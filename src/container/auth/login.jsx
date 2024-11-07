@@ -6,6 +6,7 @@ import { loadTokenFromStorage } from "../../services/AuthService";
 import { login } from "../../thunks/AuthThunks";
 import { FormField } from "../component/FormField";
 import ButtonComponent from "../component/ButtonComponent";
+import { setEmail } from "../../slices/AccountSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -15,25 +16,31 @@ function Login() {
   const { isFetching } = useSelector((state) => state.authReducer);
   const authToken = loadTokenFromStorage();
 
-  // useLayoutEffect(() => {
-  //   if (authToken) {
-  //     dispatch(loginWithAuthToken({ token: authToken }));
-  //   }
-  // }, []);
   const handleLogin = () => {
-    dispatch(login(user));
+    dispatch(login(user)).then((resp) => {
+      if(resp.payload.code === "account_unverify") {
+        dispatch(setEmail(user.email))
+        nav('/ma-xac-thuc')
+      } if(resp.payload.code === "") {
+        window.history.pushState({}, null, "/");
+      }
+    })
   };
 
   useLayoutEffect(() => {
     window.history.pushState({}, null, "/");
   }, []);
 
-  // const toggleVisibility = () => {
-  //   setShowPassword((prevShowPassword) => !prevShowPassword);
-  // };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-purple-500 to-blue-500">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-md shadow-md">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-purple-500 to-blue-500" onKeyDown={handleKeyDown}>
+      <div className="w-full mx-5 max-w-md p-8 space-y-8 bg-white rounded-md shadow-md">
         <h2 className="text-2xl font-bold text-center text-gray-900">LOGIN</h2>
         <form className="space-y-6">
           <div>

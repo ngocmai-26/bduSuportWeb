@@ -9,6 +9,10 @@ import MajorSlice from '../slices/MajorSlice'
 import EvaluationSlice from '../slices/EvaluationSlice'
 import NewsSlice from '../slices/NewsSlice'
 import AdmissionsSlice from '../slices/AdmissionSlice'
+import BusinessSlice from '../slices/BusinessSlice'
+import FeedBackSlice from '../slices/FeedBackSlice'
+import LocationSlice from '../slices/LocationSlice'
+
 export const store = configureStore({
   reducer: {
     alertReducer: AlertReducer,
@@ -21,6 +25,9 @@ export const store = configureStore({
     evaluationReducer: EvaluationSlice,
     newsReducer: NewsSlice,
     allAdmissionsReducer: AdmissionsSlice,
+    businessesReducer: BusinessSlice,
+    feedbacksReducer: FeedBackSlice,
+    locationReducer: LocationSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

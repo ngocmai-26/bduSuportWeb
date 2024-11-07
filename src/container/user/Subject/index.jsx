@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";  
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,14 @@ function SubjectManager() {
   const { allSubject } = useSelector(
     (state) => state.subjectsReducer
   );
+  
+  const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (allSubject.length <= 0) {
+    if (allSubject.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
       dispatch(getAllSubject());
     }
-  }, []);
+  }, [allSubject.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -24,7 +27,7 @@ function SubjectManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "Tên môn xét tuyển", "Hành động"];
+  const headers = ["#", "Tên môn xét tuyển", ""];
   const columns = [
     (row, index) => index,,
     "name",

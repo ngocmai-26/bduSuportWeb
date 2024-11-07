@@ -33,7 +33,7 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
 
   const handleSubmit = () => {
     dispatch(updateTypeNews(typeNewsData)).then((res) => {
-        handleClose();
+      handleClose();
     });
   };
 
@@ -73,12 +73,16 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
               />
             </div>
             <div className="flex justify-end">
-              <ButtonComponent
-                textButton="Lưu"
-                style="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                handleClick={handleSubmit}
-                type="button"
-              />
+              <div className="flex justify-end">
+                <ButtonComponent
+                  textButton="Cập nhât"
+                  style={
+                    "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  }
+                  handleClick={handleSubmit}
+                  type={"button"}
+                />
+              </div>
             </div>
           </form>
         </div>

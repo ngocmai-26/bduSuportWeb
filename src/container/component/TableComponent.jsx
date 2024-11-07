@@ -31,30 +31,42 @@ const TableComponent = ({ data, headers, columns, rowsPerPage }) => {
           </tr>
         </thead>
         <tbody>
-          {paginatedData.map((row, rowIndex) => (
-            <tr key={rowIndex} className="">
-              {columns.map((column, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="px-4 py-2 border-b text-md text-gray-700"
-                >
-                  {/* Check if column is a function to render */}
-                  {typeof column === 'function' ? (
-                    column(row, (currentPage - 1) * rowsPerPage + rowIndex + 1) // Pass the index to column function
-                  ) : (
-                    row[column]
-                  )}
-                </td>
-              ))}
+          {data.length === 0 ? (
+            <tr>
+              <td
+                colSpan={headers.length}
+                className="px-4 py-2 text-center text-gray-500"
+              >
+                Hiện tại chưa có dữ liệu
+              </td>
             </tr>
-          ))}
+          ) : (
+            paginatedData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <td
+                    key={colIndex}
+                    className="px-4 py-2 border-b text-md text-gray-700"
+                  >
+                    {/* Check if column is a function to render */}
+                    {typeof column === 'function'
+                      ? column(row, (currentPage - 1) * rowsPerPage + rowIndex + 1) // Pass the index to column function
+                      : row[column]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
-      <PaginationComponent
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {/* Only show pagination if there's data */}
+      {data.length > 0 && (
+        <PaginationComponent
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

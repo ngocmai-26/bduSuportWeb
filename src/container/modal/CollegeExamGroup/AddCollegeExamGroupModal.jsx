@@ -36,22 +36,36 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
   const handleSubmit = () => {
     dispatch(createCollegeExamGroup(data)).then((res) => {
       handleClose();
-      setData({ code: "", name: "", subjects: [] })
+      setData({ code: "", name: "", subjects: [] });
     });
   };
 
   return (
-    <div className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}>
+    <div
+      className={`fixed inset-0 z-10 overflow-y-auto ${
+        show ? "block" : "hidden"
+      }`}
+    >
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="fixed inset-0 bg-black opacity-30" onClick={handleClose}></div>
+        <div
+          className="fixed inset-0 bg-black opacity-30"
+          onClick={handleClose}
+        ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm khối thi đại học</h2>
-          <button className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200" onClick={handleClose}>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">
+            Thêm khối thi đại học
+          </h2>
+          <button
+            className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
+            onClick={handleClose}
+          >
             X
           </button>
           <form>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Mã khối</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Mã khối
+              </label>
               <FormField
                 name={"code"}
                 values={data}
@@ -62,7 +76,9 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Tên khối</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Tên khối
+              </label>
               <FormField
                 name={"name"}
                 values={data}
@@ -73,8 +89,10 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Môn thi</label>
-              <div className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm">
+              <label className="block text-sm font-medium text-gray-700">
+                Môn thi
+              </label>
+              <div className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto">
                 {allSubject.map((subject) => (
                   <div key={subject.id}>
                     <label>
@@ -93,7 +111,7 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
             </div>
             <div className="flex justify-end">
               <ButtonComponent
-                textButton="Đăng Kí"
+                textButton="Tạo mới"
                 style={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }

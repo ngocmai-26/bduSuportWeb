@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +13,13 @@ function TypeNewsManager() {
   const dispatch = useDispatch();
   const { typeNews } = useSelector((state) => state.newsReducer);
 
+  const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (typeNews.length <= 0) {
+    if (typeNews.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
       dispatch(getTypeNews());
     }
-  }, [dispatch, typeNews.length]);
+  }, [typeNews.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -28,7 +30,7 @@ function TypeNewsManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "name", "Action"];
+  const headers = ["#", "Tên", ""];
   const columns = [
     (row, index) => index, // Display index as row number
     "name",

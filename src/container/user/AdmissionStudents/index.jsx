@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import DetailAccountModal from "../../modal/Account/detailAccountModal";
@@ -24,30 +24,39 @@ function AdmissionStudentManager() {
     review_status: "",
   });
   const { allAdmission } = useSelector((state) => state.allAdmissionsReducer);
-  const { allCollegeExamGroups } = useSelector((state) => state.collegeExamGroupsReducer);
+  const { allCollegeExamGroups } = useSelector(
+    (state) => state.collegeExamGroupsReducer
+  );
   const { allEvaluation } = useSelector((state) => state.evaluationReducer);
   const { allMajors } = useSelector((state) => state.majorReducer);
   const dispatch = useDispatch();
 
-  useLayoutEffect(() => {
-    dispatch(getAllAdmission());
-  }, []);
+  const hasFetched = useRef(false);
 
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0) {
+    if (allCollegeExamGroups?.length <= 0) {
+      hasFetched.current = true;
       dispatch(getAllCollegeExamGroup());
     }
-  }, [dispatch, allCollegeExamGroups.length]);
-
-  useEffect(() => {
-    dispatch(getAllEvaluation());
-  }, [dispatch]);
-
+  }, [allCollegeExamGroups?.length, dispatch]);
   useLayoutEffect(() => {
-    if (allMajors.length <= 0) {
+    if (allEvaluation?.length <= 0 ) {
+      hasFetched.current = true;
+      dispatch(getAllEvaluation());
+    }
+  }, [allEvaluation?.length, dispatch]);
+  useLayoutEffect(() => {
+    if (allAdmission?.length <= 0) {
+      hasFetched.current = true;
+      dispatch(getAllAdmission());
+    }
+  }, [allAdmission, dispatch]);
+  useLayoutEffect(() => {
+    if (allMajors?.length <= 0 ) {
+      hasFetched.current = true;
       dispatch(getAllMajor());
     }
-  }, [dispatch, allMajors.length]);
+  }, [allMajors?.length, dispatch]);
 
   const handleShowDetailModal = () => setShowDetailModal(true);
   const handleCloseDetailModal = () => setShowDetailModal(false);
@@ -56,8 +65,6 @@ function AdmissionStudentManager() {
     dispatch(getAllAdmissionById(id));
     handleShowDetailModal();
   };
-
-  console.log("allEvaluation", allEvaluation)
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -71,17 +78,16 @@ function AdmissionStudentManager() {
     dispatch(getAllAdmission(filters));
   };
 
+  console.log("allAdmission", allAdmission)
+
   const headers = [
     "#",
-    "Full Name",
+    "Họ và Tên",
     "Email",
-    "Address",
-    "Academic Level",
-    "College Exam Group",
-    "Evaluation Method",
-    "Final Score",
-    "Status",
-    "Action",
+    "Địa chỉ",
+    "Bậc đăng kí",
+    "Trạng thái",
+    "",
   ];
   const columns = [
     (row, index) => index,
@@ -89,9 +95,6 @@ function AdmissionStudentManager() {
     (row) => row.student_info.email,
     (row) => row.student_info.address,
     "academic_level_name",
-    "college_exam_group_code",
-    "evaluation_method_name",
-    "final_score",
     (row) => (
       <span className={row.is_passed ? "text-green-500" : "text-red-500"}>
         {row.is_passed ? "Đủ điểm" : "Không đủ điểm"}

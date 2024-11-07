@@ -17,6 +17,9 @@ import CollegeExamGroupManager from "../container/user/CollegeExamGroup";
 import TypeNewsManager from "../container/user/News/typeNews";
 import { refreshSession } from "../thunks/AuthThunks";
 import { useEffect } from "react";
+import BusinessesManager from "../container/user/Business";
+import FeedBackManager from "../container/user/Feedback";
+import LocationsManager from "../container/user/Location";
 
 export const GeneralRoute = () => {
   return (
@@ -48,6 +51,9 @@ export const LoggedRoute = () => {
         <Route path="/subject-manager" element={<SubjectManager />} />
         <Route path="/college-exam-group-manager" element={<CollegeExamGroupManager />} />
         <Route path="/type-news-manager" element={<TypeNewsManager />} />
+        <Route path="/business-manager" element={<BusinessesManager />} />
+        <Route path="/feedback-manager" element={<FeedBackManager />} />
+        <Route path="/location-manager" element={<LocationsManager />} />
       </Routes>
     </AppMiddleware>
   );

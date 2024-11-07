@@ -6,6 +6,7 @@ import { setAllMajors } from '../slices/MajorSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllMajor = () => async (dispatch, rejectWithValue) => {
   
@@ -21,7 +22,9 @@ export const getAllMajor = () => async (dispatch, rejectWithValue) => {
       }
     })
     .catch((error) => {
-      console.log(error)
+      if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
     })
 }
 

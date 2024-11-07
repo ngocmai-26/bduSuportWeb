@@ -1,42 +1,55 @@
-import { useLayoutEffect, useState } from "react";
-import { AddNewsThunk, getTypeNews, NewsThunk } from "../../../thunks/NewsThunks";
+import { useLayoutEffect, useState, useRef } from "react";
+import { AddNewsThunk, getTypeNews } from "../../../thunks/NewsThunks";
 import { FormField } from "../../component/FormField";
 import { useDispatch, useSelector } from "react-redux";
+import ButtonComponent from "../../component/ButtonComponent";
 
 function AddNewsModal({ show, handleClose }) {
   const dispatch = useDispatch();
-  const { typeNews } = useSelector(
-    (state) => state.newsReducer
-  );
-
+  const { typeNews } = useSelector((state) => state.newsReducer);
+  const fileInputRef = useRef(null);
   useLayoutEffect(() => {
     if (typeNews.length <= 0) {
       dispatch(getTypeNews());
     }
-  }, [ ]);
-  const [data, setData] = useState({
+  }, [dispatch, typeNews.length]);
+
+  const [formData, setFormData] = useState({
     title: "",
     link: "",
-    image: '',
+    image: "",
+    type: "", // Thêm type vào formData
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setData((prevData) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
+  const handleFileChange = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      image: e.target.files[0], // Cập nhật file image
+    }));
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (data) {
-      dispatch(AddNewsThunk(data)).then((res) => {
+    if (formData) {
+      dispatch(AddNewsThunk(formData)).then((res) => {
         handleClose();
-        setData({
-            title: "",
-            link: "",
-            image: '',
-          })
+        setFormData({
+          title: "",
+          link: "",
+          image: "",
+          type: "", // Đặt lại type khi reset form
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // Reset the file input field to 'Choose File'
+        }
       });
     }
   };
@@ -53,9 +66,7 @@ function AddNewsModal({ show, handleClose }) {
           onClick={handleClose}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">
-            Thêm ngành học
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm tin tức</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
             onClick={handleClose}
@@ -64,71 +75,86 @@ function AddNewsModal({ show, handleClose }) {
           </button>
           <form className="space-y-4" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 gap-4">
+              {/* Input for Title */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Mã ngành
-                </label>
-                <input
-                  type="file"
-                  onChange={(e) =>
-                    setData({...data, image: e.target.files[0]})
-                  }
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Tin tức
+                  Tiêu đề
                 </label>
                 <FormField
                   name="title"
-                  values={data}
+                  values={formData}
                   id="title"
-                  setValue={setData}
+                  setValue={setFormData}
                   required="required"
                   onChange={handleChange}
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
+
+              {/* Input for Link */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Link
                 </label>
                 <FormField
                   name="link"
-                  values={data}
+                  values={formData}
                   id="link"
-                  setValue={setData}
+                  setValue={setFormData}
                   required="required"
                   onChange={handleChange}
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
+
+              {/* Input for Image */}
               <div>
-              <label className="block text-sm font-medium text-gray-700">Loại</label>
-              <select
-                name="type"
-                id="type"
-                className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                value={data.type}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn loại tin tức</option>
-                {typeNews.map((level) => (
-                  <option key={level.id} value={level.id}>
-                    {level.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Hình ảnh
+                </label>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                />
+              </div>
+
+              {/* Select for Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Loại tin tức
+                </label>
+                <select
+                  name="type"
+                  id="type"
+                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                  value={formData.type}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Chọn loại tin tức</option>
+                  {typeNews.map((level) => (
+                    <option key={level.id} value={level.id}>
+                      {level.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <button
-              className="block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-              type="submit"
-            >
-              Upload
-            </button>
+          
+
+            <div className="flex justify-end">
+              <ButtonComponent
+                textButton="Tạo mới"
+                style={
+                  "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                }
+           
+                type={"submit"}
+              />
+            </div>
           </form>
         </div>
       </div>

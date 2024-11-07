@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TableComponent from "../../component/TableComponent";
 import DetailAccountModal from "../../modal/Account/detailAccountModal";
@@ -13,8 +13,11 @@ function AccountManager() {
   const dispatch = useDispatch();
   const { allAccount } = useSelector((state) => state.accountsReducer);
 
+  const hasFetched = useRef(false); 
+
   useLayoutEffect(() => {
-    if (allAccount.length <= 0) {
+    if (allAccount.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true; 
       dispatch(getAllAccount());
     }
   }, [allAccount.length, dispatch]);
@@ -34,7 +37,7 @@ function AccountManager() {
   };
 
   const handleToggleStatus = (row) => {
-    if (row.status === "blocked") {
+    if (row?.status === "blocked") {
       dispatch(unlockAccount(row.id));
     } else {
       dispatch(lockAccount(row.id));
@@ -43,13 +46,13 @@ function AccountManager() {
   const renderStatus = (status) => {
     return status === "UNVERIFIED" ? "Chưa xác thực" : "Đã xác thực";
   };
-  const headers = ["#", "Email", "Số điện thoại", "Chức vụ", "Trạng thái", "Hành động"];
+  const headers = ["#", "Email", "Số điện thoại", "Chức vụ", "Trạng thái", ""];
   const columns = [
     (row, index) => index + 1,
     "email",
     "phone",
     "role",
-    (row) => renderStatus(row.status),
+    (row) => renderStatus(row?.status),
     (row) => (
       <div>
         <button
@@ -63,7 +66,7 @@ function AccountManager() {
           className="text-red-500 hover:underline"
           onClick={() => handleToggleStatus(row)}
         >
-          {row.status === "blocked" ? "Mở khóa" : "Khóa"}
+          {row?.status === "blocked" ? "Mở khóa" : "Khóa"}
         </button>
       </div>
     ),

@@ -1,19 +1,21 @@
 // src/components/VerifyCode.jsx
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormField } from '../component/FormField';
 import { confirmAccount } from '../../thunks/AuthThunks';
 
 function VerifyCode() {
-  const [otp, setOtp] = useState({});
   const nav = useNavigate();
   const dispatch = useDispatch();
+  const { email } = useSelector((state) => state.accountsReducer);
+  const [otp, setOtp] = useState({email: email, otp: ""});
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(confirmAccount(otp)).then((reps) => {
-      if (!reps.error) {
+      if (!reps.payload) {
         nav("/dang-nhap");
       }
     });
@@ -24,18 +26,7 @@ function VerifyCode() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-md shadow-md">
         <h2 className="text-2xl font-bold text-center text-gray-900">Nhập Mã Xác Nhận</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email xác thực
-            </label>
-            <FormField
-              name={"email"}
-              values={otp}
-              id={"email"}
-              setValue={setOtp}
-              required={"required"}
-            />
-          </div>
+        
           <div>
             <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
               Mã Xác Nhận

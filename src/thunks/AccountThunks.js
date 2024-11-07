@@ -6,6 +6,7 @@ import { setAlert } from '../slices/AlertSlice'
 import { TOAST_SUCCESS } from '../constants/toast'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllAccount = () => async (dispatch, rejectWithValue) => {
   await axiosInstance
@@ -21,7 +22,9 @@ export const getAllAccount = () => async (dispatch, rejectWithValue) => {
       }
     })
     .catch((error) => {
-      console.log(error)
+      if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
     })
 }
 
@@ -45,7 +48,7 @@ export const unlockAccount = (id) => async (dispatch, rejectWithValue) => {
       }
     })
     .catch((error) => {
-      console.log(error)
+      console.log("error", error)
     })
 }
 export const lockAccount = (id) => async (dispatch, rejectWithValue) => {

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import AddNewsModal from "../../modal/News/AddNewsModal";
@@ -12,10 +12,14 @@ function NewsManager() {
   const [selectedItem, setSelectedItem] = useState(null);
   const dispatch = useDispatch();
   const { allNews } = useSelector((state) => state.newsReducer);
-
+  
+  const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    dispatch(getNewsThunk());
-  }, [dispatch]);
+    if (allNews.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
+      dispatch(getNewsThunk());
+    }
+  }, [allNews.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -26,7 +30,7 @@ function NewsManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "title", "link", "image", "Action"];
+  const headers = ["#", "Tựa đề", "Đường dẫn", "Hình ảnh", ""];
   const columns = [
     (row, index) => index, // Display index as row number
     "title",

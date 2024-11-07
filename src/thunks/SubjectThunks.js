@@ -6,37 +6,48 @@ import { setAllSubject, setStatus } from '../slices/SubjectSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllSubject = () => async (dispatch, rejectWithValue) => {
   try {
-
-    const resp = await axiosInstance.get(`${API.uri}/backoffice/subjects`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    if (resp.status >= 200 && resp.status < 300) {
-      dispatch(setAllSubject(resp.data.data))
-    }
+    await axiosInstance
+      .get(`${API.uri}/backoffice/subjects`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        if (response) {
+          dispatch(setAllSubject(response.data.data))
+        }
+      })
+      .catch((error) => { 
+        if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
+      })
   } catch (error) {
-    console.log(error)
+    console.log('errorg', error)
   }
 }
 
 export const createSubject = (data) => async (dispatch, rejectWithValue) => {
   try {
-
-    const resp = await axiosInstance.post(`${API.uri}/backoffice/subjects`, data, {
-      headers: {
-        'Content-Type': 'application/json',
+    const resp = await axiosInstance.post(
+      `${API.uri}/backoffice/subjects`,
+      data,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       },
-    })
-    if (resp.status >= 200 && resp.status < 300) {
+    )
+    if (resp?.status >= 200 && resp?.status < 300) {
       dispatch(
         setAlert({ type: TOAST_SUCCESS, content: 'Tạo môn học thành công' }),
       )
       dispatch(getAllSubject())
-      setStatus(resp.status)
+      setStatus(resp?.status)
     }
   } catch (error) {
     console.log(error)
@@ -59,7 +70,7 @@ export const DeleteSubjectThunk = (id) => async (dispatch, rejectWithValue) => {
       }
     })
     .catch((error) => {
-      if (error.response && error.response.status === 400) {
+      if (error.response && error.response?.status === 400) {
         dispatch(
           setAlert({ type: TOAST_ERROR, content: error.response.data.message }),
         )

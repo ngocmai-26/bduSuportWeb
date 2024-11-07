@@ -2,45 +2,42 @@ import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAcademic, getAllAcademic } from "../../../thunks/AcademicThunks";
-import AddAcademicModal from "../../modal/Academic/AddAcademicModel";
+import { getFeedbackThunk } from "../../../thunks/FeedBackThunk";
 
-function AcademicManager() {
+function FeedBackManager() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
-  const { allAcademic } = useSelector((state) => state.academicsReducer);
+  const { allFeedBack } = useSelector((state) => state.feedbacksReducer);
 
   const hasFetched = useRef(false);
-
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0 && !hasFetched.current) {
+    if (allFeedBack.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllAcademic());
+      dispatch(getFeedbackThunk());
     }
-  }, [allAcademic.length, dispatch]);
+  }, [allFeedBack.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
 
-  const handleCreateAcademic = () => {
+  const handleCreateNews = () => {
     handleShowModal();
   };
-  const handleDeleteAcademic = (id) => {
-    dispatch(deleteAcademic(id));
-  };
 
-  const headers = ["#", "Tên cấp bậc", ""];
+  const headers = ["#", "Tựa đề", "Người gửi","Số điện thoại", "Ngày gửi", ""];
   const columns = [
     (row, index) => index,
-    "name",
+    "title",
+    "feedbacker_role",
+    "phone_number",
+    "created_at",
     (row) => (
       <div>
         <button
-          onClick={() => handleDeleteAcademic(row.id)}
-          className="text-red-500 hover:underline"
+          className="text-blue-500 hover:underline mr-2"
         >
-          Xóa
+          Xem chi tiết
         </button>
+       
       </div>
     ),
   ];
@@ -51,21 +48,21 @@ function AcademicManager() {
         <div className="flex justify-end">
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
-            onClick={handleCreateAcademic}
+            onClick={handleCreateNews}
           >
-            Tạo cấp bậc
+            Tạo tin tuyển dụng
+
           </button>
         </div>
         <TableComponent
-          data={allAcademic}
+          data={allFeedBack}
           headers={headers}
           columns={columns}
           rowsPerPage={5}
         />
       </div>
-      <AddAcademicModal show={showModal} handleClose={handleCloseModal} />
     </LayoutWeb>
   );
 }
 
-export default AcademicManager;
+export default FeedBackManager;

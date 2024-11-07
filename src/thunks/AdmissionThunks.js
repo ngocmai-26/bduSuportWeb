@@ -6,10 +6,11 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllAdmission = (data) => async (dispatch) => {
   try {
-    const response = await axiosInstance.get(`${API.uri}/backoffice/admission-registration`, {
+     await axiosInstance.get(`${API.uri}/backoffice/admission-registration`, {
       params: {
         evaluation_method: data?.evaluation_method,
         major: data?.major,
@@ -19,10 +20,16 @@ export const getAllAdmission = (data) => async (dispatch) => {
       headers: {
         'Content-Type': 'application/json',
       },
-    });
-    if (response) {
-      dispatch(setAllAdmission(response.data.data));
-    }
+    }).then((response) => {
+      if (response) {
+        dispatch(setAllAdmission(response.data.data))
+      }
+    })
+    .catch((error) => {
+      if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
+    })
   } catch (error) {
     console.log(error);
   }
@@ -43,8 +50,9 @@ export const getAllAdmissionById = (id) => async (
         dispatch(setSingleAdmission(response.data.data))
       }
     })
-    .catch((error) => {
-      console.log(error)
+    .catch((error) => { if(error.response.data.code === "invalid_session") {
+      dispatch(logout())
+    }
     })
 }
 

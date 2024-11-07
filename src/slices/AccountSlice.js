@@ -6,9 +6,10 @@ const initState = {
   singleAccount: {},
   paginationAccount: {},
   errors: {},
+  email: ''
 }
 const AccountsSlice = createSlice({
-  name: 'roles',
+  name: 'account',
   initialState: initState,
   reducers: {
     setAllAccount: (state, { payload }) => {
@@ -26,6 +27,9 @@ const AccountsSlice = createSlice({
     setPaginationAccount: (state, { payload }) => {
       state.paginationAccount = payload
     },
+    setEmail: (state, { payload }) => {
+      state.email = payload
+    },
   },
 })
 
@@ -34,7 +38,8 @@ export const {
   setSearchAccount,
   setSingleAccount,
   setErrors,
-  setPaginationAccount
+  setPaginationAccount,
+  setEmail
 } = AccountsSlice.actions
 
 export default AccountsSlice.reducer

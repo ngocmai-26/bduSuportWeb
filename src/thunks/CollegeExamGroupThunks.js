@@ -6,6 +6,7 @@ import { setAllCollegeExamGroups } from '../slices/CollegeExamGroupSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllCollegeExamGroup = () => async (
   dispatch,
@@ -24,7 +25,9 @@ export const getAllCollegeExamGroup = () => async (
       }
     })
     .catch((error) => {
-      console.log(error)
+      if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
     })
 }
 

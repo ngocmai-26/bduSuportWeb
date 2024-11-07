@@ -2,42 +2,44 @@ import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteAcademic, getAllAcademic } from "../../../thunks/AcademicThunks";
-import AddAcademicModal from "../../modal/Academic/AddAcademicModel";
+import AddLocationModal from "../../modal/Location/AddLocation";
+import { DeleteLocationThunk, getLocationThunk } from "../../../thunks/LocationThunk";
 
-function AcademicManager() {
+function LocationsManager() {
   const [showModal, setShowModal] = useState(false);
+
+  
   const dispatch = useDispatch();
-  const { allAcademic } = useSelector((state) => state.academicsReducer);
-
-  const hasFetched = useRef(false);
-
+  const { allLocation } = useSelector((state) => state.locationReducer);
+  
+  const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0 && !hasFetched.current) {
+    if (allLocation.length <= 0) {
       hasFetched.current = true;
-      dispatch(getAllAcademic());
+      dispatch(getLocationThunk());
     }
-  }, [allAcademic.length, dispatch]);
+  }, [allLocation.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  const handleCreateAcademic = () => {
+  const handleCreateNews = () => {
     handleShowModal();
   };
-  const handleDeleteAcademic = (id) => {
-    dispatch(deleteAcademic(id));
-  };
 
-  const headers = ["#", "Tên cấp bậc", ""];
+  const headers = ["#", "Địa chỉ", ""];
   const columns = [
-    (row, index) => index,
+    (row, index) => index, // Display index as row number
     "name",
     (row) => (
       <div>
         <button
-          onClick={() => handleDeleteAcademic(row.id)}
           className="text-red-500 hover:underline"
+          onClick={() => {
+            if (window.confirm("Bạn có muốn xóa tin tức này không?")) {
+              dispatch(DeleteLocationThunk(row.id));
+            }
+          }}
         >
           Xóa
         </button>
@@ -45,27 +47,29 @@ function AcademicManager() {
     ),
   ];
 
+
   return (
     <LayoutWeb>
       <div className="px-10">
         <div className="flex justify-end">
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
-            onClick={handleCreateAcademic}
+            onClick={handleCreateNews}
           >
-            Tạo cấp bậc
+            Tạo địa điểm
           </button>
         </div>
         <TableComponent
-          data={allAcademic}
+          data={allLocation}
           headers={headers}
           columns={columns}
           rowsPerPage={5}
         />
       </div>
-      <AddAcademicModal show={showModal} handleClose={handleCloseModal} />
+      <AddLocationModal show={showModal} handleClose={handleCloseModal} />
+     
     </LayoutWeb>
   );
 }
 
-export default AcademicManager;
+export default LocationsManager;

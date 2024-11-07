@@ -2,6 +2,7 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { updateNewsThunk, getTypeNews, getNewsByIdThunk } from "../../../thunks/NewsThunks";
 import { FormField } from "../../component/FormField";
 import { useDispatch, useSelector } from "react-redux";
+import ButtonComponent from "../../component/ButtonComponent";
 
 function UpdateNewsModal({ show, handleClose, newsId }) {
   const dispatch = useDispatch();
@@ -126,12 +127,15 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
               </div>
             </div>
 
-            <button
-              className="block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-              type="submit"
-            >
-              Cập nhật
-            </button>
+            <div className="flex justify-end">
+              <ButtonComponent
+                textButton="Cập nhât"
+                style={
+                  "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                }
+                type={"submit"}
+              />
+            </div>
           </form>
         </div>
       </div>

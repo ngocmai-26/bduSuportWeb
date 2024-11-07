@@ -20,14 +20,12 @@ const ModalAddAccount = ({ show, handleClose }) => {
   const [formErrors, setFormErrors] = useState(newFormErrors);
 
   const checkPasswordStrength = (password) => {
-    // Đặt các yêu cầu mật khẩu của bạn ở đây
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasDigits = /\d/.test(password);
     const hasSpecialChars = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
 
-    // Kiểm tra tất cả các điều kiện
     const isStrongPassword =
       password?.length >= minLength &&
       hasUpperCase &&
@@ -36,6 +34,7 @@ const ModalAddAccount = ({ show, handleClose }) => {
       hasSpecialChars;
     return isStrongPassword;
   };
+
   const handleSubmit = () => {
     const isStrong = checkPasswordStrength(user?.password);
 
@@ -51,7 +50,7 @@ const ModalAddAccount = ({ show, handleClose }) => {
       if (!isStrong) {
         newFormErrors.password = "Password is not strong enough";
       } else if (user?.password !== confirmPassword?.confirmPassword) {
-        newFormErrors.password = "Password incorrect";
+        newFormErrors.password = "Password does not match";
       }
     }
 
@@ -59,13 +58,18 @@ const ModalAddAccount = ({ show, handleClose }) => {
 
     if (Object.keys(newFormErrors).length === 0) {
       dispatch(create(user)).then((reps) => {
-        if (!reps.error) {
-          handleClose();
-          setUser({})
-        }
+        handleClose();
+          setUser({
+            email: "",
+            phone: "",
+            password: "",
+            confirmPassword: "",
+          });
+          setConfirmPassword("")
       });
     }
   };
+
   return (
     <div
       className={`fixed inset-0 z-10 overflow-y-auto ${
@@ -92,7 +96,6 @@ const ModalAddAccount = ({ show, handleClose }) => {
               <label className="block text-sm font-medium text-gray-700">
                 Email
               </label>
-
               <FormField
                 name={"email"}
                 values={user}
@@ -100,12 +103,14 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 setValue={setUser}
                 required={"required"}
               />
+              {formErrors.email && (
+                <p className="text-sm text-red-500 mt-1">{formErrors.email}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Số điện thoại
               </label>
-
               <FormField
                 name={"phone"}
                 values={user}
@@ -113,12 +118,14 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 setValue={setUser}
                 required={"required"}
               />
+              {formErrors.phone && (
+                <p className="text-sm text-red-500 mt-1">{formErrors.phone}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Mật khẩu
               </label>
-
               <FormField
                 name={"password"}
                 values={user}
@@ -127,6 +134,9 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 required={"required"}
                 type={showPassword ? "text" : "password"}
               />
+              {formErrors.password && (
+                <p className="text-sm text-red-500 mt-1">{formErrors.password}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -140,10 +150,15 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 type={showPasswordConfirm ? "text" : "password"}
                 required={"required"}
               />
+              {formErrors.confirmPassword && (
+                <p className="text-sm text-red-500 mt-1">
+                  {formErrors.confirmPassword}
+                </p>
+              )}
             </div>
             <div className="flex justify-end">
               <ButtonComponent
-                textButton="Đăng Kí"
+                textButton="Tạo mới"
                 style={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }

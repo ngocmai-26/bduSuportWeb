@@ -6,6 +6,7 @@ import axios from 'axios'
 import { setAllNews, setTypeNews } from '../slices/NewsSlice'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
+import { logout } from '../slices/AuthSlice'
 
 export const getNewsThunk = () => async (dispatch, rejectWithValue) => {
   await axiosInstance
@@ -19,8 +20,9 @@ export const getNewsThunk = () => async (dispatch, rejectWithValue) => {
         dispatch(setAllNews(response.data.data))
       }
     })
-    .catch((error) => {
-      console.log(error)
+    .catch((error) => { if(error.response.data.code === "invalid_session") {
+      dispatch(logout())
+    }
     })
 }
 

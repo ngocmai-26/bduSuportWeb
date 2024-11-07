@@ -5,6 +5,7 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAllAcademic } from '../slices/AcademicSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
+import { logout } from '../slices/AuthSlice'
 
 export const getAllAcademic = () => async (dispatch, rejectWithValue) => {
   const token = loadTokenFromStorage()
@@ -21,7 +22,9 @@ export const getAllAcademic = () => async (dispatch, rejectWithValue) => {
       }
     })
     .catch((error) => {
-      console.log(error)
+      if(error.response.data.code === "invalid_session") {
+        dispatch(logout())
+      }
     })
 }
 
@@ -53,3 +56,34 @@ export const createAcademic = (data) => async (dispatch, rejectWithValue) => {
       }
     })
 }
+
+export const deleteAcademic = (id) => async (dispatch, rejectWithValue) => {
+  const token = loadTokenFromStorage()
+  await axios
+    .delete(`${API.uri}/backoffice/academic-levels/${id}`,  {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => {
+      if (response) {
+        dispatch(
+          setAlert({
+            type: TOAST_SUCCESS,
+            content: 'Xóa dữ liệu thành công',
+          }),
+        )
+        dispatch(getAllAcademic())
+      }
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 400) {
+        dispatch(
+          setAlert({ type: TOAST_ERROR, content: error.response.data.message }),
+        )
+      }
+    })
+}
+
+

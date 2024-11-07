@@ -8,9 +8,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import { setAlert } from './slices/AlertSlice';
 import Router from './routes';
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from 'react-router-dom';
-import { setNavigate } from './services/AuthService';
-
 
 function App() {
   const { msg } = useSelector((state) => state.alertReducer);

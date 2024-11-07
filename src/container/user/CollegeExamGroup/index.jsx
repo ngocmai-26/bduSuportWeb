@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import DetailAccountModal from "../../modal/Account/detailAccountModal";
 import LayoutWeb from "../layoutWeb";
@@ -14,11 +14,15 @@ function CollegeExamGroupManager() {
     (state) => state.collegeExamGroupsReducer
   );
 
+  const hasFetched = useRef(false); 
+
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0) {
+    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true; 
       dispatch(getAllCollegeExamGroup());
     }
-  }, [dispatch, allCollegeExamGroups.length]);
+  }, [allCollegeExamGroups.length, dispatch]);
+  
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -26,7 +30,7 @@ function CollegeExamGroupManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "Mã tổ hợp", "Tổ hợp", "Môn học", "Hành động"];
+  const headers = ["#", "Mã tổ hợp", "Tổ hợp", "Môn học", ""];
   const columns = [
     (row, index) => index,
     "code",
@@ -64,7 +68,7 @@ function CollegeExamGroupManager() {
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
             onClick={handleCreateCollegeExamGroup}
           >
-            Tạo khối ngành
+            Tạo nhóm môn
           </button>
         </div>
         <TableComponent

@@ -2,16 +2,17 @@ import { useDispatch } from "react-redux";
 import { FormField } from "../../component/FormField";
 import { useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
-import { AddTypeNews } from "../../../thunks/NewsThunks";
+import { AddLocationThunk } from "../../../thunks/LocationThunk";
 
-function AddTypeNewsModal({ show, handleClose }) {
+
+function AddLocationModal({ show, handleClose }) {
   const dispatch = useDispatch();
-  const [typeNews, setTypeNews] = useState({});
+  const [location, setLocation] = useState({});
 
   const handleSubmit = () => {
-    dispatch(AddTypeNews(typeNews)).then((reps) => {
+    dispatch(AddLocationThunk(location)).then((reps) => {
       handleClose();
-      setTypeNews({})
+      setLocation({})
     });
   };
   return (
@@ -26,7 +27,7 @@ function AddTypeNewsModal({ show, handleClose }) {
           onClick={handleClose}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm loại tin tức</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm địa chỉ</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
             onClick={handleClose}
@@ -36,14 +37,14 @@ function AddTypeNewsModal({ show, handleClose }) {
           <form>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                Loại tin tức
+                Địa điểm
               </label>
 
               <FormField
                 name={"name"}
-                values={typeNews}
+                values={location}
                 id={"name"}
-                setValue={setTypeNews}
+                setValue={setLocation}
                 required={"required"}
               />
             </div>
@@ -65,4 +66,4 @@ function AddTypeNewsModal({ show, handleClose }) {
   );
 }
 
-export default AddTypeNewsModal;
+export default AddLocationModal;

@@ -6,14 +6,28 @@ import ButtonComponent from "../../component/ButtonComponent";
 
 function AddAcademicModal({ show, handleClose }) {
   const dispatch = useDispatch();
-  const [academic, setAcademic] = useState({});
+  const [academic, setAcademic] = useState({
+    name: "",
+    need_evaluation_method: false,
+  });
 
   const handleSubmit = () => {
     dispatch(createAcademic(academic)).then((reps) => {
+      setAcademic({
+        name: "",
+        need_evaluation_method: false,
+      });
       handleClose();
-      setAcademic({})
     });
   };
+
+  const handleSelectChange = (e) => {
+    setAcademic({
+      ...academic,
+      need_evaluation_method: e.target.value === "true", // Convert to boolean
+    });
+  };
+
   return (
     <div
       className={`fixed inset-0 z-10 overflow-y-auto ${
@@ -47,10 +61,26 @@ function AddAcademicModal({ show, handleClose }) {
                 required={"required"}
               />
             </div>
-
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Cần xét tuyển hay không
+              </label>
+              <select
+                name="need_evaluation_method"
+                id="need_evaluation_method"
+                className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                value={academic.need_evaluation_method}
+                onChange={handleSelectChange} // Use updated handleSelectChange
+                required
+              >
+                <option value="">Chọn giá trị</option>
+                <option value={false}>Không cần</option>
+                <option value={true}>Cần</option>
+              </select>
+            </div>
             <div className="flex justify-end">
               <ButtonComponent
-                textButton="Đăng Kí"
+                textButton="Tạo mới"
                 style={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }

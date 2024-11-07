@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import DetailAccountModal from "../../modal/Account/detailAccountModal";
@@ -18,11 +18,13 @@ function MajorManager() {
     (state) => state.majorReducer
   );
 
+  const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (allMajors.length <= 0) {
+    if (allMajors.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
       dispatch(getAllMajor());
     }
-  }, [dispatch, allMajors.length]);
+  }, [allMajors.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -35,14 +37,14 @@ function MajorManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "Mã ngành", "Tên ngành", "Tổ hợp", "Chỉ tiêu", "Điểm chuẩn", "Năm", "Action"];
+  const headers = ["#", "Mã ngành", "Tên ngành", "Tổ hợp", "Chỉ tiêu", "Điểm chuẩn", "Năm", ""];
   const columns = [
     (row, index) => index, 
     "code",
     "name",
-    (row) => row.college_exam_groups.map((group) => (
+    (row) => row.college_exam_groups?.map((group) => (
       <div key={group.id}>
-        {group.code}: {group.subjects.map((subject) => subject.name).join(", ")}
+        {group.code}: {group.subjects?.map((subject) => subject.name).join(", ")}
       </div>
     )),
     "expected_target",
