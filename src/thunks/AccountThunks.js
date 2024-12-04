@@ -16,7 +16,6 @@ export const getAllAccount = () => async (dispatch, rejectWithValue) => {
       },
     })
     .then((response) => {
-      console.log("response", response)
       if (response) {
         dispatch(setAllAccount(response.data.results))
       }

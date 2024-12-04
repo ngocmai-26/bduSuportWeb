@@ -35,24 +35,25 @@ function TypeNewsManager() {
     (row, index) => index, // Display index as row number
     "name",
     (row) => (
-      <div>
-        <button
-          className="text-green-500 hover:underline mr-2"
-          onClick={() => handleEdit(row)}
-        >
-          Sửa
-        </button>
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => {
-            if (window.confirm("Bạn có muốn xóa loại tin tức này không?")) {
-              dispatch(DeleteTypeNews(row.id));
-            }
-          }}
-        >
-          Xóa
-        </button>
-      </div>
+      <div className="flex items-center space-x-2">
+      <button
+        className="text-yellow-500 border border-yellow-500 rounded px-2 py-1 hover:bg-yellow-100"
+        onClick={() => handleEdit(row)}
+      >
+        Sửa
+      </button>
+      <button
+        className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
+        onClick={() => {
+          if (window.confirm("Bạn có muốn xóa loại tin tức này không?")) {
+            dispatch(DeleteTypeNews(row.id));
+          }
+        }}
+      >
+        Xóa
+      </button>
+    </div>
+    
     ),
   ];
 

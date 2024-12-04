@@ -6,6 +6,7 @@ import {
   setErrors,
   setErrorsRegister,
   setLogged,
+  setUser,
 } from '../slices/AuthSlice'
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
@@ -29,29 +30,31 @@ export const login = createAsyncThunk(
     dispatch(setAuthFetching(true))
 
     try {
-      const response = await axios.post(`${API.uri}/backoffice/login`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (response.status >= 300) {
-        dispatch(setActionStatus(response?.data?.code))
-        dispatch(
-          setAlert({
-            type: TOAST_SUCCESS,
-            content: 'Đã gửi mã xác nhận về email',
-          }),
-        )
-      } else {
-        dispatch(
-          setAlert({ type: TOAST_SUCCESS, content: 'Đăng nhập thành công' }),
-        )
-      }
-
-      setToken(response.data.data.access)
-      setRefresh(response.data.data.refresh)
-      dispatch(setLogged(true))
+      const response = await axios
+        .post(`${API.uri}/backoffice/login`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then((response) => {
+          dispatch(
+            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+          )
+          setToken(response.data.data.access)
+          setRefresh(response.data.data.refresh)
+          dispatch(setLogged(true))
+          dispatch(setUser(response.data.data.user_info))
+        })
+        .catch((error) => {
+          dispatch(setActionStatus(error?.data?.code))
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content:
+                'Thông tin đăng nhập chưa chính xác hoặc tài khoản chưa được xác minh',
+            }),
+          )
+        })
 
       return response.data
     } catch (error) {
@@ -94,34 +97,75 @@ export const create = (data) => async (dispatch, rejectWithValue) => {
   }
 }
 
-
 export const confirmAccount = createAsyncThunk(
   'account/confirm',
   async (data, { dispatch, rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('auth_token');
-      const response = await axios.post(`${API.uri}/backoffice/admin/accounts/verify`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      dispatch(setRefresh(true));
-      dispatch(
-        setAlert({ type: TOAST_SUCCESS, content: response.data.message })
-      );
-
-      return response.data; // Return data when fulfilled
+      const token = localStorage.getItem('auth_token')
+      await axios
+        .post(`${API.uri}/backoffice/anonymous/account/verify`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          dispatch(setRefresh(true))
+          dispatch(
+            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+          )
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content: error.response?.data?.message,
+            }),
+          )
+          return rejectWithValue(error.response?.status) // Return error code or message
+        })
     } catch (error) {
-      // Handle error in catch block
-      dispatch(
-        setAlert({ type: TOAST_ERROR, content: error.response?.data?.message })
-      );
-      return rejectWithValue(error.response?.status); // Return error code or message
+      console.log('error', error)
     }
-  }
-);
+  },
+)
+
+export const resendVerifyOtp = createAsyncThunk(
+  'account/resend',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      await axios
+        .post(
+          `${API.uri}/backoffice/anonymous/account/resend-verify-otp`,
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        .then((response) => {
+          dispatch(setRefresh(true))
+          dispatch(
+            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+          )
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content: error.response?.data?.message,
+            }),
+          )
+          return rejectWithValue(error.response?.status) // Return error code or message
+        })
+    } catch (error) {
+      console.log('error', error)
+    }
+  },
+)
 
 export const refreshSession = createAsyncThunk(
   'backoffice/refresh',
@@ -142,6 +186,76 @@ export const refreshSession = createAsyncThunk(
       return response.data
     } catch (error) {
       return rejectWithValue(error.response.data)
+    }
+  },
+)
+
+export const changePassword = createAsyncThunk(
+  'change_password',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      await axios
+        .patch(`${API.uri}/backoffice/admin/accounts/change-password`, data, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          dispatch(
+            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+          )
+          dispatch(setRefresh(true))
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content: error.response?.data?.message,
+            }),
+          )
+          return rejectWithValue(error.response?.status) // Return error code or message
+        })
+    } catch (error) {
+      console.log('error', error)
+    }
+  },
+)
+
+export const resetPassword = createAsyncThunk(
+  'reset_password',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      await axios
+        .patch(
+          `${API.uri}/backoffice/super-admin/accounts/backoffice/${data.id}/reset-password`,
+          data.data,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        .then((response) => {
+          dispatch(
+            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+          )
+          dispatch(setRefresh(true))
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content: error.response?.data?.message,
+            }),
+          )
+          return rejectWithValue(error.response?.status)
+        })
+    } catch (error) {
+      console.log('error', error)
     }
   },
 )

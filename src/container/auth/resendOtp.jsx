@@ -3,39 +3,43 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormField } from '../component/FormField';
-import { confirmAccount } from '../../thunks/AuthThunks';
+import { confirmAccount, resendVerifyOtp } from '../../thunks/AuthThunks';
+import { setEmail } from '../../slices/AccountSlice';
 
-function VerifyCode() {
+function ResendVerify() {
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const { email } = useSelector((state) => state.accountsReducer);
-  const [otp, setOtp] = useState({email: email, otp: ""});
+  const [email, setEmailResend] = useState("");
 
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
-    dispatch(confirmAccount(otp)).then((reps) => {
+    dispatch(resendVerifyOtp(email))
+    .then((reps) => {
       if (!reps.payload) {
-        nav("/dang-nhap");
+        dispatch(setEmail(email))
+        nav('/ma-xac-thuc')
       }
     });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" >
+    <div className="flex items-center justify-center min-h-screen">
       <div className="w-full mx-5 max-w-md p-8 space-y-8 bg-white rounded-md shadow-md border border-gray-300">
         <h2 className="text-2xl font-bold text-center text-gray-900">Nhập Mã Xác Nhận</h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
         
           <div>
-            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-              Mã Xác Nhận
+            <label htmlFor="emailResend" className="block text-sm font-medium text-gray-700">
+              Email
             </label>
             <FormField
-              name={"otp"}
-              values={otp}
-              id={"otp"}
-              setValue={setOtp}
+              name={"email"}
+              values={email}
+              id={"email"}
+              
+              setValue={setEmailResend}
               required={"required"}
             />
           </div>
@@ -49,8 +53,8 @@ function VerifyCode() {
           </div>
         </form>
         <div className="text-center">
-          <Link to="/gui-lai-ma" className="text-sm text-blue-500 hover:underline">
-            Gửi lại mã
+          <Link to="/" className="text-sm text-blue-500 hover:underline">
+            Đăng nhập
           </Link>
         </div>
       </div>
@@ -58,4 +62,4 @@ function VerifyCode() {
   );
 }
 
-export default VerifyCode;
+export default ResendVerify;

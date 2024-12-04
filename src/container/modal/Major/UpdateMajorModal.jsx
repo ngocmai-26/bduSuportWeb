@@ -13,7 +13,6 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
   const [data, setData] = useState(initialData || {});
   const [selectedAcademic, setSelectedAcademic] = useState(null);
 
-  console.log("initialData", initialData)
 
   const { allCollegeExamGroups } = useSelector(
     (state) => state.collegeExamGroupsReducer
@@ -228,7 +227,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Mô tả
+                Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị Logistics
                 </label>
                 <FormField
                   name="description"

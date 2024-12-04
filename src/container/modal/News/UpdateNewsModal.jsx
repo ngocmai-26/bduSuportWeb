@@ -66,7 +66,7 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
           >
             X
           </button>
-          <form className="space-y-4" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">

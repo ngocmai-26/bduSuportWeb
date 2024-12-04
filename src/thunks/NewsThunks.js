@@ -193,7 +193,7 @@ export const updateNewsThunk = (data) => async (dispatch, rejectWithValue) => {
             content: 'Cập nhật tin tức thành công',
           }),
         )
-        dispatch(getTypeNews())
+        dispatch(getNewsThunk())
       }
     })
     .catch((error) => {

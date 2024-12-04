@@ -12,13 +12,11 @@ function MajorManager() {
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [showUpdateModal, setShowUpdateModal] = useState(false); 
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const dispatch = useDispatch();
-  const { allMajors } = useSelector(
-    (state) => state.majorReducer
-  );
+  const { allMajors } = useSelector((state) => state.majorReducer);
 
-  const hasFetched = useRef(false); 
+  const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allMajors.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
@@ -37,40 +35,49 @@ function MajorManager() {
     handleShowModal();
   };
 
-  const headers = ["#", "Mã ngành", "Tên ngành", "Tổ hợp", "Chỉ tiêu", "Điểm chuẩn", "Năm", ""];
+  const headers = [
+    "#",
+    "Mã ngành",
+    "Tên ngành",
+    "Tổ hợp",
+    "Chỉ tiêu",
+    "Điểm chuẩn",
+    "Năm",
+    "",
+  ];
   const columns = [
-    (row, index) => index, 
+    (row, index) => index,
     "code",
     "name",
-    (row) => row.college_exam_groups?.map((group) => (
-      <div key={group.id}>
-        {group.code}: {group.subjects?.map((subject) => subject.name).join(", ")}
-      </div>
-    )),
+    (row) =>
+      row.college_exam_groups?.map((group) => (
+        <div key={group.id}>
+          {group.code}:{" "}
+          {group.subjects?.map((subject) => subject.name).join(", ")}
+        </div>
+      )),
     "expected_target",
     "benchmark_30",
     "year",
     (row) => (
-      <div>
+      <div className="flex items-center space-x-2">
         <button
-          className="text-blue-500 hover:underline mr-2"
+          className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
           onClick={() => handleView(row, "view")}
         >
           Xem
         </button>
         <button
-          className="text-yellow-500 hover:underline mr-2"
+          className="text-yellow-500 border border-yellow-500 rounded px-2 py-1 hover:bg-yellow-100"
           onClick={() => handleView(row, "edit")}
         >
-          Chỉnh sửa
+          sửa
         </button>
         <button
-          className="text-red-500 hover:underline"
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           onClick={() => {
-            if (
-              window.confirm("Bạn có muốn xóa ngành học này không?")
-            ) {
-              dispatch(deleteMajor(row.code));
+            if (window.confirm("Bạn có muốn xóa ngành học này không?")) {
+              dispatch(deleteMajor(row.id));
             }
           }}
         >
@@ -89,7 +96,7 @@ function MajorManager() {
     }
   };
 
-  return ( 
+  return (
     <LayoutWeb>
       <div className="px-10">
         <div className="flex justify-end">

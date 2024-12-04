@@ -8,6 +8,7 @@ function Navbar() {
   const currentPath = location.pathname;
   const dispatch = useDispatch();
   const { allAccount } = useSelector((state) => state.accountsReducer);
+  const { user } = useSelector((state) => state.authReducer);
 
   useLayoutEffect(() => {
     if (allAccount.length <= 0) {
@@ -15,10 +16,9 @@ function Navbar() {
     }
   }, [allAccount.length, dispatch]);
 
-  const userRole = allAccount.length > 0 ? allAccount[0].role : null;
 
-  const routes = [
-    { path: "/", name: "Dashboard" },
+  const adminRoutes = [
+    { path: "/", name: "Trang chủ" },
     { path: "/account-manager", name: "Quản lý tài khoản" },
     { path: "/academic-manager", name: "Quản lý bậc học" },
     { path: "/subject-manager", name: "Quản lý môn học" },
@@ -32,24 +32,28 @@ function Navbar() {
     { path: "/location-manager", name: "Quản lý địa điểm" },
   ];
 
-  
-  const filteredRoutes =
-    userRole === "root"
-      ? routes
-      : routes.filter((route) =>
-          ["Quản lý tuyển sinh", "Quản lý tin phản hồi"].includes(route.name)
-        );
+  const userRoutes = [
+    { path: "/admission-student-manager", name: "Quản lý tuyển sinh" },
+    { path: "/news-manager", name: "Quản lý tin tức" },
+    { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
+  ];
+
+  const routes = user?.role === "admin" ? userRoutes : adminRoutes;
 
   return (
     <div className="w-1/6">
       <aside className="w-1/6 bg-gray-900 text-white min-h-screen py-6 fixed top-0 left-0 h-screen pt-24 overflow-y-auto">
         <nav>
           <ul>
-            {filteredRoutes.map((route) => (
+            {routes.map((route) => (
               <li key={route.path}>
                 <Link
                   to={route.path}
-               
+                  onClick={(e) => {
+                    if (currentPath === route.path) {
+                      e.preventDefault(); 
+                    }
+                  }}
                   className={`block px-4 rounded hover:bg-gray-700 border-b border-gray-500 py-4 ${
                     currentPath === route.path ? "font-bold bg-gray-700" : ""
                   }`}

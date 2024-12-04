@@ -4,11 +4,17 @@ import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteAcademic, getAllAcademic } from "../../../thunks/AcademicThunks";
 import AddAcademicModal from "../../modal/Academic/AddAcademicModel";
+import UpdateAcademicModal from "../../modal/Academic/UpdateAcademicModel";
 
 function AcademicManager() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { allAcademic } = useSelector((state) => state.academicsReducer);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleShowUpdateModal = () => setShowUpdateModal(true);
+  const handleCloseUpdateModal = () => setShowUpdateModal(false);
 
   const hasFetched = useRef(false);
 
@@ -34,16 +40,27 @@ function AcademicManager() {
     (row, index) => index,
     "name",
     (row) => (
-      <div>
+      <div className="flex items-center space-x-2">
         <button
           onClick={() => handleDeleteAcademic(row.id)}
-          className="text-red-500 hover:underline"
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
         >
           Xóa
+        </button>
+        <button
+          className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
+          onClick={() => handleEdit(row)}
+        >
+          Sửa
         </button>
       </div>
     ),
   ];
+
+  const handleEdit = (row) => {
+    setSelectedItem(row);
+    handleShowUpdateModal();
+  };
 
   return (
     <LayoutWeb>
@@ -64,6 +81,11 @@ function AcademicManager() {
         />
       </div>
       <AddAcademicModal show={showModal} handleClose={handleCloseModal} />
+      <UpdateAcademicModal
+        show={showUpdateModal}
+        handleClose={handleCloseUpdateModal}
+        item={selectedItem}
+      />
     </LayoutWeb>
   );
 }

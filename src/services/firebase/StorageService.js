@@ -10,7 +10,6 @@
 //     uploadFiles = async (files, folder = "uploads/") => {
 //       const downloadUrls = [];
 //       for (let file of files) {
-//         console.log("file", file)
 //         const folderRef = ref(FBStorage, folder + file.name);
 //         const uploadTask = await uploadBytes(folderRef, file);
 //         const downloadUrl = await getDownloadURL(uploadTask.ref);

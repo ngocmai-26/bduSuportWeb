@@ -61,7 +61,6 @@ function AddMajorModal({ show, handleClose }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("e", e);
     setData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -220,7 +219,7 @@ function AddMajorModal({ show, handleClose }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Mô tả
+                Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị Logistics
               </label>
               <FormField
                 name="description"

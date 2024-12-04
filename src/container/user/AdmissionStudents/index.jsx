@@ -78,7 +78,6 @@ function AdmissionStudentManager() {
     dispatch(getAllAdmission(filters));
   };
 
-  console.log("allAdmission", allAdmission)
 
   const headers = [
     "#",
@@ -101,9 +100,9 @@ function AdmissionStudentManager() {
       </span>
     ),
     (row) => (
-      <div className="flex">
+      <div className="flex items-center space-x-2">
         <button
-          className="bg-blue-500 text-white mr-2 border border-blue-500 px-2"
+          className="text-blue-500 border border-blue-500 rounded px-2 py-1 bg-transparent hover:bg-blue-100"
           onClick={() => handleView(row.id)}
         >
           Xem
@@ -112,7 +111,8 @@ function AdmissionStudentManager() {
           <>
             {row.is_passed ? (
               <button
-                className="bg-green-500 text-white  border border-green-500 px-2"
+                className="text-green-500 border-green-500  border rounded px-2 py-1 hover:bg-green-100 " 
+                
                 onClick={() =>
                   dispatch(reviewAdmission(row.id, { is_approve: true }))
                 }
@@ -121,7 +121,7 @@ function AdmissionStudentManager() {
               </button>
             ) : (
               <button
-                className="bg-red-500 text-white  border border-red-500 px-2"
+                className="bg-red-500 text-white  border border-red-500 rounded px-2 py-1"
                 onClick={() =>
                   dispatch(reviewAdmission(row.id, { is_approve: false }))
                 }

@@ -8,8 +8,6 @@ import EvaluationManager from "../container/user/Evaluation";
 import MajorManager from "../container/user/Major";
 import NewsManager from "../container/user/News";
 import Login from "../container/auth/login";
-import Register from "../container/auth/register";
-import ForgotPassword from "../container/auth/forgotPassword";
 import VerifyCode from "../container/auth/verifyCode";
 import { useDispatch, useSelector } from "react-redux";
 import SubjectManager from "../container/user/Subject";
@@ -20,15 +18,15 @@ import { useEffect } from "react";
 import BusinessesManager from "../container/user/Business";
 import FeedBackManager from "../container/user/Feedback";
 import LocationsManager from "../container/user/Location";
+import ResendVerify from "../container/auth/resendOtp";
 
 export const GeneralRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
         <Route path="*" element={<Login />} />
-        <Route path="/dang-ki" element={<Register />} />
-        <Route path="/quen-mat-khau" element={<ForgotPassword />} />
         <Route path="/ma-xac-thuc" element={<VerifyCode />} />
+        <Route path="/gui-lai-ma" element={<ResendVerify />} />
       </Routes>
     </AppMiddleware>
   );

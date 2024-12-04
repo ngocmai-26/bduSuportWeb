@@ -1,99 +1,62 @@
-// src/pages/HomePage.jsx
-import React, { useState } from 'react';
-import LayoutWeb from './layoutWeb';
-import TableComponent from '../component/TableComponent';
-import DetailAccountModal from '../modal/Account/detailAccountModal';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Header from '../layout/header';
 
 function HomePage() {
-  const [showModal, setShowModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: 'Michael Holz',
-      dateCreated: '04/10/2013',
-      role: 'Admin',
-      status: 'Active',
-    },
-    {
-      id: 2,
-      name: 'Paula Wilson',
-      dateCreated: '05/08/2014',
-      role: 'Publisher',
-      status: 'Active',
-    },
-    // Thêm các dữ liệu khác nếu cần
-  ]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.authReducer);
 
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-  const handleShowDetailModal = () => setShowDetailModal(true);
-  const handleCloseDetailModal = () => setShowDetailModal(false);
-
-  const handleCreateAccount = () => {
-    handleShowModal();
-  };
-
-  const headers = ['#', 'Name', 'Date Created', 'Role', 'Status', 'Action'];
-  const columns = [
-    'id',
-    'name',
-    'dateCreated',
-    'role',
-    'status',
-    (row) => (
-      <div>
-        <button
-          className="text-blue-500 hover:underline mr-2"
-          onClick={() => handleView(row)}
-        >
-          Xem
-        </button>
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => handleDelete(row.id)}
-        >
-          Xóa
-        </button>
-      </div>
-    ),
+  const adminRoutes = [
+    { path: '/account-manager', name: 'Quản lý tài khoản' },
+    { path: '/academic-manager', name: 'Quản lý bậc học' },
+    { path: '/subject-manager', name: 'Quản lý môn học' },
+    { path: '/college-exam-group-manager', name: 'Quản lý nhóm môn' },
+    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh' },
+    { path: '/evaluation-manager', name: 'Quản lý phương thức tuyển sinh' },
+    { path: '/major-manager', name: 'Quản lý ngành học' },
+    { path: '/news-manager', name: 'Quản lý tin tức' },
+    { path: '/type-news-manager', name: 'Quản lý loại tin tức' },
+    { path: '/feedback-manager', name: 'Quản lý tin phản hồi' },
+    { path: '/location-manager', name: 'Quản lý địa điểm' },
   ];
 
-  const handleView = (row) => {
-    setSelectedItem(row);
-    handleShowDetailModal();
-  };
+  const userRoutes = [
+    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh' },
+    { path: '/news-manager', name: 'Quản lý tin tức' },
+    { path: '/feedback-manager', name: 'Quản lý tin phản hồi' },
+  ];
 
-  const handleDelete = (id) => {
-    // Lọc dữ liệu để loại bỏ mục có id tương ứng
-    const newData = data.filter(item => item.id !== id);
-    setData(newData);
-  };
+  const routes = user?.role === 'root' ? adminRoutes : userRoutes;
+
+
 
   return (
-    <LayoutWeb>
-      <div className="px-10">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
-          onClick={handleCreateAccount}
-        >
-          Tạo tài khoản
-        </button>
-        <TableComponent
-          data={data}
-          headers={headers}
-          columns={columns}
-          rowsPerPage={5}
-        />
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <Header />
+      <div className=" pt-20 flex justify-center">
+        <main className="w-full min-h-screen h-screen pt-20 overflow-y-auto ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-10">
+            {routes.map((route) => (
+              <button
+                key={route.path}
+                onClick={() => navigate(route.path)}
+                className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center justify-center space-y-4 hover:bg-gray-200 cursor-pointer transition"
+              >
+                <div className="text-5xl text-black">
+                  {/* Placeholder for icon */}
+                  <i className="fas fa-wallet"></i>
+                </div>
+                <span className="text-lg font-medium text-black">
+                  {route.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </main>
       </div>
-      {/* <ModalAddAccount show={showModal} handleClose={handleCloseModal} /> */}
-      <DetailAccountModal
-        isOpen={showDetailModal}
-        onClose={handleCloseDetailModal}
-        item={selectedItem}
-      />
-    </LayoutWeb>
+    </div>
   );
 }
 

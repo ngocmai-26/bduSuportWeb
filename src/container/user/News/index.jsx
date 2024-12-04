@@ -10,10 +10,11 @@ function NewsManager() {
   const [showModal, setShowModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedType, setSelectedType] = useState(""); // Trạng thái cho bộ lọc loại tin tức
   const dispatch = useDispatch();
-  const { allNews } = useSelector((state) => state.newsReducer);
-  
-  const hasFetched = useRef(false); 
+  const { allNews, typeNews } = useSelector((state) => state.newsReducer);
+
+  const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allNews.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
@@ -30,9 +31,19 @@ function NewsManager() {
     handleShowModal();
   };
 
+  const handleEdit = (row) => {
+    setSelectedItem(row);
+    handleShowUpdateModal();
+  };
+
+  // Lọc allNews theo selectedType
+  const filteredNews = selectedType
+    ? allNews.filter((item) => item.type === +selectedType)
+    : allNews;
+
   const headers = ["#", "Tựa đề", "Đường dẫn", "Hình ảnh", ""];
   const columns = [
-    (row, index) => index, // Display index as row number
+    (row, index) => index + 1, // Display index as row number
     "title",
     (row) => (
       <a
@@ -48,16 +59,15 @@ function NewsManager() {
       <img src={row.image} alt={row.title} className="h-16 w-16 object-cover" />
     ),
     (row) => (
-      <div>
-       
+      <div className="flex items-center space-x-2">
         <button
-          className="text-blue-500 hover:underline mr-2"
+          className="text-yellow-500 border border-yellow-500 rounded px-2 py-1 hover:bg-yellow-100"
           onClick={() => handleEdit(row)}
         >
           Sửa
         </button>
         <button
-          className="text-red-500 hover:underline"
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           onClick={() => {
             if (window.confirm("Bạn có muốn xóa tin tức này không?")) {
               dispatch(DeleteNewsThunk(row.id));
@@ -70,25 +80,35 @@ function NewsManager() {
     ),
   ];
 
-
-  const handleEdit = (row) => {
-    setSelectedItem(row);
-    handleShowUpdateModal();
-  };
-
   return (
     <LayoutWeb>
       <div className="px-10">
-        <div className="flex justify-end">
+        {/* Dropdown bộ lọc */}
+        <div className="flex justify-between mb-4">
+          <div>
+            <select
+              className="border rounded-md p-2"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option value="">Tất cả loại tin tức</option>
+              {typeNews.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             onClick={handleCreateNews}
           >
             Tạo tin tức
           </button>
         </div>
+        {/* Bảng hiển thị tin tức */}
         <TableComponent
-          data={allNews}
+          data={filteredNews}
           headers={headers}
           columns={columns}
           rowsPerPage={5}
@@ -100,7 +120,6 @@ function NewsManager() {
         handleClose={handleCloseUpdateModal}
         newsId={selectedItem?.id}
       />
-     
     </LayoutWeb>
   );
 }

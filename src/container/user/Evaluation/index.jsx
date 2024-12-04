@@ -26,7 +26,7 @@ function EvaluationManager() {
       <div>
       
         <button
-          className="text-red-500 hover:underline"
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           // onClick={() => handleDelete(row.id)}
         >
           Xóa

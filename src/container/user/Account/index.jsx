@@ -5,11 +5,14 @@ import DetailAccountModal from "../../modal/Account/detailAccountModal";
 import LayoutWeb from "../layoutWeb";
 import ModalAddAccount from "../../modal/Account/AddAcountModal";
 import { getAllAccount, unlockAccount, lockAccount } from "../../../thunks/AccountThunks";
+import ResetPwModal from "../../modal/Account/resetPwModal";
 
 function AccountManager() {
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showResetPwModal, setShowResetPwModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [userID, setUserID] = useState(null);
   const dispatch = useDispatch();
   const { allAccount } = useSelector((state) => state.accountsReducer);
 
@@ -26,9 +29,16 @@ function AccountManager() {
   const handleCloseModal = () => setShowModal(false);
   const handleShowDetailModal = () => setShowDetailModal(true);
   const handleCloseDetailModal = () => setShowDetailModal(false);
+  const handleShowResetPwModal = () => setShowResetPwModal(true);
+  const handleCloseResetPwModal = () => setShowResetPwModal(false);
 
   const handleCreateAccount = () => {
     handleShowModal();
+  };
+
+  const handleResetPwModal = (row) => {
+    handleShowResetPwModal();
+    setUserID(row.id)
   };
 
   const handleView = (row) => {
@@ -43,6 +53,8 @@ function AccountManager() {
       dispatch(lockAccount(row.id));
     }
   };
+
+
   const renderStatus = (status) => {
     return status === "UNVERIFIED" ? "Chưa xác thực" : "Đã xác thực";
   };
@@ -54,21 +66,30 @@ function AccountManager() {
     "role",
     (row) => renderStatus(row?.status),
     (row) => (
-      <div>
-        <button
-          className="text-blue-500 hover:underline mr-2"
-          onClick={() => handleView(row)}
-        >
-          Xem
-        </button>
-       
-        <button
-          className="text-red-500 hover:underline"
-          onClick={() => handleToggleStatus(row)}
-        >
-          {row?.status === "blocked" ? "Mở khóa" : "Khóa"}
-        </button>
-      </div>
+      <div className="flex items-center space-x-2">
+      <button
+        className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
+        onClick={() => handleView(row)}
+      >
+        Xem
+      </button>
+      <button
+        className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
+        onClick={() => handleResetPwModal(row)}
+      >
+        Đổi mật khẩu
+      </button>
+      <button
+        className={`${
+          row?.status === "blocked"
+            ? "text-green-500 border border-green-500 hover:bg-green-100"
+            : "text-red-500 border border-red-500 hover:bg-red-100"
+        } rounded px-2 py-1`}
+        onClick={() => handleToggleStatus(row)}
+      >
+        {row?.status === "blocked" ? "Mở khóa" : "Khóa"}
+      </button>
+    </div>
     ),
   ];
 
@@ -92,6 +113,7 @@ function AccountManager() {
         />
       </div>
       <ModalAddAccount show={showModal} handleClose={handleCloseModal} />
+      <ResetPwModal show={showResetPwModal} handleClose={handleCloseResetPwModal} userID={userID} />
       <DetailAccountModal
         isOpen={showDetailModal}
         onClose={handleCloseDetailModal}

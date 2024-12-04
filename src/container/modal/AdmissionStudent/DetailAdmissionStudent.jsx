@@ -143,15 +143,16 @@ const DetailAdmissionStudent = ({ isOpen, onClose }) => {
                 className="h-32 w-auto object-cover rounded-md shadow-md cursor-pointer mb-2"
                 onClick={() => openImageModal(index)}
               />
-              <button
-                onClick={() => openImageModal(index)}
-                className=" bottom-2 right-2 bg-blue-500 text-white text-sm px-2 py-1 rounded"
-              >
-                Xem Chi Tiết
-              </button>
             </div>
           ))}
+           
         </div>
+        <button
+        onClick={() => openImageModal(0)} // Bắt đầu hiển thị từ hình đầu tiên
+        className="mt-4 bg-blue-500 text-white text-sm px-4 py-2 rounded hover:bg-blue-600"
+      >
+        Xem Chi Tiết
+      </button>
       </div>
     );
   };
@@ -188,9 +189,9 @@ const DetailAdmissionStudent = ({ isOpen, onClose }) => {
                 <h3 className="text-lg font-semibold text-gray-700">Thông tin học tập</h3>
                 <p><strong className="text-gray-600">Ngành Học:</strong> {singleAdmission?.major_name}</p>
                 <p><strong className="text-gray-600">Trình Độ Học Vấn:</strong> {singleAdmission?.academic_level_name}</p>
-                <p><strong className="text-gray-600">Khối Thi:</strong> {singleAdmission?.college_exam_group_name} ({singleAdmission?.college_exam_group_code})</p>
-                <p><strong className="text-gray-600">Phương Thức Xét Tuyển:</strong> {singleAdmission?.evaluation_method_name}</p>
-                <p><strong className="text-gray-600">Điểm Tổng Kết:</strong> {singleAdmission?.final_score}</p>
+                <p><strong className="text-gray-600">Khối Thi:</strong> {singleAdmission?.college_exam_group_name} {singleAdmission?.college_exam_group_code}</p>
+                <p><strong className="text-gray-600">Phương Thức Xét Tuyển:</strong> {singleAdmission?.evaluation_method_name || "Không có"}</p>
+                <p><strong className="text-gray-600">Điểm Tổng Kết:</strong> {singleAdmission?.final_score === -1 ? "Không có" : singleAdmission?.final_score}</p>
                 <p><strong className="text-gray-600">Kết Quả:</strong> {singleAdmission?.is_passed ? "Đậu" : "Rớt"}</p>
               </div>
             </div>

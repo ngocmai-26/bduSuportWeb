@@ -6,6 +6,7 @@ import { setAllAcademic } from '../slices/AcademicSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
 import { logout } from '../slices/AuthSlice'
+import axiosInstance from '../axiosConfig'
 
 export const getAllAcademic = () => async (dispatch, rejectWithValue) => {
   const token = loadTokenFromStorage()
@@ -72,6 +73,34 @@ export const deleteAcademic = (id) => async (dispatch, rejectWithValue) => {
           setAlert({
             type: TOAST_SUCCESS,
             content: 'Xóa dữ liệu thành công',
+          }),
+        )
+        dispatch(getAllAcademic())
+      }
+    })
+    .catch((error) => {
+      if (error.response && error.response.status === 400) {
+        dispatch(
+          setAlert({ type: TOAST_ERROR, content: error.response.data.message }),
+        )
+      }
+    })
+}
+
+
+export const updateAcademy = (data) => async (dispatch, rejectWithValue) => {
+  await axiosInstance
+    .put(`${API.uri}/backoffice/academic-levels/${data.id}`, data.data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      if (response) {
+        dispatch(
+          setAlert({
+            type: TOAST_SUCCESS,
+            content: 'Cập nhật bậc học thành công',
           }),
         )
         dispatch(getAllAcademic())

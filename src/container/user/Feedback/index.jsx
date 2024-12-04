@@ -3,6 +3,7 @@ import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
 import { getFeedbackThunk } from "../../../thunks/FeedBackThunk";
+import moment from "moment";
 
 function FeedBackManager() {
   const [showModal, setShowModal] = useState(false);
@@ -29,13 +30,13 @@ function FeedBackManager() {
     "title",
     "feedbacker_role",
     "phone_number",
-    "created_at",
+    (row) => moment(row.created_at).format("HH:mm DD/MM/YYYY"), // Định dạng thời gian
     (row) => (
       <div>
         <button
-          className="text-blue-500 hover:underline mr-2"
+          className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
         >
-          Xem chi tiết
+          Xem
         </button>
        
       </div>
@@ -45,15 +46,7 @@ function FeedBackManager() {
   return (
     <LayoutWeb>
       <div className="px-10">
-        <div className="flex justify-end">
-          <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
-            onClick={handleCreateNews}
-          >
-            Tạo tin tuyển dụng
-
-          </button>
-        </div>
+        
         <TableComponent
           data={allFeedBack}
           headers={headers}

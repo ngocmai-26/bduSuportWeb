@@ -34,7 +34,7 @@ function LocationsManager() {
     (row) => (
       <div>
         <button
-          className="text-red-500 hover:underline"
+          className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           onClick={() => {
             if (window.confirm("Bạn có muốn xóa tin tức này không?")) {
               dispatch(DeleteLocationThunk(row.id));
