@@ -38,7 +38,7 @@ function Navbar() {
     { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
   ];
 
-  const routes = user?.role === "admin" ? userRoutes : adminRoutes;
+  const routes = user?.role === "root" ?adminRoutes  :userRoutes ;
 
   return (
     <div className="w-1/6">

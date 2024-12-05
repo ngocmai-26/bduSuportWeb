@@ -12,6 +12,5 @@ export const AppMiddleware = (props) => {
       nav("/");
     }
   }, [refresh, actionStatus]);
-  // process middleware there
   return <>{props.children}</>;
 };

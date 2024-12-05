@@ -28,7 +28,7 @@ function HomePage() {
     { path: '/feedback-manager', name: 'Quản lý tin phản hồi' },
   ];
 
-  const routes = user?.role === 'root' ? adminRoutes : userRoutes;
+  const routes = user?.role === "root" ? adminRoutes  :userRoutes ;
 
 
 
