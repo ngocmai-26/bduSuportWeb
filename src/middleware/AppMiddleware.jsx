@@ -6,10 +6,10 @@ export const AppMiddleware = (props) => {
   const nav = useNavigate();
   useLayoutEffect(() => {
     if (actionStatus==="account_unverify") {
-      nav("/ma-xac-thuc");
+      nav("/bdu-support/ma-xac-thuc");
     }
     if (user && refresh && refresh.uri) {
-      nav("/");
+      nav("/bdu-support/");
     }
   }, [refresh, actionStatus]);
   return <>{props.children}</>;

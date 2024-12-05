@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../layout/header';
 
 function HomePage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { user } = useSelector((state) => state.authReducer);
 
   const adminRoutes = [

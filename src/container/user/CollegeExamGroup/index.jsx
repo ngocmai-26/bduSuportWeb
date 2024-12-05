@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
-import DetailAccountModal from "../../modal/Account/detailAccountModal";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
 import AddCollegeExamGroupModal from "../../modal/CollegeExamGroup/AddCollegeExamGroupModal";

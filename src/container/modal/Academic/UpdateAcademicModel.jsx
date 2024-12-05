@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
-import { FormField } from "../../component/FormField";
 import { useEffect, useState } from "react";
-import { createAcademic, updateAcademy } from "../../../thunks/AcademicThunks";
+import { updateAcademy } from "../../../thunks/AcademicThunks";
 import ButtonComponent from "../../component/ButtonComponent";
 
 function UpdateAcademicModal({ show, handleClose, item }) {

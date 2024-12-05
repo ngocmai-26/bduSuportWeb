@@ -21,16 +21,16 @@ function Login() {
     dispatch(login(user)).then((resp) => {
       if (resp.payload.code === "account_unverify") {
         dispatch(setEmail(user.email));
-        nav("/ma-xac-thuc");
+        nav("/bdu-support/ma-xac-thuc");
       }
       if (resp.payload.code === "") {
-        window.history.pushState({}, null, "/");
+        window.history.pushState({}, null, "/bdu-support");
       }
     });
   };
 
   useLayoutEffect(() => {
-    window.history.pushState({}, null, "/");
+    window.history.pushState({}, null, "/bdu-support");
   }, []);
 
   const handleKeyDown = (event) => {

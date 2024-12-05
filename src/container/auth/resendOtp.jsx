@@ -1,9 +1,9 @@
 // src/components/VerifyCode.jsx
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { FormField } from '../component/FormField';
-import { confirmAccount, resendVerifyOtp } from '../../thunks/AuthThunks';
+import {  resendVerifyOtp } from '../../thunks/AuthThunks';
 import { setEmail } from '../../slices/AccountSlice';
 
 function ResendVerify() {
@@ -19,7 +19,7 @@ function ResendVerify() {
     .then((reps) => {
       if (!reps.payload) {
         dispatch(setEmail(email))
-        nav('/ma-xac-thuc')
+        nav('/bdu-support/ma-xac-thuc')
       }
     });
   };

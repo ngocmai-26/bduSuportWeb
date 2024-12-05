@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "../container/user";
 import { AppMiddleware } from "../middleware/AppMiddleware";
 import AccountManager from "../container/user/Account";
@@ -24,7 +24,7 @@ export const GeneralRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
-        <Route path="*" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/ma-xac-thuc" element={<VerifyCode />} />
         <Route path="/gui-lai-ma" element={<ResendVerify />} />
       </Routes>

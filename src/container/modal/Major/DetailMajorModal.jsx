@@ -1,5 +1,4 @@
 import React from 'react';
-import ButtonComponent from '../../component/ButtonComponent';
 
 const DetailMajorModal = ({ isOpen, onClose, item }) => {
   if (!isOpen || !item) return null;

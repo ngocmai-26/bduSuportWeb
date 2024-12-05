@@ -3,18 +3,13 @@ import {
   logout,
   setActionStatus,
   setAuthFetching,
-  setErrors,
-  setErrorsRegister,
   setLogged,
   setUser,
 } from '../slices/AuthSlice'
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import {
-  dataToBase64,
-  delaySync,
   loadAuthRefreshFromStorage,
-  setAuthInfo,
   setRefresh,
   setToken,
 } from '../services/AuthService'
@@ -22,7 +17,6 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import axios from 'axios'
 import { getAllAccount } from './AccountThunks'
 import axiosInstance from '../axiosConfig'
-import { setEmail } from '../slices/AccountSlice'
 
 export const login = createAsyncThunk(
   'auth/login',

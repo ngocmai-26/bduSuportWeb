@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
-import DetailAccountModal from "../../modal/Account/detailAccountModal";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteMajor, getAllMajor } from "../../../thunks/MajorThunks";
 import AddMajorModal from "../../modal/Major/AddMajorModal";

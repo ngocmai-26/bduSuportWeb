@@ -1,10 +1,8 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
+
 import { setAllAdmission, setSingleAdmission } from '../slices/AdmissionSlice'
 import { API } from '../constants/api'
-import axios from 'axios'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
-import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
 import { logout } from '../slices/AuthSlice'
 

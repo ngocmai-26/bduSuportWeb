@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import Logo from "../../asset/img/logo.png";
 import { logout } from "../../slices/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";

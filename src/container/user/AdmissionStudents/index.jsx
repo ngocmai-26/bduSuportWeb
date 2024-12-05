@@ -1,7 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
-import DetailAccountModal from "../../modal/Account/detailAccountModal";
 import {
   getAllAdmission,
   getAllAdmissionById,
