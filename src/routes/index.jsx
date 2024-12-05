@@ -66,7 +66,7 @@ function Router() {
 
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/bdu-support-back-office">
       {logged ? <LoggedRoute /> : <GeneralRoute />}
     </BrowserRouter>
   );
