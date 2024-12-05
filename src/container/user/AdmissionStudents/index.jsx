@@ -34,25 +34,26 @@ function AdmissionStudentManager() {
   const hasFetched = useRef(false);
 
   useLayoutEffect(() => {
-    if (allCollegeExamGroups?.length <= 0) {
+    if (!hasFetched.current && allCollegeExamGroups?.length <= 0) {
       hasFetched.current = true;
       dispatch(getAllCollegeExamGroup());
     }
   }, [allCollegeExamGroups?.length, dispatch]);
   useLayoutEffect(() => {
-    if (allEvaluation?.length <= 0 ) {
+    if (!hasFetched.current && allEvaluation?.length <= 0 ) {
       hasFetched.current = true;
       dispatch(getAllEvaluation());
     }
   }, [allEvaluation?.length, dispatch]);
   useLayoutEffect(() => {
-    if (allAdmission?.length <= 0) {
+    if (!hasFetched.current && allAdmission?.length <= 0) {
       hasFetched.current = true;
       dispatch(getAllAdmission());
     }
-  }, [allAdmission, dispatch]);
+  }, [allAdmission?.length, dispatch]);
+  
   useLayoutEffect(() => {
-    if (allMajors?.length <= 0 ) {
+    if (!hasFetched.current && allMajors?.length <= 0 ) {
       hasFetched.current = true;
       dispatch(getAllMajor());
     }

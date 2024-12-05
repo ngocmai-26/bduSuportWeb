@@ -14,7 +14,7 @@ function LocationsManager() {
   
   const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (allLocation.length <= 0) {
+    if (!hasFetched.current && allLocation.length <= 0) {
       hasFetched.current = true;
       dispatch(getLocationThunk());
     }
