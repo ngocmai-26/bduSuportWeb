@@ -4,7 +4,7 @@ import { API } from '../constants/api'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
 import axiosInstance from '../axiosConfig'
-import { logout } from '../slices/AuthSlice'
+import { refreshSession } from './AuthThunks'
 
 export const getAllAdmission = (data) => async (dispatch) => {
   try {
@@ -25,7 +25,7 @@ export const getAllAdmission = (data) => async (dispatch) => {
     })
     .catch((error) => {
       if(error.response.data.code === "invalid_session") {
-        dispatch(logout())
+        dispatch(refreshSession())
       }
     })
   } catch (error) {
@@ -49,7 +49,7 @@ export const getAllAdmissionById = (id) => async (
       }
     })
     .catch((error) => { if(error.response.data.code === "invalid_session") {
-      dispatch(logout())
+      dispatch(refreshSession())
     }
     })
 }

@@ -3,8 +3,9 @@ import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAllCollegeExamGroups } from '../slices/CollegeExamGroupSlice'
+
 import axiosInstance from '../axiosConfig'
-import { logout } from '../slices/AuthSlice'
+import { refreshSession } from './AuthThunks'
 
 export const getAllCollegeExamGroup = () => async (
   dispatch,
@@ -24,7 +25,7 @@ export const getAllCollegeExamGroup = () => async (
     })
     .catch((error) => {
       if(error.response.data.code === "invalid_session") {
-        dispatch(logout())
+        dispatch(refreshSession())
       }
     })
 }

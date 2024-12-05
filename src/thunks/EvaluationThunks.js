@@ -2,7 +2,7 @@
 import { setAllEvaluation } from '../slices/EvaluationSlice'
 import { API } from '../constants/api'
 import axiosInstance from '../axiosConfig'
-import { logout } from '../slices/AuthSlice'
+import { refreshSession } from './AuthThunks'
 
 export const getAllEvaluation = () => async (dispatch, rejectWithValue) => {
 
@@ -19,7 +19,7 @@ export const getAllEvaluation = () => async (dispatch, rejectWithValue) => {
     })
     .catch((error) => { 
       if(error.response.data.code === "invalid_session") {
-      dispatch(logout())
+        dispatch(refreshSession())
     }
     })
 }

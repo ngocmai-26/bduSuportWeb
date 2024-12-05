@@ -63,7 +63,7 @@ function UpdateAcademicModal({ show, handleClose, item }) {
               <input
                 name={"name"}
                 value={academic?.name}
-                id={"name"}
+                id={"nameUpdate"}
                 onChange={(e) => setAcademic({ ...academic, name: e.target.value })}
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 required={"required"}
@@ -75,7 +75,7 @@ function UpdateAcademicModal({ show, handleClose, item }) {
               </label>
               <select
                 name="need_evaluation_method"
-                id="need_evaluation_method"
+                id="need_evaluation_methodUpdate"
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 value={academic?.need_evaluation_method}
                 onChange={handleSelectChange} // Use updated handleSelectChange

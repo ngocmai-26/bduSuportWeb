@@ -98,7 +98,7 @@ function ChangePwModal({ show, handleClose }) {
               <FormField
                 name="new_password"
                 values={passwords}
-                id="new_password"
+                id="new_passwordChange"
                 setValue={setPasswords}
                 required="required"
                 type={showNewPassword ? "text" : "password"}

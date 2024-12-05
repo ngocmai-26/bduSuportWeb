@@ -1,11 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import Header from '../layout/header';
+import { loadAuthInfoFromStorage } from '../../services/AuthService';
+import { INFO_KEY_NAME } from '../../constants/api';
 
 function HomePage() {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.authReducer);
+  const user = loadAuthInfoFromStorage(INFO_KEY_NAME); 
 
   const adminRoutes = [
     { path: '/account-manager', name: 'Quản lý tài khoản' },

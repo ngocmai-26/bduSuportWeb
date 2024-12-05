@@ -4,14 +4,15 @@ import {
   setActionStatus,
   setAuthFetching,
   setLogged,
-  setUser,
 } from '../slices/AuthSlice'
-import { API } from '../constants/api'
+import { API, API_KEY_NAME, REFRESH_KEY_NAME } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import {
   loadAuthRefreshFromStorage,
+  setInfo,
   setRefresh,
   setToken,
+  setValueWithKey,
 } from '../services/AuthService'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import axios from 'axios'
@@ -37,7 +38,8 @@ export const login = createAsyncThunk(
           setToken(response.data.data.access)
           setRefresh(response.data.data.refresh)
           dispatch(setLogged(true))
-          dispatch(setUser(response.data.data.user_info))
+          setInfo(JSON.stringify(response.data.data.user_info))
+          
         })
         .catch((error) => {
           dispatch(setActionStatus(error?.data?.code))
@@ -163,26 +165,33 @@ export const resendVerifyOtp = createAsyncThunk(
 
 export const refreshSession = createAsyncThunk(
   'backoffice/refresh',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
-      const refreshToken = loadAuthRefreshFromStorage()
+      const refreshToken = loadAuthRefreshFromStorage();
       if (!refreshToken) {
-        console.log('Refresh token not found')
+        throw new Error('No refresh token');
       }
-      const response = await axiosInstance
-        .post('/backoffice/refresh', { refresh: refreshToken })
-        .catch((error) => {
-          if (error) {
-            logout()
-          }
-        })
 
-      return response.data
+
+      const response = await axiosInstance.post('/backoffice/refresh', { refresh: refreshToken });
+
+      // Kiểm tra response.status
+      if (response.status === 200) {
+        setToken(response.data.data.access)
+        setValueWithKey(API_KEY_NAME, response.data.data.access);
+        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh);
+        dispatch(setLogged(true));
+      } else {
+        dispatch(logout())
+      }
+
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data)
+      return rejectWithValue(error.response?.data || error.message);
     }
-  },
-)
+  }
+);
+
 
 export const changePassword = createAsyncThunk(
   'change_password',

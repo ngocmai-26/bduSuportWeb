@@ -2,8 +2,8 @@ import axiosInstance from "../axiosConfig"
 import { API } from "../constants/api"
 import { TOAST_ERROR, TOAST_SUCCESS } from "../constants/toast"
 import { setAlert } from "../slices/AlertSlice"
-import { logout } from "../slices/AuthSlice"
 import { setAllLocation } from "../slices/LocationSlice"
+import { refreshSession } from "./AuthThunks"
 
 
 export const getLocationThunk = () => async (dispatch, rejectWithValue) => {
@@ -19,7 +19,7 @@ export const getLocationThunk = () => async (dispatch, rejectWithValue) => {
         }
       })
       .catch((error) => { if(error.response.data.code === "invalid_session") {
-        dispatch(logout())
+        dispatch(refreshSession())
       }
       })
   }

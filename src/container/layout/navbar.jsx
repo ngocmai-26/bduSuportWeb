@@ -2,19 +2,23 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccount } from "../../thunks/AccountThunks";
 import { useLayoutEffect } from "react";
+import { loadAuthInfoFromStorage } from "../../services/AuthService";
+import { INFO_KEY_NAME } from "../../constants/api";
 
 function Navbar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const dispatch = useDispatch();
   const { allAccount } = useSelector((state) => state.accountsReducer);
-  const { user } = useSelector((state) => state.authReducer);
+
+  const user = loadAuthInfoFromStorage(INFO_KEY_NAME); 
 
   useLayoutEffect(() => {
     if (allAccount.length <= 0) {
       dispatch(getAllAccount());
     }
   }, [allAccount.length, dispatch]);
+
 
 
   const adminRoutes = [
@@ -38,7 +42,8 @@ function Navbar() {
     { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
   ];
 
-  const routes = user?.role === "root" ?adminRoutes  :userRoutes ;
+  const routes = user?.role === "root" ? adminRoutes  :userRoutes ;
+
 
   return (
     <div className="w-1/6">

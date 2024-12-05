@@ -9,16 +9,14 @@ import MajorManager from "../container/user/Major";
 import NewsManager from "../container/user/News";
 import Login from "../container/auth/login";
 import VerifyCode from "../container/auth/verifyCode";
-import { useDispatch, useSelector } from "react-redux";
 import SubjectManager from "../container/user/Subject";
 import CollegeExamGroupManager from "../container/user/CollegeExamGroup";
 import TypeNewsManager from "../container/user/News/typeNews";
-import { refreshSession } from "../thunks/AuthThunks";
-import { useEffect } from "react";
 import BusinessesManager from "../container/user/Business";
 import FeedBackManager from "../container/user/Feedback";
 import LocationsManager from "../container/user/Location";
 import ResendVerify from "../container/auth/resendOtp";
+import { loadAuthRefreshFromStorage } from "../services/AuthService";
 
 export const GeneralRoute = () => {
   return (
@@ -58,16 +56,12 @@ export const LoggedRoute = () => {
 };
 
 function Router() {
-  const { logged } = useSelector((state) => state.authReducer);
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(refreshSession());
-  }, []);
+  const refresh = loadAuthRefreshFromStorage(); // Load refresh token if available
 
-
+ 
   return (
     <BrowserRouter basename="/bdu-support">
-      {logged ? <LoggedRoute /> : <GeneralRoute />}
+      {refresh ? <LoggedRoute /> : <GeneralRoute />}
     </BrowserRouter>
   );
 }

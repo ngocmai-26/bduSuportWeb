@@ -2,8 +2,8 @@ import axiosInstance from "../axiosConfig"
 import { API } from "../constants/api"
 import { TOAST_ERROR, TOAST_SUCCESS } from "../constants/toast"
 import { setAlert } from "../slices/AlertSlice"
-import { logout } from "../slices/AuthSlice"
 import { setAllBusiness } from "../slices/BusinessSlice"
+import { refreshSession } from "./AuthThunks"
 
 export const getBusinessesThunk = () => async (dispatch, rejectWithValue) => {
     await axiosInstance
@@ -19,7 +19,7 @@ export const getBusinessesThunk = () => async (dispatch, rejectWithValue) => {
       })
       .catch((error) => {
         if(error.response.data.code === "invalid_session") {
-          dispatch(logout())
+          dispatch(refreshSession())
         }
       })
   }

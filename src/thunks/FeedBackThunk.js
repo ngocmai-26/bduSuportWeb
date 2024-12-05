@@ -1,7 +1,7 @@
 import axiosInstance from "../axiosConfig"
 import { API } from "../constants/api"
-import { logout } from "../slices/AuthSlice"
 import { setAllFeedBack } from "../slices/FeedBackSlice"
+import { refreshSession } from "./AuthThunks"
 
 export const getFeedbackThunk = () => async (dispatch, rejectWithValue) => {
     await axiosInstance
@@ -17,7 +17,7 @@ export const getFeedbackThunk = () => async (dispatch, rejectWithValue) => {
       })
       .catch((error) => { 
         if(error.response.data.code === "invalid_session") {
-        dispatch(logout())
+          dispatch(refreshSession())
       }
       })
   }

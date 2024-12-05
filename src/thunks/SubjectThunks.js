@@ -4,7 +4,7 @@ import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAllSubject, setStatus } from '../slices/SubjectSlice'
 import axiosInstance from '../axiosConfig'
-import { logout } from '../slices/AuthSlice'
+import { refreshSession } from './AuthThunks'
 
 export const getAllSubject = () => async (dispatch, rejectWithValue) => {
   try {
@@ -21,11 +21,11 @@ export const getAllSubject = () => async (dispatch, rejectWithValue) => {
       })
       .catch((error) => { 
         if(error.response.data.code === "invalid_session") {
-        dispatch(logout())
+          dispatch(refreshSession())
       }
       })
   } catch (error) {
-    console.log('errorg', error)
+    console.log('error', error)
   }
 }
 

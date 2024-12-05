@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import Logo from "../../asset/img/logo.png";
 import { logout } from "../../slices/AuthSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import ChangePwModal from "../modal/Account/changePwModal";
+import { loadAuthInfoFromStorage } from "../../services/AuthService";
+import { INFO_KEY_NAME } from "../../constants/api";
 
 function Header() {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
-  const { user } = useSelector((state) => state.authReducer);
+  const user = loadAuthInfoFromStorage(INFO_KEY_NAME); 
 
   const [showChangePwModal, setShowChangePwModal] = useState(false);
 

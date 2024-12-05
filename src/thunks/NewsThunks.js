@@ -4,7 +4,6 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
 import { setAllNews, setTypeNews } from '../slices/NewsSlice'
 import axiosInstance from '../axiosConfig'
-import { logout } from '../slices/AuthSlice'
 
 export const getNewsThunk = () => async (dispatch, rejectWithValue) => {
   await axiosInstance
@@ -18,10 +17,7 @@ export const getNewsThunk = () => async (dispatch, rejectWithValue) => {
         dispatch(setAllNews(response.data.data))
       }
     })
-    .catch((error) => { if(error.response.data.code === "invalid_session") {
-      dispatch(logout())
-    }
-    })
+   
 }
 
 export const getTypeNews = () => async (dispatch, rejectWithValue) => {

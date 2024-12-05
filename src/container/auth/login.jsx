@@ -29,9 +29,6 @@ function Login() {
     });
   };
 
-  useLayoutEffect(() => {
-    window.history.pushState({}, null, "/bdu-support");
-  }, []);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {

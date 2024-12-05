@@ -35,7 +35,7 @@ const handleRefreshTokenFailed = () => {
   const navigate = getNavigate()
   removeTokenFromStorage()
   removeAuthRefreshFromStorage()
-  if (navigate) navigate('/dang-nhap')
+  if (navigate) navigate('/')
 }
 
 const handleInvalidSession = async (error) => {
@@ -50,7 +50,6 @@ const handleInvalidSession = async (error) => {
     const response = await axios.post(`${API.uri}/backoffice/refresh`, {
       refresh: refreshToken,
     })
-
     setToken(response?.data?.data?.access)
     setRefresh(response?.data?.data?.refresh)
 
@@ -58,7 +57,7 @@ const handleInvalidSession = async (error) => {
     config.headers.Authorization = `Bearer ${response?.data?.data?.access}`
     return axiosInstance(config)
   } catch (refreshError) {
-    handleRefreshTokenFailed()
+    // handleRefreshTokenFailed()
     return Promise.reject(refreshError)
   }
 }
@@ -76,11 +75,12 @@ axiosInstance.interceptors.response.use(
     if (error.response) {
       const { code } = error.response.data
 
+
       switch (code) {
         case 'refresh_token_failed':
           handleRefreshTokenFailed()
           break
-
+          
         case 'invalid_session':
           return handleInvalidSession(error)
 
