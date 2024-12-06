@@ -1,7 +1,7 @@
 {
   "name": "bdusupport_admin",
   "version": "0.1.0",
-  "homepage": ".",
+  "homepage": "/bdu-support",
   "private": true,
   "dependencies": {
     "@firebase/storage": "^0.12.6",
