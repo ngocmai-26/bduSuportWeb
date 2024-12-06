@@ -15,11 +15,15 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
   }, [dispatch, typeNews.length]);
 
   const [typeNewsData, setTypeNewsData] = useState({});
+  const [initialTypeNewsData, setInitialTypeNewsData] = useState({}); // To store the initial state for resetting
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const selectedTypeNews = typeNews.find((news) => news.id === typeNewsId);
     if (selectedTypeNews) {
       setTypeNewsData(selectedTypeNews);
+      setInitialTypeNewsData(selectedTypeNews); // Save the initial data for resetting
     }
   }, [typeNews, typeNewsId]);
 
@@ -31,30 +35,56 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
     }));
   };
 
+  // Validation function
+  const validate = () => {
+    let formErrors = {}; // Object to store errors
+
+    // Validate name field (required)
+    if (!typeNewsData.name || typeNewsData.name.trim() === "") {
+      formErrors.name = "Loại tin tức không được để trống";
+    }
+
+    // Return formErrors object if there are errors
+    return formErrors;
+  };
+
   const handleSubmit = () => {
-    dispatch(updateTypeNews(typeNewsData)).then((res) => {
+    // Perform validation
+    const formErrors = validate();
+    
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors); // Set errors if validation fails
+      return; // Do not proceed if there are validation errors
+    }
+
+    // Dispatch update action if no errors
+    dispatch(updateTypeNews(typeNewsData)).then(() => {
       handleClose();
+      setTypeNewsData(initialTypeNewsData); // Reset to initial state after successful update
+      setErrors({}); // Reset errors after successful submission
     });
+  };
+
+  const handleCloseModal = () => {
+    handleClose();
+    setTypeNewsData(initialTypeNewsData); // Reset to initial state when closing the modal
+    setErrors({}); // Reset errors when closing the modal
   };
 
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">
-            Cập nhật loại tin tức
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Cập nhật loại tin tức</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
-            onClick={handleClose}
+            onClick={handleCloseModal}
           >
             X
           </button>
@@ -66,23 +96,20 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
               <FormField
                 name="name"
                 values={typeNewsData}
-                id="name"
+                id="nameUpdate"
                 setValue={setTypeNewsData}
                 required="required"
                 onChange={handleChange}
+                errors={errors} // Pass errors to FormField
               />
             </div>
             <div className="flex justify-end">
-              <div className="flex justify-end">
-                <ButtonComponent
-                  textButton="Cập nhât"
-                  style={
-                    "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  }
-                  handleClick={handleSubmit}
-                  type={"button"}
-                />
-              </div>
+              <ButtonComponent
+                textButton="Cập nhật"
+                styleButton="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                handleClick={handleSubmit}
+                type="button"
+              />
             </div>
           </form>
         </div>

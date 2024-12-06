@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 
 const DetailAdmissionStudent = ({ isOpen, onClose }) => {
-  const dispatch = useDispatch();
+
   const { singleAdmission } = useSelector((state) => state.allAdmissionsReducer);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -219,7 +219,7 @@ const DetailAdmissionStudent = ({ isOpen, onClose }) => {
           </button>
           <img
             src={singleAdmission.files[currentImageIndex]}
-            alt={`Image ${currentImageIndex + 1}`}
+            alt={`hình ảnh ${currentImageIndex + 1}`}
             className="max-w-full max-h-full object-contain"
           />
           <button

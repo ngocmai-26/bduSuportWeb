@@ -7,7 +7,6 @@ import { DeleteLocationThunk, getLocationThunk } from "../../../thunks/LocationT
 
 function LocationsManager() {
   const [showModal, setShowModal] = useState(false);
-
   
   const dispatch = useDispatch();
   const { allLocation } = useSelector((state) => state.locationReducer);

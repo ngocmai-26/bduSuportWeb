@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FormField } from "../../component/FormField";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { getAllSubject } from "../../../thunks/SubjectThunks";
 import { createCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
@@ -8,21 +8,15 @@ import { createCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
 function AddCollegeExamGroupModal({ show, handleClose }) {
   const dispatch = useDispatch();
   const [data, setData] = useState({ code: "", name: "", subjects: [] });
+  const [errors, setErrors] = useState({}); 
   const { allSubject } = useSelector((state) => state.subjectsReducer);
-
+  const hasFetched = useRef(false);
   useLayoutEffect(() => {
-    if (allSubject.length <= 0) {
+    if (allSubject.length <= 0 && !hasFetched.current) {
       dispatch(getAllSubject());
     }
-  }, [allSubject, dispatch]);
+  }, [allSubject.length, hasFetched, dispatch]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleSubjectChange = (subjectId) => {
     setData((prevData) => {
@@ -33,23 +27,48 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
     });
   };
 
-  const handleSubmit = () => {
-    dispatch(createCollegeExamGroup(data)).then((res) => {
-      handleClose();
-      setData({ code: "", name: "", subjects: [] });
-    });
+  // Validation function
+  const validate = () => {
+    let formErrors = {};
+    
+    // Check if code and name are filled
+    if (!data.code) formErrors.code = "Mã khối không được bỏ trống";
+    if (!data.name) formErrors.name = "Tên khối không được bỏ trống";
+    
+    // Check if at least one subject is selected
+    if (data.subjects.length === 0) formErrors.subjects = "Bạn phải chọn ít nhất một môn thi";
+    
+    return formErrors;
   };
+
+  const handleSubmit = () => {
+    const formErrors = validate();
+    setErrors(formErrors);
+
+    // If no errors, dispatch the action
+    if (Object.keys(formErrors).length === 0) {
+      dispatch(createCollegeExamGroup(data)).then((res) => {
+        handleClose();
+        setData({ code: "", name: "", subjects: [] });
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    handleClose();
+    setData({ code: "", name: "", subjects: [] });
+    setErrors({});  // Reset formErrors khi đóng modal
+  };
+
 
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
           <h2 className="text-lg font-bold text-gray-800 mb-4">
@@ -57,7 +76,7 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
           </h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
-            onClick={handleClose}
+            onClick={handleCloseModal}
           >
             X
           </button>
@@ -67,12 +86,12 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
                 Mã khối
               </label>
               <FormField
-                name={"code"}
+                name="code"
                 values={data}
-                id={"code"}
+                id="code"
                 setValue={setData}
-                required={"required"}
-                onChange={handleChange}
+                required={true}
+                errors={errors} // Pass error message here
               />
             </div>
             <div className="mb-4">
@@ -80,12 +99,12 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
                 Tên khối
               </label>
               <FormField
-                name={"name"}
+                name="name"
                 values={data}
-                id={"name"}
+                id="name"
                 setValue={setData}
-                required={"required"}
-                onChange={handleChange}
+                required={true}
+                errors={errors} // Pass error message here
               />
             </div>
             <div className="mb-4">
@@ -108,11 +127,14 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
                   </div>
                 ))}
               </div>
+              {errors.subjects && (
+                <p className="text-red-500 text-sm">{errors.subjects}</p>
+              )}
             </div>
             <div className="flex justify-end">
               <ButtonComponent
                 textButton="Tạo mới"
-                style={
+                styleButton={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }
                 handleClick={handleSubmit}

@@ -36,9 +36,7 @@ function Header() {
   return (
     <header className="bg-white shadow-md py-4 px-6 fixed top-0 left-0 right-0 z-10">
       <div className="mx-auto flex justify-between items-center">
-        <a href="" className="">
-          <img src={Logo} alt="Logo" width={100} />
-        </a>
+      <img src={Logo} alt="Logo" width={100} />
         <div className="flex items-center space-x-4">
         
           <span className="text-gray-700">{user?.email}</span>
@@ -61,13 +59,12 @@ function Header() {
                   Đổi mật khẩu
                 </button>
                
-                <a
-                  href="#"
-                  onClick={handleLogout}
-                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  Đăng xuất
-                </a>
+                <button
+  onClick={handleLogout}
+  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+>
+  Đăng xuất
+</button>
               </div>
             )}
           </div>

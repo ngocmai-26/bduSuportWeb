@@ -56,7 +56,7 @@ const AuthSlice = createSlice({
       removeAuthRefreshFromStorage()
       removeTokenFromStorage()
       state = initState;
-      window.location.assign(window.location.href);
+      window.location.assign('/bdu-support');
     },
   },
 });

@@ -4,18 +4,19 @@ function ButtonComponent({
   textButton,
   handleClick,
   icon,
-  style,
+  styleButton,
   type,
   iconStyles,
   typeButton,
 }) {
   const isFunction = typeof handleClick === "function";
+ 
   return (
     <button
       type={type || "button"}
       onClick={isFunction ? handleClick : () => {}}
       className={` font-medium rounded-md text-sm  px-5 py-2 ${
-        style ||
+        styleButton ||
         `${
           typeButton === 1
             ? "bg-yellow-700 hover:bg-yellow-800  focus:ring-yellow-300"
@@ -25,7 +26,8 @@ function ButtonComponent({
         }  focus:ring-4 mx-1 mr-1 text-white `
       }`}
     >
-      <FontAwesomeIcon icon={icon} className={iconStyles} />
+      {icon && <FontAwesomeIcon icon={icon} className={iconStyles} />}
+      
       {textButton}
     </button>
   );

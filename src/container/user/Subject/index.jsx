@@ -29,7 +29,7 @@ function SubjectManager() {
 
   const headers = ["#", "Tên môn xét tuyển", ""];
   const columns = [
-    (row, index) => index,,
+    (row, index) => index,
     "name",
     (row) => (
       <div>

@@ -38,7 +38,7 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === 1}
         className="px-3 py-1 bg-gray-300 text-gray-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Previous
+        	&lt;
       </button>
       <ul className="flex space-x-2 mx-4">
         {getPaginationRange().map((page, index) => (
@@ -63,7 +63,7 @@ const PaginationComponent = ({ currentPage, totalPages, onPageChange }) => {
         disabled={currentPage === totalPages}
         className="px-3 py-1 bg-gray-300 text-gray-600 rounded disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Next
+        &gt;
       </button>
     </div>
   );

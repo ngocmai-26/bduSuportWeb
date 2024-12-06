@@ -1,34 +1,59 @@
-import React, { useLayoutEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { loadTokenFromStorage } from "../../services/AuthService";
 import { login } from "../../thunks/AuthThunks";
 import { FormField } from "../component/FormField";
 import ButtonComponent from "../component/ButtonComponent";
 import { setEmail } from "../../slices/AccountSlice";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; // Import FontAwesomeIcon
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import icons
+
 
 function Login() {
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [user, setUser] = useState({});
-  const { isFetching } = useSelector((state) => state.authReducer);
-  const authToken = loadTokenFromStorage();
+  const [showPassword] = useState(false);
+  const [user, setUser] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({ email: "", password: "" }); // Lưu lỗi cho từng trường
 
-  const handleLogin = () => {
-    dispatch(login(user)).then((resp) => {
-      if (resp.payload.code === "account_unverify") {
-        dispatch(setEmail(user.email));
-        nav("/bdu-support/ma-xac-thuc");
-      }
-      if (resp.payload.code === "") {
-        window.history.pushState({}, null, "/bdu-support");
-      }
-    });
+  // Hàm validate form
+  const validate = () => {
+    let valid = true;
+    const newErrors = { email: "", password: "" };
+
+    // Kiểm tra email
+    if (!user.email) {
+      newErrors.email = "Email không được bỏ trống";
+      valid = false;
+    } else if (!/\S+@\S+\.\S+/.test(user.email)) {
+      newErrors.email = "Email không hợp lệ";
+      valid = false;
+    }
+
+    // Kiểm tra mật khẩu
+    if (!user.password) {
+      newErrors.password = "Mật khẩu không được bỏ trống";
+      valid = false;
+    } else if (user.password.length < 6) {
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
+  const handleLogin = () => {
+    if (validate()) { // Kiểm tra lỗi trước khi thực hiện login
+      dispatch(login(user)).then((resp) => {
+        if (resp.payload.code === "account_unverify") {
+          dispatch(setEmail(user.email));
+          nav("/bdu-support/ma-xac-thuc");
+        }
+        if (resp.payload.code === "") {
+          window.history.pushState({}, null, "/bdu-support");
+        }
+      });
+    }
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -48,7 +73,7 @@ function Login() {
         <form className="space-y-6">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="login-email"
               className="block text-sm font-medium text-gray-700"
             >
               Email
@@ -56,14 +81,16 @@ function Login() {
             <FormField
               name={"email"}
               values={user}
-              id={"email"}
+              id={"login-email"} // Cập nhật id ở đây
               setValue={setUser}
               required={"required"}
+              errors={errors} // Truyền errors vào
             />
           </div>
-          <div className="relative items-center ">
+          <div className="relative items-center">
+            <>
             <label
-              htmlFor="password"
+              htmlFor="login-password"
               className="block text-sm font-medium text-gray-700"
             >
               Mật khẩu
@@ -71,28 +98,19 @@ function Login() {
             <FormField
               name={"password"}
               values={user}
-              id={"password"}
+              id={"login-password"} // Cập nhật id ở đây
               setValue={setUser}
               required={"required"}
               type={showPassword ? "text" : "password"}
-            />
+              errors={errors} // Truyền errors vào
+            /></>
             {/* Biểu tượng mắt */}
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-              style={{ top: "65%", transform: "translateY(-50%)" }} 
-            >
-              <FontAwesomeIcon
-                icon={showPassword ? faEye : faEyeSlash}
-                size="sm"
-                className="text-gray-500 hover:text-gray-700" 
-              />
-            </span>
+           
           </div>
           <div>
             <ButtonComponent
               textButton="Đăng nhập"
-              style={
+              styleButton={
                 "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               }
               handleClick={handleLogin}

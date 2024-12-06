@@ -1,20 +1,21 @@
-import {  useState } from "react";
-
+import { useState } from "react";
 import { FormField } from "../../component/FormField";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AddBusinessThunk } from "../../../thunks/BusinessThunk";
 
 function AddBusinessModal({ show, handleClose }) {
   const dispatch = useDispatch();
- 
 
   const [data, setData] = useState({
-    business_name : "",
-    job_title : "",
+    business_name: "",
+    job_title: "",
     summary: "",
-    banner : '',
-    post_url: '',
+    banner: "",
+    post_url: "",
   });
+
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
@@ -23,27 +24,41 @@ function AddBusinessModal({ show, handleClose }) {
     }));
   };
 
+  const validate = () => {
+    let formErrors = {};
+    if (!data.business_name) formErrors.business_name = "Tên nhà tuyển dụng không được bỏ trống";
+    if (!data.job_title) formErrors.job_title = "Tên công việc không được bỏ trống";
+    if (!data.summary) formErrors.summary = "Nội dung không được bỏ trống";
+    if (!data.banner) formErrors.banner = "Banner không được bỏ trống";
+    if (!data.post_url) formErrors.post_url = "Đường link không được bỏ trống";
+    return formErrors;
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (data) {
+    
+    const formErrors = validate();
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length === 0) {
       dispatch(AddBusinessThunk(data)).then((res) => {
         handleClose();
         setData({
-            business_name : "",
-            job_title : "",
-            summary: "",
-            banner : '',
-            post_url: "",
-          })
+          business_name: "",
+          job_title: "",
+          summary: "",
+          banner: "",
+          post_url: "",
+        });
       });
     }
   };
 
+ 
+
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
@@ -51,9 +66,7 @@ function AddBusinessModal({ show, handleClose }) {
           onClick={handleClose}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">
-            Thêm ngành học
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm ngành học</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
             onClick={handleClose}
@@ -65,10 +78,11 @@ function AddBusinessModal({ show, handleClose }) {
               <div>
                 <input
                   type="file"
-                  onChange={(e) =>
-                    setData({...data, banner: e.target.files[0]})
-                  }
+                  onChange={(e) => setData({ ...data, banner: e.target.files[0] })}
                 />
+                {errors.banner && (
+                  <p className="text-red-500 text-sm">{errors.banner}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -81,6 +95,7 @@ function AddBusinessModal({ show, handleClose }) {
                   setValue={setData}
                   required="required"
                   onChange={handleChange}
+                  error={errors} // Pass error directly
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -95,6 +110,7 @@ function AddBusinessModal({ show, handleClose }) {
                   setValue={setData}
                   required="required"
                   onChange={handleChange}
+                  error={errors} // Pass error directly
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -109,6 +125,7 @@ function AddBusinessModal({ show, handleClose }) {
                   setValue={setData}
                   required="required"
                   onChange={handleChange}
+                  error={errors} // Pass error directly
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -123,6 +140,7 @@ function AddBusinessModal({ show, handleClose }) {
                   setValue={setData}
                   required="required"
                   onChange={handleChange}
+                  error={errors} // Pass error directly
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>

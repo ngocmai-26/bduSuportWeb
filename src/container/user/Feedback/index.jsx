@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,7 +6,6 @@ import { getFeedbackThunk } from "../../../thunks/FeedBackThunk";
 import moment from "moment";
 
 function FeedBackManager() {
-  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const { allFeedBack } = useSelector((state) => state.feedbacksReducer);
 
@@ -18,11 +17,8 @@ function FeedBackManager() {
     }
   }, [allFeedBack.length, dispatch]);
 
-  const handleShowModal = () => setShowModal(true);
-
-  const handleCreateNews = () => {
-    handleShowModal();
-  };
+ 
+ 
 
   const headers = ["#", "Tựa đề", "Người gửi","Số điện thoại", "Ngày gửi", ""];
   const columns = [

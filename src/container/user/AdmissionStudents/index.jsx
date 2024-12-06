@@ -14,8 +14,8 @@ import DetailAdmissionStudent from "../../modal/AdmissionStudent/DetailAdmission
 
 function AdmissionStudentManager() {
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedItem] = useState(null);
+  const [currentPage] = useState(1);
   const [filters, setFilters] = useState({
     evaluation_method: "",
     major: "",

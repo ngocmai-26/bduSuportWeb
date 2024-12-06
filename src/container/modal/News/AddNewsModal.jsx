@@ -21,6 +21,8 @@ function AddNewsModal({ show, handleClose }) {
     type: "", // Thêm type vào formData
   });
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -36,9 +38,21 @@ function AddNewsModal({ show, handleClose }) {
     }));
   };
 
+  const validateForm = () => {
+    let formErrors = {};
+    
+    if (!formData.title) formErrors.title = "Tiêu đề là bắt buộc";
+    if (!formData.link) formErrors.link = "Link là bắt buộc";
+    if (!formData.type) formErrors.type = "Loại tin tức là bắt buộc";
+    if (!formData.image) formErrors.image = "Hình ảnh là bắt buộc";
+
+    setErrors(formErrors);
+    return Object.keys(formErrors).length === 0; // Return true if no errors
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (formData) {
+    if (validateForm()) {
       dispatch(AddNewsThunk(formData)).then((res) => {
         handleClose();
         setFormData({
@@ -47,6 +61,7 @@ function AddNewsModal({ show, handleClose }) {
           image: "",
           type: "", // Đặt lại type khi reset form
         });
+        setErrors({});
         if (fileInputRef.current) {
           fileInputRef.current.value = ""; // Reset the file input field to 'Choose File'
         }
@@ -54,22 +69,26 @@ function AddNewsModal({ show, handleClose }) {
     }
   };
 
+  const handleCloseModal = () => {
+    handleClose();
+    setFormData({});
+    setErrors({});  // Reset formErrors khi đóng modal
+  };
+
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Thêm tin tức</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
-            onClick={handleClose}
+            onClick={handleCloseModal}
           >
             X
           </button>
@@ -85,8 +104,8 @@ function AddNewsModal({ show, handleClose }) {
                   values={formData}
                   id="title"
                   setValue={setFormData}
-                  required="required"
                   onChange={handleChange}
+                  errors={errors} // Pass entire errors object
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -101,8 +120,8 @@ function AddNewsModal({ show, handleClose }) {
                   values={formData}
                   id="link"
                   setValue={setFormData}
-                  required="required"
                   onChange={handleChange}
+                  errors={errors} // Pass entire errors object
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -118,6 +137,9 @@ function AddNewsModal({ show, handleClose }) {
                   onChange={handleFileChange}
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
+                {errors.image && (
+                  <span className="text-sm text-red-500">{errors.image}</span>
+                )}
               </div>
 
               {/* Select for Type */}
@@ -131,7 +153,6 @@ function AddNewsModal({ show, handleClose }) {
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   value={formData.type}
                   onChange={handleChange}
-                  required
                 >
                   <option value="">Chọn loại tin tức</option>
                   {typeNews.map((level) => (
@@ -140,18 +161,18 @@ function AddNewsModal({ show, handleClose }) {
                     </option>
                   ))}
                 </select>
+                {errors.type && (
+                  <span className="text-sm text-red-500">{errors.type}</span>
+                )}
               </div>
             </div>
-
-          
 
             <div className="flex justify-end">
               <ButtonComponent
                 textButton="Tạo mới"
-                style={
+                styleButton={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }
-           
                 type={"submit"}
               />
             </div>

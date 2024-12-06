@@ -1,8 +1,7 @@
-import logo from './logo.svg';
+
 import './App.css';
-import Header from './container/layout/header';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { TOAST_ERROR, TOAST_SUCCESS } from './constants/toast';
 import { ToastContainer, toast } from 'react-toastify';
 import { setAlert } from './slices/AlertSlice';
@@ -21,10 +20,13 @@ function App() {
         case TOAST_ERROR:
           toast.error(msg.content);
           break;
+        default:
+          // No action needed for unexpected types
+          break;
       }
       dispatch(setAlert({}));
     }
-  }, [msg]);
+  }, [msg, dispatch]);
  
   return (
     <div>

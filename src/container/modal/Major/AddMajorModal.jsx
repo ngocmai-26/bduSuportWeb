@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FormField } from "../../component/FormField";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { createMajor } from "../../../thunks/MajorThunks";
 import { getAllCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
@@ -36,28 +36,28 @@ function AddMajorModal({ show, handleClose }) {
 
   const { allEvaluation } = useSelector((state) => state.evaluationReducer);
   const { allLocation } = useSelector((state) => state.locationReducer);
-
+  const hasFetched = useRef(false);
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0) {
+    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
       dispatch(getAllCollegeExamGroup());
     }
-  }, []);
+  }, [allCollegeExamGroups.length, hasFetched, dispatch]);
 
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0) {
+    if (allAcademic.length <= 0&& !hasFetched.current) {
       dispatch(getAllAcademic());
     }
-  }, []);
+  }, [allAcademic.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
-    if (allEvaluation.length <= 0) {
+    if (allEvaluation.length <= 0&& !hasFetched.current) {
       dispatch(getAllEvaluation());
     }
-  }, []);
+  }, [allEvaluation.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
-    if (allLocation.length <= 0) {
+    if (allLocation.length <= 0 && !hasFetched.current) {
       dispatch(getLocationThunk());
     }
-  }, []);
+  }, [allLocation.length, hasFetched, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -133,6 +133,27 @@ function AddMajorModal({ show, handleClose }) {
     });
   };
 
+  const handleCloseModal = () => {
+    handleClose();
+    setData({
+      code: "",
+      name: "",
+      expected_target: 0,
+      college_exam_groups: [],
+      description: "",
+      year: 0,
+      benchmark_30: 0,
+      benchmark_competency_assessment_exam: 0,
+      tuition_fee: 0,
+      training_location: 0,
+      academic_level: 0,
+      benchmark_school_record: 0,
+      evaluation_methods: [],
+      number_of_credits: 0,
+    })
+  };
+
+
   return (
     <div
       className={`fixed inset-0 z-10 overflow-y-auto ${
@@ -142,7 +163,7 @@ function AddMajorModal({ show, handleClose }) {
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
-          onClick={handleClose}
+          onClick={handleCloseModal}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
           <h2 className="text-lg font-bold text-gray-800 mb-4">
@@ -150,7 +171,7 @@ function AddMajorModal({ show, handleClose }) {
           </h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
-            onClick={handleClose}
+            onClick={handleCloseModal}
           >
             X
           </button>
@@ -423,7 +444,7 @@ function AddMajorModal({ show, handleClose }) {
 
             <ButtonComponent
               textButton="Tạo mới"
-              className="block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+              styleButton="block w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
               handleClick={handleSubmit}
             />
           </form>

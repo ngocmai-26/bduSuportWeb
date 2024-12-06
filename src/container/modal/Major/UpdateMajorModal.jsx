@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { FormField } from "../../component/FormField";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { getAllCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
 import { getAllAcademic } from "../../../thunks/AcademicThunks";
@@ -21,28 +21,30 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
   const { allEvaluation } = useSelector((state) => state.evaluationReducer);
   const { allLocation } = useSelector((state) => state.locationReducer);
 
+  const hasFetched = useRef(false);
+
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0) {
+    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
       dispatch(getAllCollegeExamGroup());
     }
-  }, []);
+  }, [allCollegeExamGroups.length, hasFetched, dispatch]);
 
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0) {
+    if (allAcademic.length <= 0 && !hasFetched.current) {
       dispatch(getAllAcademic());
     }
-  }, []);
+  }, [allAcademic.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
-    if (allEvaluation.length <= 0) {
+    if (allEvaluation.length <= 0 && !hasFetched.current) {
       dispatch(getAllEvaluation());
     }
-  }, []);
+  }, [allEvaluation.length, hasFetched, dispatch]);
 
   useLayoutEffect(() => {
-    if (allLocation.length <= 0) {
+    if (allLocation.length <= 0 && !hasFetched.current) {
       dispatch(getLocationThunk());
     }
-  }, []);
+  }, [allLocation.length, hasFetched, dispatch]);
 
   useEffect(() => {
     if (initialData) {
@@ -130,7 +132,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
         ),
       }));
     }
-  }, [selectedAcademic]);
+  }, [selectedAcademic, initialData]);
 
   const handleSubmit = () => {
     dispatch(updateMajor({ id: initialData?.id, data: data })).then(() => {
@@ -173,7 +175,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                     name="code"
                     setValue={setData}
                     values={data}
-                    id="code"
+                    id="codeUpdate"
                     onChange={handleChange}
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                     disabled
@@ -187,7 +189,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                     name="name"
                     setValue={setData}
                     values={data}
-                    id="name"
+                    id="nameUpdate"
                     onChange={handleChange}
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   />
@@ -201,7 +203,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   <input
                   name="expected_target"
                   value={data.expected_target}
-                  id="expected_target"
+                  id="expected_targetUpdate"
                   required="required"
                   type="text"
                   onChange={(e) =>
@@ -217,7 +219,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   <input
                   name="year"
                   value={data.year}
-                  id="year"
+                  id="yearUpdate"
                   required="required"
                   type="text"
                   onChange={(e) => setData({ ...data, year: +e.target.value })}
@@ -233,7 +235,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   name="description"
                   setValue={setData}
                   values={data}
-                  id="description"
+                  id="descriptionUpdate"
                   onChange={handleChange}
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
@@ -244,7 +246,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                 </label>
                 <select
                   name="academic_level"
-                  id="academic_level"
+                  id="academic_levelUpdate"
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   value={data?.academic_level}
                   onChange={handleChange}
@@ -322,7 +324,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       <input
                       name="benchmark_30"
                       value={data.benchmark_30}
-                      id="benchmark_30"
+                      id="benchmark_30Update"
                       setValue={setData}
                       required="required"
                       type="text"
@@ -339,7 +341,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       <input
                       name="benchmark_competency_assessment_exam"
                       value={data.benchmark_competency_assessment_exam}
-                      id="benchmark_competency_assessment_exam"
+                      id="benchmark_competency_assessment_examUpdate"
                       required="required"
                       type="text"
                       onChange={(e) =>
@@ -357,7 +359,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       </label>
                       <input
                 name="number_of_credits"
-                id="number_of_credits"
+                id="number_of_creditsUpdate"
                 value={data.number_of_credits}
                 required="required"
                 type="text"
@@ -373,7 +375,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       <input
                       name="benchmark_school_record"
                       values={data.benchmark_school_record}
-                      id="benchmark_school_record"
+                      id="benchmark_school_recordUpdate"
                       setValue={setData}
                       required="required"
                       type="text"
@@ -394,7 +396,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   <input
                   name="tuition_fee"
                   value={data.tuition_fee}
-                  id="tuition_fee"
+                  id="tuition_feeUpdate"
                   required="required"
                   type="text"
                   onChange={(e) => setData({ ...data, tuition_fee: +e.target.value })}
@@ -407,7 +409,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   </label>
                   <select
                     name="training_location"
-                    id="training_location"
+                    id="training_locationUpdate"
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                     value={data.training_location}
                     onChange={handleChange}
@@ -436,7 +438,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
               textButton="Hủy"
               handleClick={handleClose}
               className="ml-2"
-              style="bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-lg shadow transition duration-200"
+              styleButton="bg-red-500 hover:bg-red-600 text-white font-medium px-6 py-2 rounded-lg shadow transition duration-200"
             />
           </div>
         </div>

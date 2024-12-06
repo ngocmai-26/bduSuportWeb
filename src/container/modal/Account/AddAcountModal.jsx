@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FormField } from "../../component/FormField";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import ButtonComponent from "../../component/ButtonComponent";
 import { create } from "../../../thunks/AuthThunks";
@@ -9,9 +8,8 @@ import { create } from "../../../thunks/AuthThunks";
 const ModalAddAccount = ({ show, handleClose }) => {
   const [user, setUser] = useState({});
   const dispatch = useDispatch();
-  const nav = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [showPassword] = useState(false);
+  const [showPasswordConfirm] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState({});
 
   const { errorsCreate } = useSelector((state) => state.authReducer);
@@ -19,20 +17,21 @@ const ModalAddAccount = ({ show, handleClose }) => {
   const newFormErrors = { ...errorsCreate };
   const [formErrors, setFormErrors] = useState(newFormErrors);
 
+  // Kiểm tra độ mạnh của mật khẩu
   const checkPasswordStrength = (password) => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasDigits = /\d/.test(password);
-    const hasSpecialChars = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password);
+const hasSpecialChars = /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/.test(password);
 
-    const isStrongPassword =
+    return (
       password?.length >= minLength &&
       hasUpperCase &&
       hasLowerCase &&
       hasDigits &&
-      hasSpecialChars;
-    return isStrongPassword;
+      hasSpecialChars
+    );
   };
 
   const handleSubmit = () => {
@@ -40,46 +39,70 @@ const ModalAddAccount = ({ show, handleClose }) => {
 
     const newFormErrors = { ...errorsCreate };
 
+    // Kiểm tra email
     if (user?.email) {
       if (!validator.isEmail(user?.email)) {
-        newFormErrors.email = "Format is incorrect";
+        newFormErrors.email = "Định dạng email không hợp lệ";
       }
+    } else {
+      newFormErrors.email = "Email là bắt buộc";
     }
 
+    // Kiểm tra số điện thoại
+    if (user?.phone) {
+      if (!validator.isMobilePhone(user?.phone, 'any', { strictMode: false })) {
+        newFormErrors.phone = "Định dạng số điện thoại không hợp lệ";
+      }
+    } else {
+      newFormErrors.phone = "Số điện thoại là bắt buộc";
+    };
+
+    // Kiểm tra mật khẩu
     if (user?.password) {
       if (!isStrong) {
-        newFormErrors.password = "Password is not strong enough";
+        newFormErrors.password = "Mật khẩu không đủ mạnh";
       } else if (user?.password !== confirmPassword?.confirmPassword) {
-        newFormErrors.password = "Password does not match";
+        newFormErrors.password = "Mật khẩu không khớp";
       }
+    } else {
+      newFormErrors.password = "Mật khẩu là bắt buộc";
+    }
+
+    // Kiểm tra mật khẩu xác nhận
+    if (!confirmPassword?.confirmPassword) {
+      newFormErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
     }
 
     setFormErrors(newFormErrors);
 
+    // Chỉ gửi form nếu không có lỗi
     if (Object.keys(newFormErrors).length === 0) {
       dispatch(create(user)).then((reps) => {
         handleClose();
-          setUser({
-            email: "",
-            phone: "",
-            password: "",
-            confirmPassword: "",
-          });
-          setConfirmPassword("")
+        setUser({
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+        });
+        setConfirmPassword("");
       });
     }
   };
 
+  const handleCloseModal = () => {
+    handleClose();
+    setFormErrors({});  // Reset formErrors khi đóng modal
+  };
+  
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
           className="fixed inset-0 bg-black opacity-30"
-          onClick={handleClose}
+          onClick={handleCloseModal} 
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
           <h2 className="text-lg font-bold text-gray-800 mb-4">
@@ -87,7 +110,7 @@ const ModalAddAccount = ({ show, handleClose }) => {
           </h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
-            onClick={handleClose}
+            onClick={handleCloseModal} 
           >
             X
           </button>
@@ -102,10 +125,8 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 id={"email"}
                 setValue={setUser}
                 required={"required"}
+                errors={formErrors}  // Pass the error here
               />
-              {formErrors.email && (
-                <p className="text-sm text-red-500 mt-1">{formErrors.email}</p>
-              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -117,10 +138,8 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 id={"phone"}
                 setValue={setUser}
                 required={"required"}
+                errors={formErrors}  // Pass the error here
               />
-              {formErrors.phone && (
-                <p className="text-sm text-red-500 mt-1">{formErrors.phone}</p>
-              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -133,10 +152,8 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 setValue={setUser}
                 required={"required"}
                 type={showPassword ? "text" : "password"}
+                errors={formErrors}  // Pass the error here
               />
-              {formErrors.password && (
-                <p className="text-sm text-red-500 mt-1">{formErrors.password}</p>
-              )}
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
@@ -149,17 +166,13 @@ const ModalAddAccount = ({ show, handleClose }) => {
                 setValue={setConfirmPassword}
                 type={showPasswordConfirm ? "text" : "password"}
                 required={"required"}
+                errors={formErrors}  // Pass the error here
               />
-              {formErrors.confirmPassword && (
-                <p className="text-sm text-red-500 mt-1">
-                  {formErrors.confirmPassword}
-                </p>
-              )}
             </div>
             <div className="flex justify-end">
               <ButtonComponent
                 textButton="Tạo mới"
-                style={
+                styleButton={
                   "w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 }
                 handleClick={handleSubmit}
