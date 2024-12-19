@@ -37,7 +37,7 @@ function AddTypeNewsModal({ show, handleClose }) {
   const handleCloseModal = () => {
     handleClose();
     setTypeNews({});
-    setErrors({});  // Reset formErrors khi đóng modal
+    setErrors({}); 
   };
 
   return (

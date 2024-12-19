@@ -21,6 +21,7 @@ function HomePage() {
     { path: '/type-news-manager', name: 'Quản lý loại tin tức', icon: 'https://cdn-icons-png.freepik.com/512/3634/3634451.png' },
     { path: '/feedback-manager', name: 'Quản lý tin phản hồi', icon: 'https://png.pngtree.com/png-clipart/20230330/original/pngtree-feedback-line-icon-png-image_9010142.png' },
     { path: '/location-manager', name: 'Quản lý địa điểm', icon: 'https://png.pngtree.com/png-clipart/20230123/original/pngtree-flat-red-location-sign-png-image_8927579.png' },
+    { path: '/function-manager', name: 'Quản lý chức năng', icon: 'https://img.pikbest.com/element_our/20230413/bg/0fad9a7bef79d.png!sw800' },
   ];
 
   const userRoutes = [

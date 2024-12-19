@@ -71,6 +71,7 @@ function AddNewsModal({ show, handleClose }) {
 
   const handleCloseModal = () => {
     handleClose();
+    fileInputRef.current.value = "";
     setFormData({});
     setErrors({});  // Reset formErrors khi đóng modal
   };

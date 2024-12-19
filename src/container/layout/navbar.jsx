@@ -34,6 +34,7 @@ function Navbar() {
     { path: "/type-news-manager", name: "Quản lý loại tin tức" },
     { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
     { path: "/location-manager", name: "Quản lý địa điểm" },
+    { path: "/function-manager", name: "Quản lý chức năng" },
   ];
 
   const userRoutes = [

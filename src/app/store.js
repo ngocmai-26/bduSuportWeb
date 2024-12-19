@@ -12,6 +12,7 @@ import AdmissionsSlice from '../slices/AdmissionSlice'
 import BusinessSlice from '../slices/BusinessSlice'
 import FeedBackSlice from '../slices/FeedBackSlice'
 import LocationSlice from '../slices/LocationSlice'
+import FunctionSlice from '../slices/FunctionSlice'
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ export const store = configureStore({
     businessesReducer: BusinessSlice,
     feedbacksReducer: FeedBackSlice,
     locationReducer: LocationSlice,
+    functionReducer: FunctionSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
