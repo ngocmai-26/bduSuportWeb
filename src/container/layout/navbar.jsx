@@ -35,12 +35,16 @@ function Navbar() {
     { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
     { path: "/location-manager", name: "Quản lý địa điểm" },
     { path: "/function-manager", name: "Quản lý chức năng" },
+    { path: "/contact-manager", name: "Quản lý liên hệ" },
+    { path: "/handbook-manager", name: "Quản lý Handbook" },
   ];
 
   const userRoutes = [
     { path: "/admission-student-manager", name: "Quản lý tuyển sinh" },
     { path: "/news-manager", name: "Quản lý tin tức" },
     { path: "/feedback-manager", name: "Quản lý tin phản hồi" },
+    { path: "/contact-manager", name: "Quản lý liên hệ" },
+    { path: "/handbook-manager", name: "Quản lý Handbook" },
   ];
 
   const routes = user?.role === "root" ? adminRoutes  :userRoutes ;

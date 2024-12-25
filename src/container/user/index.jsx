@@ -14,20 +14,25 @@ function HomePage() {
     { path: '/academic-manager', name: 'Quản lý bậc học', icon: 'https://png.pngtree.com/png-vector/20230131/ourmid/pngtree-graduation-bachelor-hat-illustration-png-image_6580811.png' },
     { path: '/subject-manager', name: 'Quản lý môn học', icon: 'https://www.clipartmax.com/png/full/87-876167_icon-book-note-dairy-book-book-book-book-b-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-cu%E1%BB%91n.png' },
     { path: '/college-exam-group-manager', name: 'Quản lý nhóm môn', icon: 'https://img.pikbest.com/origin/09/24/25/99YpIkbEsTFsU.png!sw800' },
-    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh', icon: 'https://png.pngtree.com/png-clipart/20230423/original/pngtree-education-line-icon-png-image_9088921.png' },
+    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh', icon: 'https://png.pngtree.com/recommend-works/png-clipart/20241030/ourmid/pngtree-male-student-icon-graduating-png-image_14211323.png' },
     { path: '/evaluation-manager', name: 'Quản lý phương thức tuyển sinh', icon: 'https://png.pngtree.com/png-vector/20221119/ourmid/pngtree-red-yellow-colorful-admission-open-banner-png-image_6470939.png' },
-    { path: '/major-manager', name: 'Quản lý ngành học', icon: 'https://cdn-icons-png.flaticon.com/512/4696/4696488.png' },
-    { path: '/news-manager', name: 'Quản lý tin tức', icon: 'https://cdn-icons-png.flaticon.com/512/2446/2446297.png' },
-    { path: '/type-news-manager', name: 'Quản lý loại tin tức', icon: 'https://cdn-icons-png.freepik.com/512/3634/3634451.png' },
-    { path: '/feedback-manager', name: 'Quản lý tin phản hồi', icon: 'https://png.pngtree.com/png-clipart/20230330/original/pngtree-feedback-line-icon-png-image_9010142.png' },
+    { path: '/major-manager', name: 'Quản lý ngành học', icon: 'https://png.pngtree.com/png-vector/20220527/ourmid/pngtree-majors-student-color-icon-vector-png-image_4755429.png' },
+    { path: '/news-manager', name: 'Quản lý tin tức', icon: 'https://cdn-icons-png.flaticon.com/512/1295/1295674.png' },
+    { path: '/type-news-manager', name: 'Quản lý loại tin tức', icon: 'https://thumbs.dreamstime.com/b/newspaper-icon-news-icon-colors-included-simple-vector-icons-set-newspaper-icon-news-icon-colors-included-110118833.jpg' },
+    { path: '/feedback-manager', name: 'Quản lý tin phản hồi', icon: 'https://cdn-icons-png.freepik.com/512/7299/7299812.png' },
     { path: '/location-manager', name: 'Quản lý địa điểm', icon: 'https://png.pngtree.com/png-clipart/20230123/original/pngtree-flat-red-location-sign-png-image_8927579.png' },
-    { path: '/function-manager', name: 'Quản lý chức năng', icon: 'https://img.pikbest.com/element_our/20230413/bg/0fad9a7bef79d.png!sw800' },
+    { path: '/function-manager', name: 'Quản lý chức năng', icon: 'https://cdn-icons-png.flaticon.com/512/11337/11337201.png' },
+    { path: '/contact-manager', name: 'Quản lý liên hệ', icon: 'https://cdn-icons-png.freepik.com/512/5300/5300765.png' },
+    { path: '/handbook-manager', name: 'Quản lý handbook', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
   ];
 
   const userRoutes = [
-    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh', icon: 'https://png.pngtree.com/png-clipart/20230423/original/pngtree-education-line-icon-png-image_9088921.png' },
-    { path: '/news-manager', name: 'Quản lý tin tức', icon: 'https://cdn-icons-png.flaticon.com/512/2446/2446297.png' },
-    { path: '/feedback-manager', name: 'Quản lý tin phản hồi', icon: 'https://png.pngtree.com/png-clipart/20230330/original/pngtree-feedback-line-icon-png-image_9010142.png' },
+    { path: '/admission-student-manager', name: 'Quản lý tuyển sinh', icon: 'https://png.pngtree.com/recommend-works/png-clipart/20241030/ourmid/pngtree-male-student-icon-graduating-png-image_14211323.png' },
+    { path: '/news-manager', name: 'Quản lý tin tức', icon: 'https://cdn-icons-png.flaticon.com/512/1295/1295674.png' },
+    { path: '/feedback-manager', name: 'Quản lý tin phản hồi', icon: 'https://cdn-icons-png.freepik.com/512/7299/7299812.png' },
+    
+    { path: '/contact-manager', name: 'Quản lý liên hệ', icon: 'https://cdn-icons-png.freepik.com/512/5300/5300765.png' },
+    { path: '/handbook-manager', name: 'Quản lý handbook', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
   ];
 
   // Lựa chọn route dựa trên vai trò của user

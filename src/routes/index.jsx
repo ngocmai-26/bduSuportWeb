@@ -18,6 +18,8 @@ import LocationsManager from "../container/user/Location";
 import ResendVerify from "../container/auth/resendOtp";
 import { loadAuthRefreshFromStorage } from "../services/AuthService";
 import FunctionManager from "../container/user/Function";
+import ContactManager from "../container/user/Contact";
+import HandbookManager from "../container/user/Handbook";
 
 export const GeneralRoute = () => {
   return (
@@ -52,6 +54,8 @@ export const LoggedRoute = () => {
         <Route path="/feedback-manager" element={<FeedBackManager />} />
         <Route path="/location-manager" element={<LocationsManager />} />
         <Route path="/function-manager" element={<FunctionManager />} />
+        <Route path="/contact-manager" element={<ContactManager />} />
+        <Route path="/handbook-manager" element={<HandbookManager />} />
       </Routes>
     </AppMiddleware>
   );

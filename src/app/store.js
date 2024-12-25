@@ -13,6 +13,8 @@ import BusinessSlice from '../slices/BusinessSlice'
 import FeedBackSlice from '../slices/FeedBackSlice'
 import LocationSlice from '../slices/LocationSlice'
 import FunctionSlice from '../slices/FunctionSlice'
+import ContactSlice from '../slices/ContactSlice'
+import HandbookSlice from '../slices/HandbookSlice'
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +32,8 @@ export const store = configureStore({
     feedbacksReducer: FeedBackSlice,
     locationReducer: LocationSlice,
     functionReducer: FunctionSlice,
+    contactReducer: ContactSlice,
+    handbookReducer: HandbookSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),
