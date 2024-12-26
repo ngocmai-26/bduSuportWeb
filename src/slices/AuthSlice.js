@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { loadTokenFromStorage, removeAuthRefreshFromStorage, removeTokenFromStorage } from "../services/AuthService";
+import { loadTokenFromStorage, removeAuthRefreshFromStorage, removeInfo, removeTokenFromStorage } from "../services/AuthService";
 
 const initState = {
   logged: false,
@@ -55,6 +55,7 @@ const AuthSlice = createSlice({
     logout: (state) => {
       removeAuthRefreshFromStorage()
       removeTokenFromStorage()
+      removeInfo()
       state = initState;
       window.location.assign('/bdu-support');
     },

@@ -16,7 +16,7 @@ function VerifyCode() {
     e.preventDefault();
     dispatch(confirmAccount(otp)).then((reps) => {
       if (!reps.payload) {
-        nav("/bdu-support/dang-nhap");
+        nav("/dang-nhap");
       }
     });
   };

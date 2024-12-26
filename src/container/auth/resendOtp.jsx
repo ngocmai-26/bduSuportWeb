@@ -1,25 +1,24 @@
 // src/components/VerifyCode.jsx
-import React, { useState } from 'react';
-import { useDispatch} from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { FormField } from '../component/FormField';
-import {  resendVerifyOtp } from '../../thunks/AuthThunks';
-import { setEmail } from '../../slices/AccountSlice';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { FormField } from "../component/FormField";
+import { resendVerifyOtp } from "../../thunks/AuthThunks";
+import { setEmail } from "../../slices/AccountSlice";
 
 function ResendVerify() {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const [email, setEmailResend] = useState("");
 
-
   const handleSubmit = (e) => {
-    
     e.preventDefault();
-    dispatch(resendVerifyOtp(email))
-    .then((reps) => {
+    dispatch(resendVerifyOtp(email)).then((reps) => {
       if (!reps.payload) {
-        dispatch(setEmail(email))
-        nav('/bdu-support/ma-xac-thuc')
+        dispatch(setEmail(email));
+        nav("/ma-xac-thuc");
+        
+
       }
     });
   };
@@ -27,18 +26,21 @@ function ResendVerify() {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-full mx-5 max-w-md p-8 space-y-8 bg-white rounded-md shadow-md border border-gray-300">
-        <h2 className="text-2xl font-bold text-center text-gray-900">Nhập Mã Xác Nhận</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-900">
+          Nhập Email Gửi Mã Xác Thực
+        </h2>
         <form className="space-y-6" onSubmit={handleSubmit}>
-        
           <div>
-            <label htmlFor="emailResend" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="emailResend"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <FormField
               name={"email"}
               values={email}
               id={"email"}
-              
               setValue={setEmailResend}
               required={"required"}
             />

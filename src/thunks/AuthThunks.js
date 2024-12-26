@@ -143,9 +143,8 @@ export const resendVerifyOtp = createAsyncThunk(
           },
         )
         .then((response) => {
-          dispatch(setRefresh(true))
           dispatch(
-            setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
+            setAlert({ type: TOAST_SUCCESS, content: "Đã gửi mã xác thực đến email" }),
           )
         })
         .catch((error) => {

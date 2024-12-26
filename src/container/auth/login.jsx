@@ -46,7 +46,7 @@ function Login() {
       dispatch(login(user)).then((resp) => {
         if (resp.payload.code === "account_unverify") {
           dispatch(setEmail(user.email));
-          nav("/bdu-support/ma-xac-thuc");
+          nav("/ma-xac-thuc");
         }
         if (resp.payload.code === "") {
           window.history.pushState({}, null, "/bdu-support");
