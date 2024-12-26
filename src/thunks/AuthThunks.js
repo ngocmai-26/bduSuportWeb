@@ -106,7 +106,6 @@ export const confirmAccount = createAsyncThunk(
           },
         })
         .then((response) => {
-          dispatch(setRefresh(true))
           dispatch(
             setAlert({ type: TOAST_SUCCESS, content: response.data.message }),
           )

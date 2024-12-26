@@ -9,9 +9,7 @@ function VerifyCode() {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const { email } = useSelector((state) => state.accountsReducer);
-  const [otp, setOtp] = useState({email: email, otp: ""});
-
-
+  const [otp, setOtp] = useState({email: email.email, otp: ""});
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(confirmAccount(otp)).then((reps) => {
