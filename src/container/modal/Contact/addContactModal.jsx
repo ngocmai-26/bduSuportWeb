@@ -37,7 +37,6 @@ function AddContactModal({ show, handleClose }) {
         handleClose();
         setData({ name: "", phone: "", location: "" });
       });
-      console.log("data", data);
     }
   };
 

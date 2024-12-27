@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import {
@@ -32,31 +32,37 @@ function AdmissionStudentManager() {
 
   const hasFetched = useRef(false);
 
+  // useEffect(() => {
+  //   if (!hasFetched.current && allCollegeExamGroups?.length <= 0 ||allEvaluation?.length <= 0 || allAdmission?.length <= 0 || allMajors?.length <= 0) {
+  //     hasFetched.current = true;
+  //     dispatch(getAllEvaluation());
+  //     dispatch(getAllCollegeExamGroup());
+    
+  //     dispatch(getAllAdmission());
+  //     dispatch(getAllMajor());
+  //   }
+  // }, [ dispatch, allEvaluation.length, allAdmission.length, allMajors.length, allCollegeExamGroups.length]);
   useLayoutEffect(() => {
-    if (!hasFetched.current && allCollegeExamGroups?.length <= 0) {
-      hasFetched.current = true;
+    if (allCollegeExamGroups?.length <= 0 ) {
       dispatch(getAllCollegeExamGroup());
     }
-  }, [allCollegeExamGroups?.length, dispatch]);
-  useLayoutEffect(() => {
-    if (!hasFetched.current && allEvaluation?.length <= 0 ) {
-      hasFetched.current = true;
+  }, [allEvaluation.length, dispatch]);
+  useEffect(() => {
+    if (allEvaluation.length <= 0 ) {
       dispatch(getAllEvaluation());
     }
-  }, [allEvaluation?.length, dispatch]);
-  useLayoutEffect(() => {
-    if (!hasFetched.current && allAdmission?.length <= 0) {
-      hasFetched.current = true;
+  }, [allEvaluation.length, dispatch]);
+  useEffect(() => {
+    if (allAdmission.length <= 0) {
       dispatch(getAllAdmission());
     }
-  }, [allAdmission?.length, dispatch]);
+  }, [allAdmission.length, dispatch]);
   
-  useLayoutEffect(() => {
-    if (!hasFetched.current && allMajors?.length <= 0 ) {
-      hasFetched.current = true;
+  useEffect(() => {
+    if (allMajors.length <= 0 ) {
       dispatch(getAllMajor());
     }
-  }, [allMajors?.length, dispatch]);
+  }, [allMajors.length, dispatch]);
 
   const handleShowDetailModal = () => setShowDetailModal(true);
   const handleCloseDetailModal = () => setShowDetailModal(false);

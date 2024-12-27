@@ -25,6 +25,7 @@ export const GeneralRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
+      <Route path="*" element={<Login />} />
         <Route path="/" element={<Login />} />
         <Route path="/ma-xac-thuc" element={<VerifyCode />} />
         <Route path="/gui-lai-ma" element={<ResendVerify />} />
@@ -37,6 +38,7 @@ export const LoggedRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
+      <Route path="*" element={<HomePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/account-manager" element={<AccountManager />} />
         <Route path="/academic-manager" element={<AcademicManager />} />

@@ -182,7 +182,6 @@ export const refreshSession = createAsyncThunk(
       } else {
         dispatch(logout())
       }
-
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

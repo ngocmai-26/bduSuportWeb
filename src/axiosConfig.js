@@ -9,6 +9,7 @@ import {
   setRefresh,
 } from './services/AuthService'
 import { getNavigate } from './services/AuthService'
+import { logout } from './slices/AuthSlice'
 
 const axiosInstance = axios.create({
   baseURL: `${API.uri}`,
@@ -35,7 +36,7 @@ const handleRefreshTokenFailed = () => {
   const navigate = getNavigate()
   removeTokenFromStorage()
   removeAuthRefreshFromStorage()
-  if (navigate) navigate('/')
+  logout()
 }
 
 const handleInvalidSession = async (error) => {
@@ -45,6 +46,9 @@ const handleInvalidSession = async (error) => {
     handleRefreshTokenFailed()
     return Promise.reject(error)
   }
+  console.log("refreshToken", refreshToken)
+
+  
 
   try {
     const response = await axios.post(`${API.uri}/backoffice/refresh`, {
@@ -52,12 +56,13 @@ const handleInvalidSession = async (error) => {
     })
     setToken(response?.data?.data?.access)
     setRefresh(response?.data?.data?.refresh)
+    console.log("response", response?.data?.data?.refresh)
 
     const config = error.config
     config.headers.Authorization = `Bearer ${response?.data?.data?.access}`
     return axiosInstance(config)
   } catch (refreshError) {
-    // handleRefreshTokenFailed()
+    handleRefreshTokenFailed()
     return Promise.reject(refreshError)
   }
 }
@@ -74,10 +79,12 @@ axiosInstance.interceptors.response.use(
   async function (error) {
     if (error.response) {
       const { code } = error.response.data
+      console.log("codssse", error.response)
 
 
       switch (code) {
         case 'refresh_token_failed':
+          console.log("sss")
           handleRefreshTokenFailed()
           break
           
