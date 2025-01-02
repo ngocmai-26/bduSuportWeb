@@ -37,7 +37,7 @@ function Navbar() {
     { path: "/function-manager", name: "Quản lý chức năng" },
     { path: "/contact-manager", name: "Quản lý liên hệ" },
     { path: "/handbook-manager", name: "Quản lý Handbook" },
-    { path: "/audit-manager", name: "Quản lý" },
+    { path: "/audit-manager", name: "Quản lý audit log" },
   ];
 
   const userRoutes = [
