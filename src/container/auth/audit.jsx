@@ -7,17 +7,20 @@ import moment from "moment";
 
 function AuditManager() {
   const dispatch = useDispatch();
-  const { audit } = useSelector((state) => state.authReducer);
+  const { audit, total_page, current_page } = useSelector((state) => state.authReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (audit.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAudit());
+      dispatch(getAudit({page: 1}));
     }
   }, [audit.length, dispatch]);
 
- 
+ const handlePageChange = (page) => {
+     if (page < 1 || page > total_page) return;
+     dispatch(getAudit({page: page}))
+   };
 
   const headers = ["#", "Email", "Hành động", "Chi tiết", "Thời gian"];
   const columns = [
@@ -43,7 +46,10 @@ function AuditManager() {
           data={audit}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
     </LayoutWeb>
