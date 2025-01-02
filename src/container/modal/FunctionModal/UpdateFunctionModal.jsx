@@ -8,7 +8,6 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
 
-  console.log("initialData", initialData)
 
   // Initialize state with the provided initial data or default values
   const [data, setData] = useState(initialData || {});

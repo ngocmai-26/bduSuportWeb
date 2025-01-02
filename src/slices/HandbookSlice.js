@@ -6,6 +6,8 @@ const initState = {
   singleHandbooks: {},
   paginationHandbooks: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const HandbookSlice = createSlice({
   name: 'Handbook',
@@ -26,6 +28,12 @@ const HandbookSlice = createSlice({
     setPaginationHandbooks: (state, { payload }) => {
       state.paginationHandbooks = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchHandbooks,
   setSingleHandbooks,
   setErrors,
-  setPaginationHandbooks
+  setPaginationHandbooks,
+  setCurrentPage,
+  setTotalPage
 } = HandbookSlice.actions
 
 export default HandbookSlice.reducer

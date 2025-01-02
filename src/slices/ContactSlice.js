@@ -6,6 +6,8 @@ const initState = {
   singleContacts: {},
   paginationContacts: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const ContactSlice = createSlice({
   name: 'Contact',
@@ -26,6 +28,12 @@ const ContactSlice = createSlice({
     setPaginationContacts: (state, { payload }) => {
       state.paginationContacts = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchContacts,
   setSingleContacts,
   setErrors,
-  setPaginationContacts
+  setPaginationContacts,
+  setCurrentPage,
+  setTotalPage
 } = ContactSlice.actions
 
 export default ContactSlice.reducer

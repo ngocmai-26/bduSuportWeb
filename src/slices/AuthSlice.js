@@ -10,7 +10,10 @@ const initState = {
   actionStatus: '',
   isFetching: false,
   errors: {},
-  errorsRegister: {}
+  errorsRegister: {}, 
+  audit: [],
+  current_page: 0,
+  total_page: 0,
 };
 const AuthSlice = createSlice({
   name: "auth",
@@ -40,6 +43,9 @@ const AuthSlice = createSlice({
     setAuthFetching: (state, { payload }) => {
       state.isFetching = payload;
     },
+    setAuditAuth: (state, { payload }) => {
+      state.audit = payload;
+    },
     setEmailAuth: (state, { payload }) => {
       state.email = payload;
     },
@@ -59,6 +65,12 @@ const AuthSlice = createSlice({
       state = initState;
       window.location.assign('/bdu-support');
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 });
 
@@ -73,7 +85,10 @@ export const {
   setErrors,
   setAuthFetching,
   setErrorsRegister,
-  setAccount
+  setAccount,
+  setAuditAuth,
+  setCurrentPage,
+  setTotalPage
 } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

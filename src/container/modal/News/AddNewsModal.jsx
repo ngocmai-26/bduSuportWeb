@@ -10,7 +10,7 @@ function AddNewsModal({ show, handleClose }) {
   const fileInputRef = useRef(null);
   useLayoutEffect(() => {
     if (typeNews.length <= 0) {
-      dispatch(getTypeNews());
+      dispatch(getTypeNews({page: 1}));
     }
   }, [dispatch, typeNews.length]);
 
@@ -156,7 +156,7 @@ function AddNewsModal({ show, handleClose }) {
                   onChange={handleChange}
                 >
                   <option value="">Chọn loại tin tức</option>
-                  {typeNews.map((level) => (
+                  {typeNews?.map((level) => (
                     <option key={level.id} value={level.id}>
                       {level.name}
                     </option>

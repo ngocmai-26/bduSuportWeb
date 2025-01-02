@@ -5,7 +5,9 @@ const initState = {
   searchFeedBack: [],
   singleFeedBack: {},
   paginationFeedBack: {},
-  errors: {}
+  errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const FeedBacksSlice = createSlice({
   name: 'FeedBack',
@@ -26,6 +28,12 @@ const FeedBacksSlice = createSlice({
     setPaginationFeedBack: (state, { payload }) => {
       state.paginationFeedBack = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchFeedBack,
   setSingleFeedBack,
   setErrors,
-  setPaginationFeedBack
+  setPaginationFeedBack,
+  setCurrentPage,
+  setTotalPage
 } = FeedBacksSlice.actions
 
 export default FeedBacksSlice.reducer

@@ -43,7 +43,7 @@ function ResetPwModal({ show, handleClose, userID }) {
   const handleCloseModal = () => {
     handleClose();
     setNewPw({});
-    setErrors({});  // Reset formErrors khi đóng modal
+    setErrors({});  
   };
 
   return (

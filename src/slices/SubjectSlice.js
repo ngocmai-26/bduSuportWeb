@@ -7,6 +7,8 @@ const initState = {
   paginationSubject: {},
   errors: {},
   status: 0,
+  current_page: 0,
+  total_page: 0,
 }
 const SubjectsSlice = createSlice({
   name: 'subject',
@@ -30,6 +32,12 @@ const SubjectsSlice = createSlice({
     setStatus: (state, { payload }) => {
       state.status = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -39,7 +47,9 @@ export const {
   setSingleSubject,
   setErrors,
   setPaginationSubject,
-  setStatus
+  setStatus,
+  setCurrentPage,
+  setTotalPage
 } = SubjectsSlice.actions
 
 export default SubjectsSlice.reducer

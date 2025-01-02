@@ -6,6 +6,8 @@ const initState = {
   singleAcademic: {},
   paginationAcademic: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const AcademicsSlice = createSlice({
   name: 'academic',
@@ -26,6 +28,12 @@ const AcademicsSlice = createSlice({
     setPaginationAcademic: (state, { payload }) => {
       state.paginationAcademic = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchAcademic,
   setSingleAcademic,
   setErrors,
-  setPaginationAcademic
+  setPaginationAcademic,
+  setCurrentPage,
+  setTotalPage
 } = AcademicsSlice.actions
 
 export default AcademicsSlice.reducer

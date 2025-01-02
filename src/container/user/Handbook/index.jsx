@@ -10,7 +10,7 @@ function HandbookManager() {
   const [showModal, setShowModal] = useState(false);
   
   const dispatch = useDispatch();
-  const { allHandbooks } = useSelector((state) => state.handbookReducer);
+  const { allHandbooks, total_page, current_page } = useSelector((state) => state.handbookReducer);
 
   
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -22,7 +22,7 @@ function HandbookManager() {
   useLayoutEffect(() => {
     if (!hasFetched.current && allHandbooks?.length <= 0) {
       hasFetched.current = true;
-      dispatch(getHandbookThunk());
+      dispatch(getHandbookThunk({page: 1}));
     }
   }, [allHandbooks?.length, dispatch]);
 
@@ -65,6 +65,10 @@ function HandbookManager() {
     ),
   ];
 
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getHandbookThunk({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -81,7 +85,10 @@ function HandbookManager() {
           data={allHandbooks}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddHandbookModal show={showModal} handleClose={handleCloseModal} />

@@ -7,18 +7,16 @@ import moment from "moment";
 
 function FeedBackManager() {
   const dispatch = useDispatch();
-  const { allFeedBack } = useSelector((state) => state.feedbacksReducer);
+  const { allFeedBack, total_page, current_page } = useSelector((state) => state.feedbacksReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allFeedBack.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getFeedbackThunk());
+      dispatch(getFeedbackThunk({page: 1}));
     }
   }, [allFeedBack.length, dispatch]);
 
- 
- 
 
   const headers = ["#", "Tựa đề", "Người gửi","Số điện thoại", "Ngày gửi", ""];
   const columns = [
@@ -38,6 +36,11 @@ function FeedBackManager() {
       </div>
     ),
   ];
+  
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getFeedbackThunk({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -48,6 +51,9 @@ function FeedBackManager() {
           headers={headers}
           columns={columns}
           rowsPerPage={5}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
     </LayoutWeb>

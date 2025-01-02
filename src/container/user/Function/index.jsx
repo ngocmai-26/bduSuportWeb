@@ -2,9 +2,6 @@ import { useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteMajor, getAllMajor } from "../../../thunks/MajorThunks";
-import AddMajorModal from "../../modal/Major/AddMajorModal";
-import UpdateMajorModal from "../../modal/Major/UpdateMajorModal";
 import DetailMajorModal from "../../modal/Major/DetailMajorModal";
 import AddFunctionModal from "../../modal/FunctionModal/AddFunctionModal";
 import { deleteFunction, getAllFunction } from "../../../thunks/FunctionThunks";
@@ -16,13 +13,13 @@ function FunctionManager() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const dispatch = useDispatch();
-  const { allFunctions } = useSelector((state) => state.functionReducer);
+  const { allFunctions, total_page, current_page } = useSelector((state) => state.functionReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allFunctions.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllFunction());
+      dispatch(getAllFunction({page: 1}));
     }
   }, [allFunctions.length, dispatch]);
 
@@ -74,7 +71,10 @@ function FunctionManager() {
       </div>
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllFunction({page: page}))
+  };
   const handleView = (row, action) => {
     setSelectedItem(row);
     if (action === "view") {
@@ -100,6 +100,9 @@ function FunctionManager() {
           headers={headers}
           columns={columns}
           rowsPerPage={5}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddFunctionModal show={showModal} handleClose={handleCloseModal} />

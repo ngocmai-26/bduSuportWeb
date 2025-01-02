@@ -5,7 +5,9 @@ const initState = {
   searchBusiness: [],
   singleBusiness: {},
   paginationBusiness: {},
-  errors: {}
+  errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const BusinessesSlice = createSlice({
   name: 'business',
@@ -26,6 +28,12 @@ const BusinessesSlice = createSlice({
     setPaginationBusiness: (state, { payload }) => {
       state.paginationBusiness = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchBusiness,
   setSingleBusiness,
   setErrors,
-  setPaginationBusiness
+  setPaginationBusiness,
+  setCurrentPage,
+  setTotalPage
 } = BusinessesSlice.actions
 
 export default BusinessesSlice.reducer

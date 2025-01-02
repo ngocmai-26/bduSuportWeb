@@ -20,6 +20,7 @@ import { loadAuthRefreshFromStorage } from "../services/AuthService";
 import FunctionManager from "../container/user/Function";
 import ContactManager from "../container/user/Contact";
 import HandbookManager from "../container/user/Handbook";
+import AuditManager from "../container/auth/audit";
 
 export const GeneralRoute = () => {
   return (
@@ -58,6 +59,7 @@ export const LoggedRoute = () => {
         <Route path="/function-manager" element={<FunctionManager />} />
         <Route path="/contact-manager" element={<ContactManager />} />
         <Route path="/handbook-manager" element={<HandbookManager />} />
+        <Route path="/audit-manager" element={<AuditManager />} />
       </Routes>
     </AppMiddleware>
   );

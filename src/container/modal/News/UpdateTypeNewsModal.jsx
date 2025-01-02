@@ -10,7 +10,7 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
 
   useEffect(() => {
     if (typeNews.length <= 0) {
-      dispatch(getTypeNews());
+      dispatch(getTypeNews({page: 1}));
     }
   }, [dispatch, typeNews.length]);
 

@@ -1,5 +1,6 @@
 export const API = {
-    uri: "https://cds.bdu.edu.vn/apis",
+    // uri: "https://cds.bdu.edu.vn/apis",
+    uri: "https://bdu-support-apis.thuannt.id.vn/apis",
   };
   
   export const API_KEY_NAME = "auth_token";

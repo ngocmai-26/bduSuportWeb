@@ -14,7 +14,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
   const [selectedAcademic, setSelectedAcademic] = useState(null);
 
 
-  const { allCollegeExamGroups } = useSelector(
+  const { allCollegeExamGroups, total_page } = useSelector(
     (state) => state.collegeExamGroupsReducer
   );
   const { allAcademic } = useSelector((state) => state.academicsReducer);
@@ -23,28 +23,68 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
 
   const hasFetched = useRef(false);
 
-  useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-      dispatch(getAllCollegeExamGroup());
-    }
-  }, [allCollegeExamGroups.length, hasFetched, dispatch]);
+  // useLayoutEffect(() => {
+  //   if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
+  //     dispatch(getAllCollegeExamGroup());
+  //   }
+  // }, [allCollegeExamGroups.length, hasFetched, dispatch]);
 
   useLayoutEffect(() => {
     if (allAcademic.length <= 0 && !hasFetched.current) {
-      dispatch(getAllAcademic());
+      dispatch(getAllAcademic({page:1}));
     }
   }, [allAcademic.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
     if (allEvaluation.length <= 0 && !hasFetched.current) {
-      dispatch(getAllEvaluation());
+      dispatch(getAllEvaluation({page:1}));
     }
   }, [allEvaluation.length, hasFetched, dispatch]);
 
   useLayoutEffect(() => {
     if (allLocation.length <= 0 && !hasFetched.current) {
-      dispatch(getLocationThunk());
+      dispatch(getLocationThunk({page:1}));
     }
   }, [allLocation.length, hasFetched, dispatch]);
+
+  const [page, setPage] = useState(1); // Current page
+  const [loading, setLoading] = useState(false); // Loading state
+  const [CollegeExamGroupList, setCollegeExamGroupList] = useState([]); // Local state for accumulated subjects
+
+  const isWaiting = useRef(false); // Use ref to manage waiting state
+
+   useLayoutEffect(() => {
+     if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
+       hasFetched.current = true;
+       dispatch(getAllCollegeExamGroup({page:1}));
+     }
+   }, [allCollegeExamGroups.length, dispatch]);
+
+  useEffect(() => {
+    if (allCollegeExamGroups.length > 0) {
+      setCollegeExamGroupList((prevSubjects) => [...prevSubjects, ...allCollegeExamGroups]);
+    }
+  }, [allCollegeExamGroups]);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    
+    if (
+      scrollHeight - scrollTop > clientHeight - 10 && 
+      scrollHeight - scrollTop <= clientHeight && 
+      !loading &&
+      page <= total_page && 
+      !isWaiting.current 
+    ) {
+      setLoading(true);
+      isWaiting.current = true;
+  
+      dispatch(getAllCollegeExamGroup({ page: page + 1 })).then(() => {
+        setLoading(false);
+        isWaiting.current = false; 
+        setPage((prevPage) => prevPage + 1);
+      });
+    }
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -267,8 +307,8 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       <label className="block text-sm font-medium text-gray-700">
                         Tổ hợp
                       </label>
-                      <div className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto">
-                        {allCollegeExamGroups.map((group) => (
+                      <div onScroll={handleScroll} className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto">
+                        {CollegeExamGroupList.map((group) => (
                           <div>
                             <label key={group.id}>
                               <input

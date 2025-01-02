@@ -1,21 +1,27 @@
 
 import { API } from '../constants/api'
-import { setAllAccount } from '../slices/AccountSlice'
+import { setAllAccount, setCurrentPage, setTotalPage } from '../slices/AccountSlice'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_SUCCESS } from '../constants/toast'
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
 
-export const getAllAccount = () => async (dispatch, rejectWithValue) => {
+export const getAllAccount = (data) => async (dispatch, rejectWithValue) => {
   await axiosInstance
     .get(`${API.uri}/backoffice/accounts`, {
+      params: {
+        page: data?.page,
+        size: 10,
+      },
       headers: {
         'Content-Type': 'application/json',
       },
     })
     .then((response) => {
       if (response) {
-        dispatch(setAllAccount(response?.data?.results))
+        dispatch(setAllAccount(response?.data?.data.results))
+        dispatch(setCurrentPage(response?.data?.data.current_page))
+        dispatch(setTotalPage(response?.data?.data.total_page))
       }
     })
     .catch((error) => {

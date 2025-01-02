@@ -8,7 +8,7 @@ import { DeleteSubjectThunk, getAllSubject } from "../../../thunks/SubjectThunks
 function SubjectManager() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
-  const { allSubject } = useSelector(
+  const { allSubject, total_page, current_page } = useSelector(
     (state) => state.subjectsReducer
   );
   
@@ -16,7 +16,7 @@ function SubjectManager() {
   useLayoutEffect(() => {
     if (allSubject.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllSubject());
+      dispatch(getAllSubject({page: 1}));
     }
   }, [allSubject.length, dispatch]);
 
@@ -49,7 +49,10 @@ function SubjectManager() {
     ),
   ];
 
- 
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllSubject({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -67,6 +70,9 @@ function SubjectManager() {
           headers={headers}
           columns={columns}
           rowsPerPage={5}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddSubjectModal show={showModal} handleClose={handleCloseModal} />

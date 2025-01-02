@@ -6,6 +6,8 @@ const initState = {
   singleMajors: {},
   paginationMajors: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const MajorSlice = createSlice({
   name: 'major',
@@ -26,6 +28,12 @@ const MajorSlice = createSlice({
     setPaginationMajors: (state, { payload }) => {
       state.paginationMajors = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchMajors,
   setSingleMajors,
   setErrors,
-  setPaginationMajors
+  setPaginationMajors,
+  setCurrentPage,
+  setTotalPage
 } = MajorSlice.actions
 
 export default MajorSlice.reducer

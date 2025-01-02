@@ -6,6 +6,8 @@ const initState = {
   singleAdmission: {},
   paginationAdmission: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const AdmissionsSlice = createSlice({
   name: 'admission',
@@ -26,6 +28,12 @@ const AdmissionsSlice = createSlice({
     setPaginationAdmission: (state, { payload }) => {
       state.paginationAdmission = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchAdmission,
   setSingleAdmission,
   setErrors,
-  setPaginationAdmission
+  setPaginationAdmission,
+  setCurrentPage,
+  setTotalPage
 } = AdmissionsSlice.actions
 
 export default AdmissionsSlice.reducer

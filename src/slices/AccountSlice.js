@@ -6,7 +6,9 @@ const initState = {
   singleAccount: {},
   paginationAccount: {},
   errors: {},
-  email: ''
+  email: '',
+  current_page: 0,
+  total_page: 0,
 }
 const AccountsSlice = createSlice({
   name: 'account',
@@ -30,6 +32,12 @@ const AccountsSlice = createSlice({
     setEmail: (state, { payload }) => {
       state.email = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -39,7 +47,9 @@ export const {
   setSingleAccount,
   setErrors,
   setPaginationAccount,
-  setEmail
+  setEmail,
+  setCurrentPage,
+  setTotalPage
 } = AccountsSlice.actions
 
 export default AccountsSlice.reducer

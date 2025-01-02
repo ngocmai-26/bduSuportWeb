@@ -6,6 +6,8 @@ const initState = {
   singleEvaluation: {},
   paginationEvaluation: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const EvaluationsSlice = createSlice({
   name: 'evaluation',
@@ -26,6 +28,12 @@ const EvaluationsSlice = createSlice({
     setPaginationEvaluation: (state, { payload }) => {
       state.paginationEvaluation = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchEvaluation,
   setSingleEvaluation,
   setErrors,
-  setPaginationEvaluation
+  setPaginationEvaluation,
+  setCurrentPage,
+  setTotalPage
 } = EvaluationsSlice.actions
 
 export default EvaluationsSlice.reducer

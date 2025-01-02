@@ -24,6 +24,7 @@ function HomePage() {
     { path: '/function-manager', name: 'Quản lý chức năng', icon: 'https://cdn-icons-png.flaticon.com/512/11337/11337201.png' },
     { path: '/contact-manager', name: 'Quản lý liên hệ', icon: 'https://cdn-icons-png.freepik.com/512/5300/5300765.png' },
     { path: '/handbook-manager', name: 'Quản lý handbook', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
+    { path: '/audit-manager', name: 'Quản lý', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
   ];
 
   const userRoutes = [

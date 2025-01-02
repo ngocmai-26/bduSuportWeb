@@ -10,7 +10,7 @@ function ContactManager() {
   const [showModal, setShowModal] = useState(false);
   
   const dispatch = useDispatch();
-  const { allContacts } = useSelector((state) => state.contactReducer);
+  const { allContacts, total_page, current_page } = useSelector((state) => state.contactReducer);
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -22,7 +22,7 @@ function ContactManager() {
   useLayoutEffect(() => {
     if (!hasFetched.current && allContacts?.length <= 0) {
       hasFetched.current = true;
-      dispatch(getContactThunk());
+      dispatch(getContactThunk({page: 1}));
     }
   }, [allContacts?.length, dispatch]);
 
@@ -66,7 +66,10 @@ function ContactManager() {
       </div>
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getContactThunk({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -83,7 +86,10 @@ function ContactManager() {
           data={allContacts}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddContactModal show={showModal} handleClose={handleCloseModal} />

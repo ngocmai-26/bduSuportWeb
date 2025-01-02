@@ -2,8 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import {
   logout,
   setActionStatus,
+  setAuditAuth,
   setAuthFetching,
+  setCurrentPage,
   setLogged,
+  setTotalPage,
 } from '../slices/AuthSlice'
 import { API, API_KEY_NAME, REFRESH_KEY_NAME } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
@@ -39,7 +42,6 @@ export const login = createAsyncThunk(
           setRefresh(response.data.data.refresh)
           dispatch(setLogged(true))
           setInfo(JSON.stringify(response.data.data.user_info))
-          
         })
         .catch((error) => {
           dispatch(setActionStatus(error?.data?.code))
@@ -143,7 +145,10 @@ export const resendVerifyOtp = createAsyncThunk(
         )
         .then((response) => {
           dispatch(
-            setAlert({ type: TOAST_SUCCESS, content: "Đã gửi mã xác thực đến email" }),
+            setAlert({
+              type: TOAST_SUCCESS,
+              content: 'Đã gửi mã xác thực đến email',
+            }),
           )
         })
         .catch((error) => {
@@ -165,30 +170,30 @@ export const refreshSession = createAsyncThunk(
   'backoffice/refresh',
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      const refreshToken = loadAuthRefreshFromStorage();
+      const refreshToken = loadAuthRefreshFromStorage()
       if (!refreshToken) {
-        throw new Error('No refresh token');
+        throw new Error('No refresh token')
       }
 
-
-      const response = await axiosInstance.post('/backoffice/refresh', { refresh: refreshToken });
+      const response = await axiosInstance.post('/backoffice/refresh', {
+        refresh: refreshToken,
+      })
 
       // Kiểm tra response.status
       if (response.status === 200) {
         setToken(response.data.data.access)
-        setValueWithKey(API_KEY_NAME, response.data.data.access);
-        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh);
-        dispatch(setLogged(true));
+        setValueWithKey(API_KEY_NAME, response.data.data.access)
+        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh)
+        dispatch(setLogged(true))
       } else {
         dispatch(logout())
       }
-      return response.data;
+      return response.data
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || error.message)
     }
-  }
-);
-
+  },
+)
 
 export const changePassword = createAsyncThunk(
   'change_password',
@@ -252,6 +257,43 @@ export const resetPassword = createAsyncThunk(
               content: error.response?.data?.message,
             }),
           )
+          return rejectWithValue(error.response?.status)
+        })
+    } catch (error) {
+      console.log('error', error)
+    }
+  },
+)
+
+export const getAudit = createAsyncThunk(
+  'audit',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('auth_token')
+      await axios
+        .get(`${API.uri}/backoffice/audit/backoffice`, {
+          params: {
+            page: data?.page,
+            size: 10,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          dispatch(setAuditAuth(response.data.data.results))
+          dispatch(setCurrentPage(response?.data?.data.current_page))
+          dispatch(setTotalPage(response?.data?.data.total_page))
+        })
+        .catch((error) => {
+          dispatch(
+            setAlert({
+              type: TOAST_ERROR,
+              content: 'Đã xảy ra lỗi trong quá trình load dữ liệu',
+            }),
+          )
+          dispatch(refreshSession())
           return rejectWithValue(error.response?.status)
         })
     } catch (error) {

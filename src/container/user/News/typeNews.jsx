@@ -11,15 +11,15 @@ function TypeNewsManager() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const dispatch = useDispatch();
-  const { typeNews } = useSelector((state) => state.newsReducer);
+  const { typeNews, total_page_type, current_page_type } = useSelector((state) => state.newsReducer);
 
   const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (typeNews.length <= 0 && !hasFetched.current) {
+    if (typeNews?.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getTypeNews());
+      dispatch(getTypeNews({page: 1}));
     }
-  }, [typeNews.length, dispatch]);
+  }, [typeNews?.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -56,7 +56,10 @@ function TypeNewsManager() {
     
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page_type) return;
+    dispatch(getTypeNews({page: page}))
+  };
 
   const handleEdit = (row) => {
     setSelectedItem(row);
@@ -79,6 +82,9 @@ function TypeNewsManager() {
           headers={headers}
           columns={columns}
           rowsPerPage={5}
+          current_page={current_page_type}
+          total_page={total_page_type}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddTypeNewsModal show={showModal} handleClose={handleCloseModal} />

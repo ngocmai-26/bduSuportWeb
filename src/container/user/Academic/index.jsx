@@ -9,7 +9,7 @@ import UpdateAcademicModal from "../../modal/Academic/UpdateAcademicModel";
 function AcademicManager() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
-  const { allAcademic } = useSelector((state) => state.academicsReducer);
+  const { allAcademic, total_page, current_page } = useSelector((state) => state.academicsReducer);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -21,7 +21,7 @@ function AcademicManager() {
   useLayoutEffect(() => {
     if (allAcademic.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllAcademic());
+      dispatch(getAllAcademic({page: 1}));
     }
   }, [allAcademic.length, dispatch]);
 
@@ -56,7 +56,10 @@ function AcademicManager() {
       </div>
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllAcademic({page: page}))
+  };
   const handleEdit = (row) => {
     setSelectedItem(row);
     handleShowUpdateModal();
@@ -77,7 +80,10 @@ function AcademicManager() {
           data={allAcademic}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddAcademicModal show={showModal} handleClose={handleCloseModal} />

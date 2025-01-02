@@ -2,18 +2,24 @@ import axiosInstance from "../axiosConfig"
 import { API } from "../constants/api"
 import { TOAST_ERROR, TOAST_SUCCESS } from "../constants/toast"
 import { setAlert } from "../slices/AlertSlice"
-import { setAllHandbooks } from "../slices/HandbookSlice"
+import { setAllHandbooks, setCurrentPage, setTotalPage } from "../slices/HandbookSlice"
 
-export const getHandbookThunk = () => async (dispatch, rejectWithValue) => {
+export const getHandbookThunk = (data) => async (dispatch, rejectWithValue) => {
     await axiosInstance
       .get(`${API.uri}/backoffice/handbooks`, {
+        params: {
+          page: data?.page,
+          size: 10,
+        },
         headers: {
           'Content-Type': 'application/json',
         },
       })
       .then((response) => {
         if (response) {
-          dispatch(setAllHandbooks(response.data.data))
+          dispatch(setAllHandbooks(response.data.data.results))
+          dispatch(setCurrentPage(response?.data?.data.current_page))
+          dispatch(setTotalPage(response?.data?.data.total_page))
         }
       })
      

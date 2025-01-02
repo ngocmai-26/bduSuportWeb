@@ -5,20 +5,26 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
-import { setAllFunctions } from '../slices/FunctionSlice'
+import { setAllFunctions, setCurrentPage, setTotalPage } from '../slices/FunctionSlice'
 
 
-export const getAllFunction = () => async (dispatch, rejectWithValue) => {
+export const getAllFunction = (data) => async (dispatch, rejectWithValue) => {
   
     await axiosInstance
       .get(`${API.uri}/backoffice/app-functions`, {
+        params: {
+          page: data?.page,
+          size: 10,
+        },
         headers: {
           'Content-Type': 'application/json',
         },
       })
       .then((response) => {
         if (response) {
-          dispatch(setAllFunctions(response?.data?.data))
+          dispatch(setAllFunctions(response?.data?.data.results))
+                    dispatch(setCurrentPage(response?.data?.data.current_page))
+                    dispatch(setTotalPage(response?.data?.data.total_page))
         }
       })
       .catch((error) => {

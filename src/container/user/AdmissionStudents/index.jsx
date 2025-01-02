@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import {
@@ -15,14 +15,13 @@ import DetailAdmissionStudent from "../../modal/AdmissionStudent/DetailAdmission
 function AdmissionStudentManager() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItem] = useState(null);
-  const [currentPage] = useState(1);
   const [filters, setFilters] = useState({
     evaluation_method: "",
     major: "",
     college_exam_group: "",
     review_status: "",
   });
-  const { allAdmission } = useSelector((state) => state.allAdmissionsReducer);
+  const { allAdmission, total_page, current_page } = useSelector((state) => state.allAdmissionsReducer);
   const { allCollegeExamGroups } = useSelector(
     (state) => state.collegeExamGroupsReducer
   );
@@ -30,39 +29,27 @@ function AdmissionStudentManager() {
   const { allMajors } = useSelector((state) => state.majorReducer);
   const dispatch = useDispatch();
 
-  const hasFetched = useRef(false);
-
-  // useEffect(() => {
-  //   if (!hasFetched.current && allCollegeExamGroups?.length <= 0 ||allEvaluation?.length <= 0 || allAdmission?.length <= 0 || allMajors?.length <= 0) {
-  //     hasFetched.current = true;
-  //     dispatch(getAllEvaluation());
-  //     dispatch(getAllCollegeExamGroup());
-    
-  //     dispatch(getAllAdmission());
-  //     dispatch(getAllMajor());
-  //   }
-  // }, [ dispatch, allEvaluation.length, allAdmission.length, allMajors.length, allCollegeExamGroups.length]);
   useLayoutEffect(() => {
     if (allCollegeExamGroups?.length <= 0 ) {
-      dispatch(getAllCollegeExamGroup());
+      dispatch(getAllCollegeExamGroup({page: 1}));
     }
-  }, [allEvaluation.length, dispatch]);
+  }, [allCollegeExamGroups?.length, dispatch]);
   useEffect(() => {
-    if (allEvaluation.length <= 0 ) {
-      dispatch(getAllEvaluation());
+    if (allEvaluation?.length <= 0 ) {
+      dispatch(getAllEvaluation({page: 1}));
     }
-  }, [allEvaluation.length, dispatch]);
+  }, [allEvaluation?.length, dispatch]);
   useEffect(() => {
-    if (allAdmission.length <= 0) {
-      dispatch(getAllAdmission());
+    if (allAdmission?.length <= 0) {
+      dispatch(getAllAdmission({page: 1}));
     }
-  }, [allAdmission.length, dispatch]);
+  }, [allAdmission?.length, dispatch]);
   
   useEffect(() => {
-    if (allMajors.length <= 0 ) {
-      dispatch(getAllMajor());
+    if (allMajors?.length <= 0 ) {
+      dispatch(getAllMajor({page: 1}));
     }
-  }, [allMajors.length, dispatch]);
+  }, [allMajors?.length, dispatch]);
 
   const handleShowDetailModal = () => setShowDetailModal(true);
   const handleCloseDetailModal = () => setShowDetailModal(false);
@@ -83,7 +70,10 @@ function AdmissionStudentManager() {
   const handleSearch = () => {
     dispatch(getAllAdmission(filters));
   };
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllAdmission({page: page}))
+  };
 
   const headers = [
     "#",
@@ -158,7 +148,7 @@ function AdmissionStudentManager() {
             className="border rounded-md p-2 max-w-64"
           >
             <option value="">Chọn phương pháp đánh giá</option>
-            {allEvaluation.map((method) => (
+            {allEvaluation?.map((method) => (
               <option key={method.code} value={method.code}>
                 {method.name}
               </option>
@@ -171,7 +161,7 @@ function AdmissionStudentManager() {
             className="border rounded-md p-2"
           >
             <option value="">Chọn chuyên ngành</option>
-            {allMajors.map((major) => (
+            {allMajors?.map((major) => (
               <option key={major.id} value={major.id}>
                 {major.name}
               </option>
@@ -184,7 +174,7 @@ function AdmissionStudentManager() {
             className="border rounded-md p-2"
           >
             <option value="">Chọn nhóm thi đại học</option>
-            {allCollegeExamGroups.map((group) => (
+            {allCollegeExamGroups?.map((group) => (
               <option key={group.id} value={group.id}>
                 {group.name}
               </option>
@@ -212,8 +202,10 @@ function AdmissionStudentManager() {
           data={allAdmission}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
-          currentPage={currentPage}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <DetailAdmissionStudent

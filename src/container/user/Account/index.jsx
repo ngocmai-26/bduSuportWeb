@@ -14,14 +14,14 @@ function AccountManager() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [userID, setUserID] = useState(null);
   const dispatch = useDispatch();
-  const { allAccount } = useSelector((state) => state.accountsReducer);
+  const { allAccount, total_page, current_page } = useSelector((state) => state.accountsReducer);
 
   const hasFetched = useRef(false); 
 
   useLayoutEffect(() => {
     if (allAccount.length <= 0 && !hasFetched.current) {
       hasFetched.current = true; 
-      dispatch(getAllAccount());
+      dispatch(getAllAccount({page: 1}));
     }
   }, [allAccount.length, dispatch]);
 
@@ -44,6 +44,11 @@ function AccountManager() {
   const handleView = (row) => {
     setSelectedItem(row);
     handleShowDetailModal();
+  };
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllAccount({page: page}))
   };
 
   const handleToggleStatus = (row) => {
@@ -109,7 +114,10 @@ function AccountManager() {
           data={allAccount}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          handlePageChange={handlePageChange}
+          current_page={current_page}
+          total_page={total_page}
         />
       </div>
       <ModalAddAccount show={showModal} handleClose={handleCloseModal} />

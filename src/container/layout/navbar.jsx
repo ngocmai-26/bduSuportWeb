@@ -14,10 +14,10 @@ function Navbar() {
   const user = loadAuthInfoFromStorage(INFO_KEY_NAME); 
 
   useLayoutEffect(() => {
-    if (allAccount.length <= 0) {
+    if (allAccount?.length <= 0) {
       dispatch(getAllAccount());
     }
-  }, [allAccount.length, dispatch]);
+  }, [allAccount?.length, dispatch]);
 
 
 
@@ -37,6 +37,7 @@ function Navbar() {
     { path: "/function-manager", name: "Quản lý chức năng" },
     { path: "/contact-manager", name: "Quản lý liên hệ" },
     { path: "/handbook-manager", name: "Quản lý Handbook" },
+    { path: "/audit-manager", name: "Quản lý" },
   ];
 
   const userRoutes = [

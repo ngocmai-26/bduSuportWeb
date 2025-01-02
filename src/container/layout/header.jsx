@@ -5,13 +5,18 @@ import { useDispatch } from "react-redux";
 import ChangePwModal from "../modal/Account/changePwModal";
 import { loadAuthInfoFromStorage } from "../../services/AuthService";
 import { INFO_KEY_NAME } from "../../constants/api";
+import CreateNotificationModel from "../modal/Account/notificationModal";
 
 function Header() {
   const dispatch = useDispatch();
   const [showMenu, setShowMenu] = useState(false);
-  const user = loadAuthInfoFromStorage(INFO_KEY_NAME); 
+  const user = loadAuthInfoFromStorage(INFO_KEY_NAME);
 
   const [showChangePwModal, setShowChangePwModal] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+
+  const handleShowNotificationModal = () => setShowNotificationModal(true);
+  const handleCloseNotificationModal = () => setShowNotificationModal(false);
 
   const handleShowChangePwModal = () => setShowChangePwModal(true);
   const handleCloseChangePwModal = () => setShowChangePwModal(false);
@@ -32,13 +37,15 @@ function Header() {
   const handleChangePwModal = (row) => {
     handleShowChangePwModal();
   };
+  const handleNotificationModal = (row) => {
+    handleShowNotificationModal();
+  };
 
   return (
     <header className="bg-white shadow-md py-4 px-6 fixed top-0 left-0 right-0 z-10">
       <div className="mx-auto flex justify-between items-center">
-      <img src={Logo} alt="Logo" width={100} />
+        <img src={Logo} alt="Logo" width={100} />
         <div className="flex items-center space-x-4">
-        
           <span className="text-gray-700">{user?.email}</span>
           <div
             className="relative"
@@ -58,19 +65,32 @@ function Header() {
                 >
                   Đổi mật khẩu
                 </button>
-               
                 <button
-  onClick={handleLogout}
-  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
->
-  Đăng xuất
-</button>
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                  onClick={handleNotificationModal}
+                >
+                  Tạo thông báo chung
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full text-left"
+                >
+                  Đăng xuất
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
-      <ChangePwModal show={showChangePwModal} handleClose={handleCloseChangePwModal} />
+      <ChangePwModal
+        show={showChangePwModal}
+        handleClose={handleCloseChangePwModal}
+      />
+      <CreateNotificationModel
+        show={showNotificationModal}
+        handleClose={handleCloseNotificationModal}
+      />
     </header>
   );
 }

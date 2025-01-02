@@ -9,13 +9,13 @@ function LocationsManager() {
   const [showModal, setShowModal] = useState(false);
   
   const dispatch = useDispatch();
-  const { allLocation } = useSelector((state) => state.locationReducer);
+  const { allLocation, total_page, current_page } = useSelector((state) => state.locationReducer);
   
   const hasFetched = useRef(false); 
   useLayoutEffect(() => {
     if (!hasFetched.current && allLocation.length <= 0) {
       hasFetched.current = true;
-      dispatch(getLocationThunk());
+      dispatch(getLocationThunk({page: 1}));
     }
   }, [allLocation.length, dispatch]);
 
@@ -45,7 +45,10 @@ function LocationsManager() {
       </div>
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getLocationThunk({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -62,7 +65,11 @@ function LocationsManager() {
           data={allLocation}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddLocationModal show={showModal} handleClose={handleCloseModal} />

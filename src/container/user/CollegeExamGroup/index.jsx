@@ -7,9 +7,8 @@ import { DeleteCollegeExamGroup, getAllCollegeExamGroup } from "../../../thunks/
 
 function CollegeExamGroupManager() {
   const [showModal, setShowModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1); 
   const dispatch = useDispatch();
-  const { allCollegeExamGroups } = useSelector(
+  const { allCollegeExamGroups, total_page, current_page } = useSelector(
     (state) => state.collegeExamGroupsReducer
   );
 
@@ -18,7 +17,7 @@ function CollegeExamGroupManager() {
   useLayoutEffect(() => {
     if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
       hasFetched.current = true; 
-      dispatch(getAllCollegeExamGroup());
+      dispatch(getAllCollegeExamGroup({page: 1}));
     }
   }, [allCollegeExamGroups.length, dispatch]);
   
@@ -58,7 +57,10 @@ function CollegeExamGroupManager() {
       </div>
     ),
   ];
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllCollegeExamGroup({page: page}))
+  };
   return (
     <LayoutWeb>
       <div className="px-10">
@@ -74,9 +76,11 @@ function CollegeExamGroupManager() {
           data={allCollegeExamGroups}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddCollegeExamGroupModal show={showModal} handleClose={handleCloseModal} />

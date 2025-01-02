@@ -6,6 +6,8 @@ const initState = {
   singleFunctions: {},
   paginationFunctions: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const FunctionSlice = createSlice({
   name: 'function',
@@ -26,6 +28,12 @@ const FunctionSlice = createSlice({
     setPaginationFunctions: (state, { payload }) => {
       state.paginationFunctions = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchFunctions,
   setSingleFunctions,
   setErrors,
-  setPaginationFunctions
+  setPaginationFunctions,
+  setCurrentPage,
+  setTotalPage
 } = FunctionSlice.actions
 
 export default FunctionSlice.reducer

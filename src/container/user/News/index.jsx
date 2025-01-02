@@ -12,15 +12,15 @@ function NewsManager() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedType, setSelectedType] = useState(""); // Trạng thái cho bộ lọc loại tin tức
   const dispatch = useDispatch();
-  const { allNews, typeNews } = useSelector((state) => state.newsReducer);
+  const { allNews, typeNews, total_page, current_page } = useSelector((state) => state.newsReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
-    if (allNews.length <= 0 && !hasFetched.current) {
+    if (allNews?.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getNewsThunk());
+      dispatch(getNewsThunk({page: 1}));
     }
-  }, [allNews.length, dispatch]);
+  }, [allNews?.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -80,6 +80,10 @@ function NewsManager() {
     ),
   ];
 
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getNewsThunk({page: page}))
+  };
   return (
     <LayoutWeb>
       <div className="px-10">
@@ -111,7 +115,10 @@ function NewsManager() {
           data={filteredNews}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddNewsModal show={showModal} handleClose={handleCloseModal} />

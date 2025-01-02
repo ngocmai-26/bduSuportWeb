@@ -6,6 +6,8 @@ const initState = {
   singleLocation: {},
   paginationLocation: {},
   errors: {},
+  current_page: 0,
+  total_page: 0,
 }
 const LocationsSlice = createSlice({
   name: 'Location',
@@ -26,6 +28,12 @@ const LocationsSlice = createSlice({
     setPaginationLocation: (state, { payload }) => {
       state.paginationLocation = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
   },
 })
 
@@ -34,7 +42,9 @@ export const {
   setSearchLocation,
   setSingleLocation,
   setErrors,
-  setPaginationLocation
+  setPaginationLocation,
+  setCurrentPage,
+  setTotalPage
 } = LocationsSlice.actions
 
 export default LocationsSlice.reducer

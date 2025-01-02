@@ -158,7 +158,7 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
                   required
                 >
                   <option value="">Chọn loại tin tức</option>
-                  {typeNews.map((level) => (
+                  {typeNews?.map((level) => (
                     <option key={level.id} value={level.id}>
                       {level.name}
                     </option>

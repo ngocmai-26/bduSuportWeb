@@ -1,5 +1,4 @@
-
-import { setAllAdmission, setSingleAdmission } from '../slices/AdmissionSlice'
+import { setAllAdmission, setCurrentPage, setSingleAdmission, setTotalPage } from '../slices/AdmissionSlice'
 import { API } from '../constants/api'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
@@ -8,30 +7,36 @@ import { refreshSession } from './AuthThunks'
 
 export const getAllAdmission = (data) => async (dispatch) => {
   try {
-     await axiosInstance.get(`${API.uri}/backoffice/admission-registration`, {
-      params: {
-        evaluation_method: data?.evaluation_method,
-        major: data?.major,
-        college_exam_group: data?.college_exam_group,
-        review_status: data?.review_status,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then((response) => {
-      if (response) {
-        dispatch(setAllAdmission(response.data.data))
-      }
-    })
-    .catch((error) => {
-      if(error.response.data.code === "invalid_session") {
-        dispatch(refreshSession())
-      }
-    })
+    await axiosInstance
+      .get(`${API.uri}/backoffice/admission-registration`, {
+        params: {
+          evaluation_method: data?.evaluation_method,
+          major: data?.major,
+          college_exam_group: data?.college_exam_group,
+          review_status: data?.review_status,
+          page: data?.page,
+          size: 10,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        if (response) {
+          dispatch(setAllAdmission(response.data.data.results))
+          dispatch(setCurrentPage(response?.data?.data.current_page))
+          dispatch(setTotalPage(response?.data?.data.total_page))
+        }
+      })
+      .catch((error) => {
+        if (error.response.data.code === 'invalid_session') {
+          dispatch(refreshSession())
+        }
+      })
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}
 
 export const getAllAdmissionById = (id) => async (
   dispatch,
@@ -48,9 +53,10 @@ export const getAllAdmissionById = (id) => async (
         dispatch(setSingleAdmission(response.data.data))
       }
     })
-    .catch((error) => { if(error.response.data.code === "invalid_session") {
-      dispatch(refreshSession())
-    }
+    .catch((error) => {
+      if (error.response.data.code === 'invalid_session') {
+        dispatch(refreshSession())
+      }
     })
 }
 

@@ -6,15 +6,15 @@ import { getAllEvaluation } from "../../../thunks/EvaluationThunks";
 
 function EvaluationManager() {
   const dispatch = useDispatch();
-  const { allEvaluation } = useSelector((state) => state.evaluationReducer);
+  const { allEvaluation, total_page, current_page } = useSelector((state) => state.evaluationReducer);
 
   const hasFetched = useRef(false); 
   useLayoutEffect(() => {
-    if (allEvaluation.length <= 0 && !hasFetched.current) {
+    if (allEvaluation?.length <= 0 && !hasFetched.current) {
       hasFetched.current = true; 
-      dispatch(getAllEvaluation());
+      dispatch(getAllEvaluation({page: 1}));
     }
-  }, [allEvaluation.length, dispatch]);
+  }, [allEvaluation?.length, dispatch]);
 
   const headers = ["#", "Mã code", "Tên", ""];
   const columns = [
@@ -34,7 +34,10 @@ function EvaluationManager() {
     ),
   ];
 
-  
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllEvaluation({page: page}))
+  };
 
   return (
     <LayoutWeb>
@@ -43,7 +46,10 @@ function EvaluationManager() {
           data={allEvaluation}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
    

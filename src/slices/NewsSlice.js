@@ -7,6 +7,10 @@ const initState = {
   paginationNews: {},
   errors: {},
   typeNews: [],
+  current_page: 0,
+  total_page: 0,
+  current_page_type: 0,
+  total_page_type: 0,
 }
 const NewSlice = createSlice({
   name: 'new',
@@ -30,6 +34,18 @@ const NewSlice = createSlice({
     setPaginationNews: (state, { payload }) => {
       state.paginationNews = payload
     },
+    setCurrentPage: (state, { payload }) => {
+      state.current_page = payload
+    },
+    setTotalPage: (state, { payload }) => {
+      state.total_page = payload
+    },
+    setCurrentPageType: (state, { payload }) => {
+      state.current_page_type = payload
+    },
+    setTotalPageType: (state, { payload }) => {
+      state.total_page_type = payload
+    },
   },
 })
 
@@ -39,7 +55,11 @@ export const {
   setSingleNews,
   setErrors,
   setPaginationNews,
-  setTypeNews
+  setTypeNews,
+  setCurrentPage,
+  setTotalPage,
+  setCurrentPageType,
+  setTotalPageType
 } = NewSlice.actions
 
 export default NewSlice.reducer

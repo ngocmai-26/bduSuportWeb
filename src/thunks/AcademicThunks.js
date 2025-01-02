@@ -1,17 +1,20 @@
-
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
-import { setAllAcademic } from '../slices/AcademicSlice'
+import { setAllAcademic, setCurrentPage, setTotalPage } from '../slices/AcademicSlice'
 import axios from 'axios'
 import { loadTokenFromStorage } from '../services/AuthService'
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
 
-export const getAllAcademic = () => async (dispatch, rejectWithValue) => {
+export const getAllAcademic = (data) => async (dispatch, rejectWithValue) => {
   const token = loadTokenFromStorage()
   await axios
     .get(`${API.uri}/backoffice/academic-levels`, {
+      params: {
+        page: data?.page,
+        size: 10,
+      },
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -19,11 +22,13 @@ export const getAllAcademic = () => async (dispatch, rejectWithValue) => {
     })
     .then((response) => {
       if (response) {
-        dispatch(setAllAcademic(response.data.data))
+        dispatch(setAllAcademic(response.data.data.results))
+        dispatch(setCurrentPage(response?.data?.data.current_page))
+        dispatch(setTotalPage(response?.data?.data.total_page))
       }
     })
     .catch((error) => {
-      if(error.response.data.code === "invalid_session") {
+      if (error.response.data.code === 'invalid_session') {
         dispatch(refreshSession())
       }
     })
@@ -61,7 +66,7 @@ export const createAcademic = (data) => async (dispatch, rejectWithValue) => {
 export const deleteAcademic = (id) => async (dispatch, rejectWithValue) => {
   const token = loadTokenFromStorage()
   await axios
-    .delete(`${API.uri}/backoffice/academic-levels/${id}`,  {
+    .delete(`${API.uri}/backoffice/academic-levels/${id}`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -86,7 +91,6 @@ export const deleteAcademic = (id) => async (dispatch, rejectWithValue) => {
       }
     })
 }
-
 
 export const updateAcademy = (data) => async (dispatch, rejectWithValue) => {
   await axiosInstance
@@ -114,5 +118,3 @@ export const updateAcademy = (data) => async (dispatch, rejectWithValue) => {
       }
     })
 }
-
-

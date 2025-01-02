@@ -2,21 +2,27 @@
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
-import { setAllMajors } from '../slices/MajorSlice'
+import { setAllMajors, setCurrentPage, setTotalPage } from '../slices/MajorSlice'
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
 
-export const getAllMajor = () => async (dispatch, rejectWithValue) => {
+export const getAllMajor = (data) => async (dispatch, rejectWithValue) => {
   
   await axiosInstance
     .get(`${API.uri}/backoffice/majors`, {
+      params: {
+        page: data?.page,
+        size: 10,
+      },
       headers: {
         'Content-Type': 'application/json',
       },
     })
     .then((response) => {
       if (response) {
-        dispatch(setAllMajors(response.data.data))
+        dispatch(setAllMajors(response.data.data.results))
+        dispatch(setCurrentPage(response?.data?.data.current_page))
+        dispatch(setTotalPage(response?.data?.data.total_page))
       }
     })
     .catch((error) => {

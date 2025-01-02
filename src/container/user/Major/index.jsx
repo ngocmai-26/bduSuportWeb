@@ -13,13 +13,13 @@ function MajorManager() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const dispatch = useDispatch();
-  const { allMajors } = useSelector((state) => state.majorReducer);
+  const { allMajors, total_page, current_page } = useSelector((state) => state.majorReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allMajors.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllMajor());
+      dispatch(getAllMajor({page: 1}));
     }
   }, [allMajors.length, dispatch]);
 
@@ -94,7 +94,10 @@ function MajorManager() {
       handleShowUpdateModal();
     }
   };
-
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getAllMajor({page: page}))
+  };
   return (
     <LayoutWeb>
       <div className="px-10">
@@ -110,7 +113,10 @@ function MajorManager() {
           data={allMajors}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddMajorModal show={showModal} handleClose={handleCloseModal} />

@@ -2,21 +2,27 @@
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
-import { setAllSubject, setStatus } from '../slices/SubjectSlice'
+import { setAllSubject, setCurrentPage, setStatus, setTotalPage } from '../slices/SubjectSlice'
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
 
-export const getAllSubject = () => async (dispatch, rejectWithValue) => {
+export const getAllSubject = (data) => async (dispatch, rejectWithValue) => {
   try {
     await axiosInstance
       .get(`${API.uri}/backoffice/subjects`, {
+        params: {
+          page: data?.page,
+          size: 10,
+        },
         headers: {
           'Content-Type': 'application/json',
         },
       })
       .then((response) => {
         if (response) {
-          dispatch(setAllSubject(response.data.data))
+          dispatch(setAllSubject(response.data.data.results))
+          dispatch(setCurrentPage(response?.data?.data.current_page))
+          dispatch(setTotalPage(response?.data?.data.total_page))
         }
       })
       .catch((error) => { 

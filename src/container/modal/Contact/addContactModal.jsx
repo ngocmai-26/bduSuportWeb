@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FormField } from "../../component/FormField";
 import { useLayoutEffect, useRef, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
-import { AddLocationThunk, getLocationThunk } from "../../../thunks/LocationThunk";
+import { getLocationThunk } from "../../../thunks/LocationThunk";
 import { AddContactThunk } from "../../../thunks/ContactThunks";
 
 function AddContactModal({ show, handleClose }) {
@@ -15,7 +15,7 @@ function AddContactModal({ show, handleClose }) {
   useLayoutEffect(() => {
     if (!hasFetched.current && allLocation.length <= 0) {
       hasFetched.current = true;
-      dispatch(getLocationThunk());
+      dispatch(getLocationThunk({page: 1}));
     }
   }, [allLocation.length, dispatch]);
 

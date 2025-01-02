@@ -8,13 +8,13 @@ import AddBusinessModal from "../../modal/Business/AddBusinessModal";
 function BusinessesManager() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
-  const { allBusiness } = useSelector((state) => state.businessesReducer);
+  const { allBusiness,total_page, current_page } = useSelector((state) => state.businessesReducer);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allBusiness.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getBusinessesThunk());
+      dispatch(getBusinessesThunk({page: 1}));
     }
   }, [allBusiness.length, dispatch]);
 
@@ -60,6 +60,11 @@ function BusinessesManager() {
     ),
   ];
 
+  const handlePageChange = (page) => {
+    if (page < 1 || page > total_page) return;
+    dispatch(getBusinessesThunk({page: page}))
+  };
+
   return (
     <LayoutWeb>
       <div className="px-10">
@@ -76,7 +81,10 @@ function BusinessesManager() {
           data={allBusiness}
           headers={headers}
           columns={columns}
-          rowsPerPage={5}
+          rowsPerPage={10}
+          current_page={current_page}
+          total_page={total_page}
+          handlePageChange={handlePageChange}
         />
       </div>
       <AddBusinessModal show={showModal} handleClose={handleCloseModal} />

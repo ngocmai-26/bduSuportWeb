@@ -2,20 +2,26 @@ import axiosInstance from "../axiosConfig"
 import { API } from "../constants/api"
 import { TOAST_ERROR, TOAST_SUCCESS } from "../constants/toast"
 import { setAlert } from "../slices/AlertSlice"
-import { setAllLocation } from "../slices/LocationSlice"
+import { setAllLocation, setCurrentPage, setTotalPage } from "../slices/LocationSlice"
 import { refreshSession } from "./AuthThunks"
 
 
-export const getLocationThunk = () => async (dispatch, rejectWithValue) => {
+export const getLocationThunk = (data) => async (dispatch, rejectWithValue) => {
     await axiosInstance
       .get(`${API.uri}/backoffice/training-location`, {
+        params: {
+          page: data?.page,
+          size: 10,
+        },
         headers: {
           'Content-Type': 'application/json',
         },
       })
       .then((response) => {
         if (response) {
-          dispatch(setAllLocation(response.data.data))
+          dispatch(setAllLocation(response.data.data.results))
+          dispatch(setCurrentPage(response?.data?.data.current_page))
+          dispatch(setTotalPage(response?.data?.data.total_page))
         }
       })
       .catch((error) => { if(error.response.data.code === "invalid_session") {

@@ -1,23 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PaginationComponent from './PaginationComponent'; // Import the Pagination component
 
-const TableComponent = ({ data, headers, columns, rowsPerPage }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+const TableComponent = ({ data, headers, columns, rowsPerPage, total_page, current_page, handlePageChange }) => {
 
-  const handlePageChange = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  };
 
-  const paginatedData = data.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  // const handlePageChange = (page) => {
+  //   if (page < 1 || page > totalPages) return;
+  //   setCurrentPage(page);
+  // };
+
 
   return (
     <div className="mx-auto p-4 bg-white shadow rounded-lg">
-      <table className="min-w-full border-collapse">
+       <table className="min-w-full border-collapse">
         <thead>
           <tr>
             {headers.map((header, index) => (
@@ -41,7 +36,7 @@ const TableComponent = ({ data, headers, columns, rowsPerPage }) => {
               </td>
             </tr>
           ) : (
-            paginatedData.map((row, rowIndex) => (
+            data.map((row, rowIndex) => (
               <tr key={rowIndex}>
                 {columns.map((column, colIndex) => (
                   <td
@@ -50,7 +45,7 @@ const TableComponent = ({ data, headers, columns, rowsPerPage }) => {
                   >
                     {/* Check if column is a function to render */}
                     {typeof column === 'function'
-                      ? column(row, (currentPage - 1) * rowsPerPage + rowIndex + 1) // Pass the index to column function
+                      ? column(row, (current_page - 1) * rowsPerPage + rowIndex ) // Pass the index to column function
                       : row[column]}
                   </td>
                 ))}
@@ -62,8 +57,8 @@ const TableComponent = ({ data, headers, columns, rowsPerPage }) => {
       {/* Only show pagination if there's data */}
       {data.length > 0 && (
         <PaginationComponent
-          currentPage={currentPage}
-          totalPages={totalPages}
+          currentPage={current_page}
+          totalPages={total_page}
           onPageChange={handlePageChange}
         />
       )}
