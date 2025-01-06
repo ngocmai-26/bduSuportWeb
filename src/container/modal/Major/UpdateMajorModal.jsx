@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { FormField } from "../../component/FormField";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { getAllCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
@@ -7,12 +6,13 @@ import { getAllAcademic } from "../../../thunks/AcademicThunks";
 import { updateMajor } from "../../../thunks/MajorThunks";
 import { getAllEvaluation } from "../../../thunks/EvaluationThunks";
 import { getLocationThunk } from "../../../thunks/LocationThunk";
+import { setAlert } from "../../../slices/AlertSlice";
+import { TOAST_ERROR } from "../../../constants/toast";
 
 function UpdateMajorModal({ show, handleClose, initialData }) {
   const dispatch = useDispatch();
   const [data, setData] = useState(initialData || {});
   const [selectedAcademic, setSelectedAcademic] = useState(null);
-
 
   const { allCollegeExamGroups, total_page } = useSelector(
     (state) => state.collegeExamGroupsReducer
@@ -23,64 +23,60 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
 
   const hasFetched = useRef(false);
 
-  // useLayoutEffect(() => {
-  //   if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-  //     dispatch(getAllCollegeExamGroup());
-  //   }
-  // }, [allCollegeExamGroups.length, hasFetched, dispatch]);
+  useLayoutEffect(() => {
+    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
+      dispatch(getAllCollegeExamGroup({ page: 1 }));
+    }
+  }, [allCollegeExamGroups.length, dispatch]);
 
   useLayoutEffect(() => {
     if (allAcademic.length <= 0 && !hasFetched.current) {
-      dispatch(getAllAcademic({page:1}));
+      dispatch(getAllAcademic({ page: 1 }));
     }
-  }, [allAcademic.length, hasFetched, dispatch]);
+  }, [allAcademic.length, dispatch]);
+
   useLayoutEffect(() => {
     if (allEvaluation.length <= 0 && !hasFetched.current) {
-      dispatch(getAllEvaluation({page:1}));
+      dispatch(getAllEvaluation({ page: 1 }));
     }
-  }, [allEvaluation.length, hasFetched, dispatch]);
+  }, [allEvaluation.length, dispatch]);
 
   useLayoutEffect(() => {
     if (allLocation.length <= 0 && !hasFetched.current) {
-      dispatch(getLocationThunk({page:1}));
+      dispatch(getLocationThunk({ page: 1 }));
     }
-  }, [allLocation.length, hasFetched, dispatch]);
+  }, [allLocation.length, dispatch]);
 
-  const [page, setPage] = useState(1); // Current page
-  const [loading, setLoading] = useState(false); // Loading state
-  const [CollegeExamGroupList, setCollegeExamGroupList] = useState([]); // Local state for accumulated subjects
-
-  const isWaiting = useRef(false); // Use ref to manage waiting state
-
-   useLayoutEffect(() => {
-     if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-       hasFetched.current = true;
-       dispatch(getAllCollegeExamGroup({page:1}));
-     }
-   }, [allCollegeExamGroups.length, dispatch]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [CollegeExamGroupList, setCollegeExamGroupList] = useState([]);
+  const isWaiting = useRef(false);
 
   useEffect(() => {
+    
     if (allCollegeExamGroups.length > 0) {
-      setCollegeExamGroupList((prevSubjects) => [...prevSubjects, ...allCollegeExamGroups]);
+      setCollegeExamGroupList((prevSubjects) => [
+        ...prevSubjects,
+        ...allCollegeExamGroups,
+      ]);
     }
   }, [allCollegeExamGroups]);
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
-    
     if (
-      scrollHeight - scrollTop > clientHeight - 10 && 
-      scrollHeight - scrollTop <= clientHeight && 
+      scrollHeight - scrollTop > clientHeight - 10 &&
+      scrollHeight - scrollTop <= clientHeight &&
       !loading &&
-      page <= total_page && 
-      !isWaiting.current 
+      page <= total_page &&
+      !isWaiting.current
     ) {
       setLoading(true);
       isWaiting.current = true;
-  
+
       dispatch(getAllCollegeExamGroup({ page: page + 1 })).then(() => {
         setLoading(false);
-        isWaiting.current = false; 
+        isWaiting.current = false;
         setPage((prevPage) => prevPage + 1);
       });
     }
@@ -101,7 +97,9 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
     }
   }, [initialData]);
 
+
   useEffect(() => {
+    
     const matchedLevel = allAcademic.find(
       (level) => level.id === +data.academic_level
     );
@@ -147,38 +145,48 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
     });
   };
 
-  useEffect(() => {
-    if (!selectedAcademic) {
-      setData((prevData) => ({
-        ...prevData,
-        college_exam_groups: [],
-        benchmark_30: 0,
-        benchmark_school_record: 0,
-        benchmark_competency_assessment_exam: 0,
-        evaluation_methods: [],
-      }));
-    } else {
-      setData((prevData) => ({
-        ...prevData,
-        college_exam_groups: initialData.college_exam_groups.map(
-          (group) => group.id
-        ),
-        benchmark_30: initialData.benchmark_30,
-        benchmark_school_record: initialData.benchmark_school_record,
-        benchmark_competency_assessment_exam:
-          initialData.benchmark_competency_assessment_exam,
-        evaluation_methods: initialData.evaluation_methods.map(
-          (method) => method.code
-        ),
-      }));
-    }
-  }, [selectedAcademic, initialData]);
-
   const handleSubmit = () => {
-    dispatch(updateMajor({ id: initialData?.id, data: data })).then(() => {
-      handleClose();
-    });
+    // So sánh `data` với `initialData` để chỉ bao gồm các trường có sự thay đổi
+    const updatedFields = Object.keys(data).reduce((fields, key) => {
+      const currentValue = data[key];
+      const initialValue = initialData[key];
+  
+      if (Array.isArray(currentValue)) {
+        // Kiểm tra sự thay đổi thực sự của mảng
+        const isArrayChanged =
+          currentValue.length !== (initialValue?.length || 0) ||
+          currentValue.some((item, index) => item !== (initialValue?.[index]));
+  
+        if (isArrayChanged) {
+          fields[key] = currentValue;
+        }
+      } else if (currentValue !== initialValue && currentValue !== undefined) {
+        // Kiểm tra giá trị không phải mảng
+        fields[key] = currentValue;
+      }
+  
+      return fields;
+    }, {});
+  
+    // Kiểm tra xem có thay đổi hay không
+    if (Object.keys(updatedFields).length === 0) {
+      dispatch(
+        setAlert({ type: TOAST_ERROR, content: "Dữ liệu không có thay đổi" })
+      );
+    } else {
+      // Nếu có thay đổi, gửi yêu cầu cập nhật
+      dispatch(updateMajor({ id: initialData?.id, data: updatedFields })).then(
+        () => {
+          handleClose();
+        }
+      );
+    }
+  
+    // Debug: Xem dữ liệu đã thay đổi
+    console.log("Dữ liệu đã thay đổi:", updatedFields);
+    console.log("Toàn bộ dữ liệu hiện tại:", data);
   };
+  
 
   return (
     <div
@@ -211,25 +219,21 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   <label className="block text-sm font-medium text-gray-700">
                     Mã ngành
                   </label>
-                  <FormField
+                  <input
                     name="code"
-                    setValue={setData}
-                    values={data}
-                    id="codeUpdate"
+                    value={data.code || ""}
                     onChange={handleChange}
-                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                     disabled
+                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Tên ngành
                   </label>
-                  <FormField
+                  <input
                     name="name"
-                    setValue={setData}
-                    values={data}
-                    id="nameUpdate"
+                    value={data.name || ""}
                     onChange={handleChange}
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   />
@@ -241,41 +245,42 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                     Chỉ tiêu
                   </label>
                   <input
-                  name="expected_target"
-                  value={data.expected_target}
-                  id="expected_targetUpdate"
-                  required="required"
-                  type="text"
-                  onChange={(e) =>
-                    setData({ ...data, expected_target: +e.target.value })
-                  }
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                />
+                    name="expected_target"
+                    value={data.expected_target}
+                    id="expected_targetUpdate"
+                    required="required"
+                    type="text"
+                    onChange={(e) =>
+                      setData({ ...data, expected_target: +e.target.value })
+                    }
+                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
                     Năm
                   </label>
                   <input
-                  name="year"
-                  value={data.year}
-                  id="yearUpdate"
-                  required="required"
-                  type="text"
-                  onChange={(e) => setData({ ...data, year: +e.target.value })}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                />
+                    name="year"
+                    value={data.year}
+                    id="yearUpdate"
+                    required="required"
+                    type="text"
+                    onChange={(e) =>
+                      setData({ ...data, year: +e.target.value })
+                    }
+                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                  />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị Logistics
+                  Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị
+                  Logistics
                 </label>
-                <FormField
+                <input
                   name="description"
-                  setValue={setData}
-                  values={data}
-                  id="descriptionUpdate"
+                  value={data.description || ""}
                   onChange={handleChange}
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
@@ -307,7 +312,10 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                       <label className="block text-sm font-medium text-gray-700">
                         Tổ hợp
                       </label>
-                      <div onScroll={handleScroll} className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto">
+                      <div
+                        onScroll={handleScroll}
+                        className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto"
+                      >
                         {CollegeExamGroupList.map((group) => (
                           <div>
                             <label key={group.id}>
@@ -362,67 +370,76 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                         Điểm chuẩn
                       </label>
                       <input
-                      name="benchmark_30"
-                      value={data.benchmark_30}
-                      id="benchmark_30Update"
-                      setValue={setData}
-                      required="required"
-                      type="text"
-                      onChange={(e) =>
-                        setData({ ...data, benchmark_30: +e.target.value })
-                      }
-                      className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                    />
+                        name="benchmark_30"
+                        value={data.benchmark_30}
+                        id="benchmark_30Update"
+                        setValue={setData}
+                        required="required"
+                        type="text"
+                        onChange={(e) =>
+                          setData({ ...data, benchmark_30: +e.target.value })
+                        }
+                        className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Điểm thi đánh giá năng lực
                       </label>
                       <input
-                      name="benchmark_competency_assessment_exam"
-                      value={data.benchmark_competency_assessment_exam}
-                      id="benchmark_competency_assessment_examUpdate"
-                      required="required"
-                      type="text"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          benchmark_competency_assessment_exam: +e.target.value,
-                        })
-                      }
-                      className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                    />
+                        name="benchmark_competency_assessment_exam"
+                        value={data.benchmark_competency_assessment_exam}
+                        id="benchmark_competency_assessment_examUpdate"
+                        required="required"
+                        type="text"
+                        onChange={(e) =>
+                          setData({
+                            ...data,
+                            benchmark_competency_assessment_exam:
+                              +e.target.value,
+                          })
+                        }
+                        className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Số tín chỉ
                       </label>
                       <input
-                name="number_of_credits"
-                id="number_of_creditsUpdate"
-                value={data.number_of_credits}
-                required="required"
-                type="text"
-                
-                onChange={(e) => setData({ ...data, number_of_credits: +e.target.value })}
-                className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-              />
+                        name="number_of_credits"
+                        id="number_of_creditsUpdate"
+                        value={data.number_of_credits}
+                        required="required"
+                        type="text"
+                        onChange={(e) =>
+                          setData({
+                            ...data,
+                            number_of_credits: +e.target.value,
+                          })
+                        }
+                        className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Điểm hồ sơ học bạ
                       </label>
                       <input
-                      name="benchmark_school_record"
-                      values={data.benchmark_school_record}
-                      id="benchmark_school_recordUpdate"
-                      setValue={setData}
-                      required="required"
-                      type="text"
-                     
-                  onChange={(e) => setData({ ...data, benchmark_school_record: +e.target.value })}
-                      className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                    />
+                        name="benchmark_school_record"
+                        values={data.benchmark_school_record}
+                        id="benchmark_school_recordUpdate"
+                        setValue={setData}
+                        required="required"
+                        type="text"
+                        onChange={(e) =>
+                          setData({
+                            ...data,
+                            benchmark_school_record: +e.target.value,
+                          })
+                        }
+                        className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                      />
                     </div>
                   </div>
                 </>
@@ -434,14 +451,16 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                     Học phí
                   </label>
                   <input
-                  name="tuition_fee"
-                  value={data.tuition_fee}
-                  id="tuition_feeUpdate"
-                  required="required"
-                  type="text"
-                  onChange={(e) => setData({ ...data, tuition_fee: +e.target.value })}
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                />
+                    name="tuition_fee"
+                    value={data.tuition_fee}
+                    id="tuition_feeUpdate"
+                    required="required"
+                    type="text"
+                    onChange={(e) =>
+                      setData({ ...data, tuition_fee: +e.target.value })
+                    }
+                    className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">

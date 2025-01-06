@@ -1,6 +1,5 @@
 import { useLayoutEffect, useState, useEffect } from "react";
 import { updateNewsThunk, getTypeNews } from "../../../thunks/NewsThunks";
-import { FormField } from "../../component/FormField";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonComponent from "../../component/ButtonComponent";
 
@@ -43,12 +42,12 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
     let formErrors = {}; // Object to store errors
 
     // Validate Title
-    if (!newsData.title.trim()) {
+    if (!newsData.title?.trim()) {
       formErrors.title = "Tiêu đề không được để trống";
     }
 
     // Validate Link
-    if (!newsData.link.trim()) {
+    if (!newsData.link?.trim()) {
       formErrors.link = "Đường dẫn không được để trống";
     }
 
@@ -72,8 +71,18 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
       return; // Do not proceed if there are validation errors
     }
 
-    // Dispatch update action if no errors
-    dispatch(updateNewsThunk(newsData)).then(() => {
+    // Only submit changed fields
+    const updatedFields = Object.keys(newsData).reduce((acc, key) => {
+      if (newsData[key] !== initialNewsData[key]) {
+        acc[key] = newsData[key];
+      }
+      return acc;
+    }, {});
+
+    // Ensure newsId is included
+    updatedFields.id = newsId;
+
+    dispatch(updateNewsThunk(updatedFields)).then(() => {
       handleClose();
       setNewsData({});
       setErrors({}); // Reset errors on successful submission
@@ -97,9 +106,7 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
           onClick={handleCloseModal}
         ></div>
         <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">
-            Cập nhật tin tức
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Cập nhật tin tức</h2>
           <button
             className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-200"
             onClick={handleCloseModal}
@@ -112,38 +119,31 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
                 <label className="block text-sm font-medium text-gray-700">
                   Hình ảnh
                 </label>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                />
+                <input type="file" onChange={handleFileChange} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Tiêu đề
                 </label>
-                <FormField
+                <input
                   name="title"
-                  values={newsData}
-                  id="titleUpdate"
-                  setValue={setNewsData}
+                  value={newsData.title || ""}
                   onChange={handleChange}
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                  errors={errors} // Pass errors to FormField
                 />
+                {errors.title && <span className="text-sm text-red-500">{errors.title}</span>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Đường dẫn
                 </label>
-                <FormField
+                <input
                   name="link"
-                  values={newsData}
-                  id="linkUpdate"
-                  setValue={setNewsData}
+                  value={newsData.link || ""}
                   onChange={handleChange}
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                  errors={errors} // Pass errors to FormField
                 />
+                {errors.link && <span className="text-sm text-red-500">{errors.link}</span>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -151,10 +151,9 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
                 </label>
                 <select
                   name="type"
-                  id="typeUpdate"
-                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
-                  value={newsData.type}
+                  value={newsData.type || ""}
                   onChange={handleChange}
+                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   required
                 >
                   <option value="">Chọn loại tin tức</option>

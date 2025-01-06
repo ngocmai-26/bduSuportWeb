@@ -2,6 +2,8 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { patchHandbook } from "../../../thunks/HandbookThunk";
+import { setAlert } from "../../../slices/AlertSlice";
+import { TOAST_ERROR } from "../../../constants/toast";
 
 function UpdateHandbookModal({ show, handleClose, item }) {
   const dispatch = useDispatch();
@@ -25,6 +27,7 @@ function UpdateHandbookModal({ show, handleClose, item }) {
     }
   }, [item]);
 
+  // Validate form fields
   const validate = () => {
     let valid = true;
     const newErrors = { name: "", link: "" };
@@ -44,12 +47,27 @@ function UpdateHandbookModal({ show, handleClose, item }) {
 
   const handleSubmit = () => {
     if (validate()) {
-      dispatch(
-        patchHandbook({
-          id: item.id,
-          data: handbook,
-        })
-      ).then(() => {
+      // Tạo đối tượng chỉ chứa các trường đã thay đổi
+      const changedFields = Object.keys(handbook).reduce((acc, key) => {
+        if (handbook[key] !== item[key]) {
+          acc[key] = handbook[key];
+        }
+        return acc;
+      }, {});
+
+      // Nếu không có trường nào thay đổi
+      if (Object.keys(changedFields).length === 0) {
+        dispatch(
+          setAlert({ type: TOAST_ERROR, content: "Dữ liệu không có thay đổi" })
+        );
+        return;
+      }
+
+      // Thêm ID vào đối tượng nếu cần thiết
+      const payload = { id: item.id, data: changedFields };
+
+      // Gửi dữ liệu cập nhật
+      dispatch(patchHandbook(payload)).then(() => {
         handleClose(); // Đóng modal sau khi cập nhật thành công
       });
     }

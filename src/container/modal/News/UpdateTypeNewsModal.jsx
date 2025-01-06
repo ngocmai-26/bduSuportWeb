@@ -3,6 +3,8 @@ import { FormField } from "../../component/FormField";
 import { useState, useEffect } from "react";
 import ButtonComponent from "../../component/ButtonComponent";
 import { updateTypeNews, getTypeNews } from "../../../thunks/NewsThunks";
+import { setAlert } from "../../../slices/AlertSlice";
+import { TOAST_ERROR } from "../../../constants/toast";
 
 function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
   const dispatch = useDispatch();
@@ -47,22 +49,31 @@ function UpdateTypeNewsModal({ show, handleClose, typeNewsId }) {
     // Return formErrors object if there are errors
     return formErrors;
   };
-
   const handleSubmit = () => {
     // Perform validation
     const formErrors = validate();
-    
+  
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors); // Set errors if validation fails
       return; // Do not proceed if there are validation errors
     }
-
-    // Dispatch update action if no errors
-    dispatch(updateTypeNews(typeNewsData)).then(() => {
-      handleClose();
-      setTypeNewsData(initialTypeNewsData); // Reset to initial state after successful update
-      setErrors({}); // Reset errors after successful submission
-    });
+  
+    // Kiểm tra sự thay đổi giữa typeNewsData và initialTypeNewsData
+    const isDataChanged = Object.keys(typeNewsData).some(
+      (key) => typeNewsData[key] !== initialTypeNewsData[key]
+    );
+  
+    if (isDataChanged) {
+      // Nếu có thay đổi, dispatch cập nhật
+      dispatch(updateTypeNews(typeNewsData)).then(() => {
+        handleClose();
+        setTypeNewsData(initialTypeNewsData); // Reset to initial state after successful update
+        setErrors({}); // Reset errors after successful submission
+      });
+    } else {
+      // Nếu không có thay đổi, dispatch cảnh báo
+      dispatch(setAlert({ type: TOAST_ERROR, content: "Dữ liệu không có thay đổi" }));
+    }
   };
 
   const handleCloseModal = () => {

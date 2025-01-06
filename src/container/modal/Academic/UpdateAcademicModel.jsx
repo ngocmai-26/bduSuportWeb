@@ -2,40 +2,36 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { updateAcademy } from "../../../thunks/AcademicThunks";
 import ButtonComponent from "../../component/ButtonComponent";
-
+import { setAlert } from "../../../slices/AlertSlice";
+import { TOAST_ERROR } from "../../../constants/toast";
 function UpdateAcademicModal({ show, handleClose, item }) {
   const dispatch = useDispatch();
 
-  const [academic, setAcademic] = useState({
-    name: "",
-    need_evaluation_method: false,
-  });
-
+  const [academic, setAcademic] = useState({}); // Chỉ lưu các trường thay đổi
   const [errors, setErrors] = useState({
     name: "",
     need_evaluation_method: "",
   });
 
   useEffect(() => {
-    if (item) {
-      // Đặt giá trị từ `item` khi modal hiển thị
-      setAcademic({
-        name: item?.name || "",
-        need_evaluation_method: item?.need_evaluation_method || false,
-      });
-    }
+    // Reset trạng thái khi item thay đổi
+    setAcademic({});
+    setErrors({});
   }, [item]);
 
   const validate = () => {
     let valid = true;
     const newErrors = { name: "", need_evaluation_method: "" };
 
-    if (!academic.name.trim()) {
+    if ("name" in academic && !academic.name.trim()) {
       newErrors.name = "Tên bậc học không được bỏ trống";
       valid = false;
     }
 
-    if (academic.need_evaluation_method === "") {
+    if (
+      "need_evaluation_method" in academic &&
+      academic.need_evaluation_method === ""
+    ) {
       newErrors.need_evaluation_method = "Vui lòng chọn cần xét tuyển hay không";
       valid = false;
     }
@@ -46,24 +42,36 @@ function UpdateAcademicModal({ show, handleClose, item }) {
 
   const handleSubmit = () => {
     if (validate()) {
-      dispatch(updateAcademy({ id: item.id, data: academic })).then(() => {
-        handleClose(); // Đóng modal sau khi cập nhật thành công
-      });
+      if (Object.keys(academic).length > 0) {
+        dispatch(updateAcademy({ id: item.id, data: academic })).then(() => {
+          handleClose(); // Đóng modal sau khi cập nhật thành công
+        });
+      } else {
+        // Không có trường nào thay đổi, chỉ đóng modal
+        dispatch(
+                      setAlert({ type: TOAST_ERROR, content: "Dữ liệu không có thay đổi" })
+                    );
+      }
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setAcademic((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleSelectChange = (e) => {
-    setAcademic({
-      ...academic,
+    setAcademic((prev) => ({
+      ...prev,
       need_evaluation_method: e.target.value === "true", // Chuyển đổi string thành boolean
-    });
+    }));
   };
 
   const handleCloseModal = () => {
-    setAcademic({
-      name: item?.name || "",
-      need_evaluation_method: item?.need_evaluation_method || false,
-    });
+    setAcademic({});
     setErrors({}); // Reset lỗi
     handleClose(); // Đóng modal
   };
@@ -93,10 +101,8 @@ function UpdateAcademicModal({ show, handleClose, item }) {
               </label>
               <input
                 name="name"
-                value={academic.name}
-                onChange={(e) =>
-                  setAcademic({ ...academic, name: e.target.value })
-                }
+                defaultValue={item?.name || ""}
+                onChange={handleInputChange}
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 required
               />
@@ -112,7 +118,7 @@ function UpdateAcademicModal({ show, handleClose, item }) {
               </label>
               <select
                 name="need_evaluation_method"
-                value={academic.need_evaluation_method.toString()}
+                value={academic.need_evaluation_method?.toString() || item?.need_evaluation_method?.toString() || ""}
                 onChange={handleSelectChange}
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 required
