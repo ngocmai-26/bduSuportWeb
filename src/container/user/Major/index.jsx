@@ -6,20 +6,24 @@ import { deleteMajor, getAllMajor } from "../../../thunks/MajorThunks";
 import AddMajorModal from "../../modal/Major/AddMajorModal";
 import UpdateMajorModal from "../../modal/Major/UpdateMajorModal";
 import DetailMajorModal from "../../modal/Major/DetailMajorModal";
+import * as XLSX from "xlsx";
 
 function MajorManager() {
   const [showModal, setShowModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
   const dispatch = useDispatch();
-  const { allMajors, total_page, current_page } = useSelector((state) => state.majorReducer);
+  const { allMajors, total_page, current_page } = useSelector(
+    (state) => state.majorReducer
+  );
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allMajors.length <= 0 && !hasFetched.current) {
       hasFetched.current = true;
-      dispatch(getAllMajor({page: 1}));
+      dispatch(getAllMajor({ page: 1 }));
     }
   }, [allMajors.length, dispatch]);
 
@@ -34,7 +38,23 @@ function MajorManager() {
     handleShowModal();
   };
 
+  const handleCheckboxChange = (row) => {
+    setSelectedRows((prevSelected) =>
+      prevSelected.includes(row)
+        ? prevSelected.filter((item) => item !== row)
+        : [...prevSelected, row]
+    );
+  };
+
+  const handleDownloadExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(selectedRows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Majors");
+    XLSX.writeFile(workbook, "Selected_Majors.xlsx");
+  };
+
   const headers = [
+    "",
     "#",
     "Mã ngành",
     "Tên ngành",
@@ -45,7 +65,14 @@ function MajorManager() {
     "",
   ];
   const columns = [
-    (row, index) => index,
+    (row) => (
+      <input
+        type="checkbox"
+        checked={selectedRows.includes(row)}
+        onChange={() => handleCheckboxChange(row)}
+      />
+    ),
+    (row, index) => index + 1,
     "code",
     "name",
     (row) =>
@@ -96,17 +123,25 @@ function MajorManager() {
   };
   const handlePageChange = (page) => {
     if (page < 1 || page > total_page) return;
-    dispatch(getAllMajor({page: page}))
+    dispatch(getAllMajor({ page: page }));
   };
+
   return (
     <LayoutWeb>
       <div className="px-10">
-        <div className="flex justify-end">
+        <div className="flex justify-between items-center mb-4">
           <button
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mb-4"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             onClick={handleCreateMajor}
           >
             Tạo ngành học
+          </button>
+          <button
+            className="bg-green-500  hover:bg-green-600 text-white px-4 py-2 rounded-md"
+            onClick={handleDownloadExcel}
+            disabled={selectedRows.length === 0}
+          >
+            Tải file Excel
           </button>
         </div>
         <TableComponent

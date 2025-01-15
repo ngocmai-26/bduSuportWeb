@@ -12,7 +12,7 @@ function HomePage() {
   const adminRoutes = [
     { path: '/account-manager', name: 'Quản lý tài khoản', icon: 'https://ecomstone.com/wp-content/uploads/2021/05/icon-ecomstone-2.png' },
     { path: '/academic-manager', name: 'Quản lý bậc học', icon: 'https://png.pngtree.com/png-vector/20230131/ourmid/pngtree-graduation-bachelor-hat-illustration-png-image_6580811.png' },
-    { path: '/subject-manager', name: 'Quản lý môn học', icon: 'https://www.clipartmax.com/png/full/87-876167_icon-book-note-dairy-book-book-book-book-b-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-cu%E1%BB%91n.png' },
+    { path: '/subject-manager', name: 'Quản lý môn học', icon: 'https://png.pngtree.com/png-clipart/20230407/original/pngtree-open-book-icon-vector-illustration-clipart-design-png-image_9031608.png' },
     { path: '/college-exam-group-manager', name: 'Quản lý nhóm môn', icon: 'https://img.pikbest.com/origin/09/24/25/99YpIkbEsTFsU.png!sw800' },
     { path: '/admission-student-manager', name: 'Quản lý tuyển sinh', icon: 'https://png.pngtree.com/recommend-works/png-clipart/20241030/ourmid/pngtree-male-student-icon-graduating-png-image_14211323.png' },
     { path: '/evaluation-manager', name: 'Quản lý phương thức tuyển sinh', icon: 'https://png.pngtree.com/png-vector/20221119/ourmid/pngtree-red-yellow-colorful-admission-open-banner-png-image_6470939.png' },
