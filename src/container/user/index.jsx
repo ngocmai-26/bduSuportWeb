@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../layout/header';
 import { loadAuthInfoFromStorage } from '../../services/AuthService';
 import { INFO_KEY_NAME } from '../../constants/api';
+import { useDispatch } from 'react-redux';
+import { refreshSession } from '../../thunks/AuthThunks';
 
 function HomePage() {
   const navigate = useNavigate();
   const user = loadAuthInfoFromStorage(INFO_KEY_NAME);
+  const dispatch = useDispatch();
 
   // Cấu hình route với icon
   const adminRoutes = [
@@ -35,6 +38,10 @@ function HomePage() {
     { path: '/contact-manager', name: 'Quản lý liên hệ', icon: 'https://cdn-icons-png.freepik.com/512/5300/5300765.png' },
     { path: '/handbook-manager', name: 'Quản lý handbook', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
   ];
+
+  useLayoutEffect(() => {
+      dispatch(refreshSession())
+    }, []);
 
   // Lựa chọn route dựa trên vai trò của user
   const routes = user?.role === 'root' ? adminRoutes : userRoutes;

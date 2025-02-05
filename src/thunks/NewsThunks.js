@@ -4,6 +4,7 @@ import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import { setAlert } from '../slices/AlertSlice'
 import { setAllNews, setCurrentPage, setCurrentPageType, setTotalPage, setTotalPageType, setTypeNews } from '../slices/NewsSlice'
 import axiosInstance from '../axiosConfig'
+import { refreshSession } from './AuthThunks'
 
 export const getNewsThunk = (data) => async (dispatch, rejectWithValue) => {
   await axiosInstance
@@ -22,7 +23,11 @@ export const getNewsThunk = (data) => async (dispatch, rejectWithValue) => {
         dispatch(setCurrentPage(response?.data?.data.current_page))
         dispatch(setTotalPage(response?.data?.data.total_page))
       }
-    })
+    }) .catch((error) => {
+          if(error.response.data.code === "invalid_session") {
+            dispatch(refreshSession())
+          }
+        })
    
 }
 
@@ -44,9 +49,11 @@ export const getTypeNews = (data) => async (dispatch, rejectWithValue) => {
         dispatch(setTotalPageType(response?.data?.data.total_page))
       }
     })
-    .catch((error) => {
-      console.log(error)
-    })
+     .catch((error) => {
+          if(error.response.data.code === "invalid_session") {
+            dispatch(refreshSession())
+          }
+        })
 }
 
 export const AddNewsThunk = (formData) => async (dispatch) => {

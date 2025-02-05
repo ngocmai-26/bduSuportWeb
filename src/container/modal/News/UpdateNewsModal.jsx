@@ -2,6 +2,7 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { updateNewsThunk, getTypeNews } from "../../../thunks/NewsThunks";
 import { useDispatch, useSelector } from "react-redux";
 import ButtonComponent from "../../component/ButtonComponent";
+import moment from "moment/moment";
 
 function UpdateNewsModal({ show, handleClose, newsId }) {
   const dispatch = useDispatch();
@@ -132,6 +133,19 @@ function UpdateNewsModal({ show, handleClose, newsId }) {
                   className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
                 {errors.title && <span className="text-sm text-red-500">{errors.title}</span>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Ngày đăng
+                </label>
+                <input
+                  name="posted_at"
+                  type="date"
+                  value={newsData.posted_at ? moment(newsData.posted_at).format("YYYY-MM-DD") : ""}
+                  onChange={handleChange}
+                  className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                />
+                {errors.posted_at && <span className="text-sm text-red-500">{errors.title}</span>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">

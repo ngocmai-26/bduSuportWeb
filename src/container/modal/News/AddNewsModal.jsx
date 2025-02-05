@@ -18,6 +18,7 @@ function AddNewsModal({ show, handleClose }) {
     title: "",
     link: "",
     image: "",
+    posted_at:"",
     type: "", // Thêm type vào formData
   });
 
@@ -43,6 +44,7 @@ function AddNewsModal({ show, handleClose }) {
     
     if (!formData.title) formErrors.title = "Tiêu đề là bắt buộc";
     if (!formData.link) formErrors.link = "Link là bắt buộc";
+    if (!formData.posted_at ) formErrors.posted_at  = "Ngày đăng là bắt buộc";
     if (!formData.type) formErrors.type = "Loại tin tức là bắt buộc";
     if (!formData.image) formErrors.image = "Hình ảnh là bắt buộc";
 
@@ -59,6 +61,7 @@ function AddNewsModal({ show, handleClose }) {
           title: "",
           link: "",
           image: "",
+          posted_at :"",
           type: "", // Đặt lại type khi reset form
         });
         setErrors({});
@@ -67,6 +70,7 @@ function AddNewsModal({ show, handleClose }) {
         }
       });
     }
+    console.log("formData", formData)
   };
 
   const handleCloseModal = () => {
@@ -120,6 +124,21 @@ function AddNewsModal({ show, handleClose }) {
                   name="link"
                   values={formData}
                   id="link"
+                  setValue={setFormData}
+                  onChange={handleChange}
+                  errors={errors} // Pass entire errors object
+                  className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Ngày đăng
+                </label>
+                <FormField
+                  name="posted_at"
+                  type={"date"}
+                  values={formData}
+                  id="posted_at"
                   setValue={setFormData}
                   onChange={handleChange}
                   errors={errors} // Pass entire errors object
