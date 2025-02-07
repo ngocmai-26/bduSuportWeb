@@ -170,30 +170,31 @@ export const refreshSession = createAsyncThunk(
   'backoffice/refresh',
   async (_, { rejectWithValue, dispatch }) => {
     try {
-      const refreshToken = loadAuthRefreshFromStorage()
+      const refreshToken = loadAuthRefreshFromStorage();
       if (!refreshToken) {
-        throw new Error('No refresh token')
+        throw new Error('No refresh token');
       }
 
       const response = await axiosInstance.post('/backoffice/refresh', {
         refresh: refreshToken,
-      })
+      });
 
-      // Kiểm tra response.status
       if (response.status === 200) {
-        setToken(response.data.data.access)
-        setValueWithKey(API_KEY_NAME, response.data.data.access)
-        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh)
-        dispatch(setLogged(true))
+        setToken(response.data.data.access);
+        setValueWithKey(API_KEY_NAME, response.data.data.access);
+        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh);
+        dispatch(setLogged(true));
       } else {
-        dispatch(logout())
+        dispatch(logout()); // Logout ngay lập tức nếu có lỗi
       }
-      return response.data
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || error.message)
+      dispatch(logout()); // Thêm logout vào catch
+      return rejectWithValue(error.response?.data || error.message);
     }
-  },
-)
+  }
+);
+
 
 export const changePassword = createAsyncThunk(
   'change_password',

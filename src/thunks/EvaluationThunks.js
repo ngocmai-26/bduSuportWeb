@@ -20,7 +20,6 @@ export const getAllEvaluation = (data) => async (dispatch, rejectWithValue) => {
     })
     .then((response) => {
       if (response) {
-        console.log("response.data.data.results", response.data.data)
         dispatch(setAllEvaluation(response.data.data.results))
         dispatch(setCurrentPage(response?.data?.data.current_page))
         dispatch(setTotalPage(response?.data?.data.total_page))

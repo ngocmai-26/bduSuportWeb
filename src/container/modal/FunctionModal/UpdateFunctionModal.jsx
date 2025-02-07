@@ -75,7 +75,6 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
 
     // If there are any changes, submit them
     if (Object.keys(changedData).length > 0) {
-      console.log("Submitting changed data:", changedData);
 
       dispatch(patchFunction({ id: initialData.id, data: changedData }))
         .then(() => {

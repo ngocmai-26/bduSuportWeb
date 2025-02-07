@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../layout/header';
 import { loadAuthInfoFromStorage } from '../../services/AuthService';
@@ -40,8 +40,10 @@ function HomePage() {
   ];
 
   useLayoutEffect(() => {
-      dispatch(refreshSession())
-    }, []);
+    console.log("sssss")
+    dispatch(refreshSession());
+  }, []);
+
 
   // Lựa chọn route dựa trên vai trò của user
   const routes = user?.role === 'root' ? adminRoutes : userRoutes;

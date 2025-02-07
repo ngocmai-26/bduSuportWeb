@@ -182,9 +182,6 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
       );
     }
   
-    // Debug: Xem dữ liệu đã thay đổi
-    console.log("Dữ liệu đã thay đổi:", updatedFields);
-    console.log("Toàn bộ dữ liệu hiện tại:", data);
   };
   
 

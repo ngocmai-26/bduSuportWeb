@@ -43,8 +43,8 @@ function HandbookManager() {
     (row, index) => index, // Display index as row number
     "name",
     "link",
-    (row) => (
-      <div className="flex items-center space-x-2">
+    (row, key) => (
+      <div className="flex items-center space-x-2" key={key}>
         <button
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           onClick={() => {

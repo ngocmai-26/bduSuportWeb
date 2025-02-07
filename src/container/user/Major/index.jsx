@@ -15,7 +15,7 @@ function MajorManager() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const dispatch = useDispatch();
-  const { allMajors, total_page, current_page } = useSelector(
+  const { allMajors, total_pageMajor, current_page } = useSelector(
     (state) => state.majorReducer
   );
 
@@ -122,27 +122,27 @@ function MajorManager() {
     }
   };
   const handlePageChange = (page) => {
-    if (page < 1 || page > total_page) return;
+    if (page < 1 || page > total_pageMajor) return;
     dispatch(getAllMajor({ page: page }));
   };
 
   return (
     <LayoutWeb>
       <div className="px-10">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-end items-center mb-4">
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             onClick={handleCreateMajor}
           >
             Tạo ngành học
           </button>
-          <button
+          {/* <button
             className="bg-green-500  hover:bg-green-600 text-white px-4 py-2 rounded-md"
             onClick={handleDownloadExcel}
             disabled={selectedRows.length === 0}
           >
             Tải file Excel
-          </button>
+          </button> */}
         </div>
         <TableComponent
           data={allMajors}
@@ -150,7 +150,7 @@ function MajorManager() {
           columns={columns}
           rowsPerPage={10}
           current_page={current_page}
-          total_page={total_page}
+          total_page={total_pageMajor}
           handlePageChange={handlePageChange}
         />
       </div>

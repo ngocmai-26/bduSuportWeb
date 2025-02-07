@@ -21,7 +21,6 @@ function CreateNotificationModel({ show, handleClose }) {
     setErrors(formErrors);
 
     if (Object.keys(formErrors).length === 0) {
-      console.log("notification", notification);
         dispatch(createNotification(notification)).then(() => {
           handleClose();
           setNotification({ content: "" });

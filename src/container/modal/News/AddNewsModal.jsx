@@ -70,7 +70,6 @@ function AddNewsModal({ show, handleClose }) {
         }
       });
     }
-    console.log("formData", formData)
   };
 
   const handleCloseModal = () => {

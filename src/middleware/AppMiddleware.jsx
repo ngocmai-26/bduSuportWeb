@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadAuthRefreshFromStorage } from "../services/AuthService";
 import { logout } from "../slices/AuthSlice";
+import { refreshSession } from "../thunks/AuthThunks";
 
 export const AppMiddleware = (props) => {
   const { actionStatus } = useSelector((state) => state.authReducer);
@@ -17,13 +18,16 @@ export const AppMiddleware = (props) => {
     }
   }, [actionStatus, nav]);
 
-  useEffect(() => {
-    // Kiểm tra nếu refresh.current là undefined hoặc false và logout chưa được gọi
-    if ((refresh.current === undefined || refresh.current === false ) && !logoutCalledRef.current) {
-      dispatch(logout());
-      logoutCalledRef.current = true;
-    }
-  }, [dispatch, refresh.current]); // Chỉ phụ thuộc vào dispatch vì refresh đã được lưu vào ref
+    useEffect(() => {
+      // Kiểm tra nếu refresh.current là undefined hoặc false và logout chưa được gọi
+      if ((refresh.current === undefined || refresh.current === false ) && !logoutCalledRef.current) {
+        dispatch(refreshSession());
+        logoutCalledRef.current = true;
+      }
+    }, [dispatch, refresh.current]); // Chỉ phụ thuộc vào dispatch vì refresh đã được lưu vào ref
 
+  // useEffect(() => {
+  //   dispatch(refreshSession());
+  // }, [dispatch]);
   return <>{props.children}</>;
 };

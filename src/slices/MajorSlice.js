@@ -7,7 +7,7 @@ const initState = {
   paginationMajors: {},
   errors: {},
   current_page: 0,
-  total_page: 0,
+  total_pageMajor: 0,
 }
 const MajorSlice = createSlice({
   name: 'major',
@@ -32,7 +32,7 @@ const MajorSlice = createSlice({
       state.current_page = payload
     },
     setTotalPage: (state, { payload }) => {
-      state.total_page = payload
+      state.total_pageMajor = payload
     },
   },
 })

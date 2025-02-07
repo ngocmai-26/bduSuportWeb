@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import {
@@ -12,6 +12,8 @@ import { getAllMajor } from "../../../thunks/MajorThunks";
 import { useDispatch, useSelector } from "react-redux";
 import DetailAdmissionStudent from "../../modal/AdmissionStudent/DetailAdmissionStudent";
 import * as XLSX from "xlsx";
+import Select, { components } from "react-select";
+import { getLocationThunk } from "../../../thunks/LocationThunk";
 
 function AdmissionStudentManager() {
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -22,33 +24,48 @@ function AdmissionStudentManager() {
     major: "",
     college_exam_group: "",
     review_status: "",
+    location: ""
   });
 
   const { allAdmission, total_page, current_page } = useSelector(
     (state) => state.allAdmissionsReducer
   );
-  const { allCollegeExamGroups } = useSelector(
-    (state) => state.collegeExamGroupsReducer
-  );
+  // const { allCollegeExamGroups } = useSelector(
+  //   (state) => state.collegeExamGroupsReducer
+  // );
   const { allEvaluation } = useSelector((state) => state.evaluationReducer);
-  const { allMajors } = useSelector((state) => state.majorReducer);
+  const { allMajors, total_pageMajor } = useSelector(
+    (state) => state.majorReducer
+  );
+  const { allLocation} = useSelector((state) => state.locationReducer);
+
   const dispatch = useDispatch();
 
+  const [isInitialFetch, setIsInitialFetch] = useState(true);
+
   useLayoutEffect(() => {
-    if (allCollegeExamGroups?.length <= 0) {
-      dispatch(getAllCollegeExamGroup({ page: 1 }));
+    if (isInitialFetch && allAdmission?.length === 0) {
+      dispatch(getAllAdmission({ page: 1 }));
+      setIsInitialFetch(false);
     }
-  }, [allCollegeExamGroups?.length, dispatch]);
+  }, [isInitialFetch, allAdmission?.length, dispatch]);
+
+  // useEffect(() => {
+  //   if (allCollegeExamGroups?.length <= 0) {
+  //     dispatch(getAllCollegeExamGroup({ page: 1 }));
+  //   }
+  // }, [allCollegeExamGroups?.length, dispatch]);
   useEffect(() => {
     if (allEvaluation?.length <= 0) {
       dispatch(getAllEvaluation({ page: 1 }));
     }
   }, [allEvaluation?.length, dispatch]);
   useEffect(() => {
-    if (allAdmission?.length <= 0) {
-      dispatch(getAllAdmission({ page: 1 }));
+    if (allLocation?.length <= 0) {
+      dispatch(getLocationThunk({ page: 1 }));
     }
-  }, [allAdmission?.length, dispatch]);
+  }, [allLocation?.length, dispatch]);
+
   useEffect(() => {
     if (allMajors?.length <= 0) {
       dispatch(getAllMajor({ page: 1 }));
@@ -71,8 +88,10 @@ function AdmissionStudentManager() {
     }));
   };
 
-  const handleSearch = () => {
-    dispatch(getAllAdmission(filters));
+  const handleSearch = async () => {
+    const res = await dispatch(getAllAdmission(filters));
+    if (res?.payload?.length === 0) {
+    }
   };
 
   const handlePageChange = (page) => {
@@ -80,12 +99,23 @@ function AdmissionStudentManager() {
     dispatch(getAllAdmission({ page: page }));
   };
 
+  const [selectAll, setSelectAll] = useState(false);
+
   const handleCheckboxChange = (row) => {
-    setSelectedRows((prevSelected) =>
-      prevSelected.includes(row)
-        ? prevSelected.filter((item) => item !== row)
-        : [...prevSelected, row]
+    setSelectedRows((prev) =>
+      prev.includes(row)
+        ? prev.filter((r) => r !== row)
+        : [...prev, row]
     );
+  };
+
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSelectedRows([]); // Bỏ chọn tất cả
+    } else {
+      setSelectedRows(allAdmission); // Chọn tất cả (data là danh sách hàng)
+    }
+    setSelectAll(!selectAll);
   };
 
   const handleDownloadExcel = () => {
@@ -93,34 +123,42 @@ function AdmissionStudentManager() {
       console.error("No rows selected");
       return;
     }
-  
+
     // Xử lý dữ liệu trước khi xuất
     const dataForExcel = selectedRows.map((row) => {
       return {
         ...row, // Lấy tất cả các trường từ đối tượng gốc
-        files: row.files && row.files.length > 0 
-          ? row.files.join(", ")  // Nối các phần tử trong mảng bằng dấu phẩy
-          : "No Files", // Trường hợp mảng rỗng
-        subject_scores: row.subject_scores && row.subject_scores.length > 0 
-          ? row.subject_scores.map(score => `${score.subject}: ${score.score}`).join(", ")
-          : "No Scores",
+        files:
+          row.files && row.files.length > 0
+            ? row.files.join(", ") // Nối các phần tử trong mảng bằng dấu phẩy
+            : "No Files", // Trường hợp mảng rỗng
+        subject_scores:
+          row.subject_scores && row.subject_scores.length > 0
+            ? row.subject_scores
+                .map((score) => `${score.subject}: ${score.score}`)
+                .join(", ")
+            : "No Scores",
         recalled_at: row.recalled_at || "N/A", // Thay thế giá trị null bằng "N/A"
       };
     });
-  
+
     // Chuyển đổi dữ liệu JSON sang Excel
     const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
     const workbook = XLSX.utils.book_new();
-  
+
     // Thêm sheet vào workbook
     XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Students");
-  
+
     // Xuất file Excel
     XLSX.writeFile(workbook, "Selected_Admissions.xlsx");
   };
-  
+
   const headers = [
-    "",
+    <input
+    type="checkbox"
+    checked={selectAll}
+    onChange={handleSelectAllChange}
+  />,
     "#",
     "Họ và Tên",
     "Email",
@@ -188,6 +226,64 @@ function AdmissionStudentManager() {
     ),
   ];
 
+  
+
+  const [majorsList, setMajorsList] = useState([]); // Local state for accumulated subjects
+  useEffect(() => {
+    if (allMajors.length > 0) {
+      setMajorsList((prevSubjects) => [...prevSubjects, ...allMajors]);
+    }
+  }, [allMajors]);
+
+  // const options = majorsList?.map((major) => ({
+  //   value: major.id,
+  //   label: major.name,
+  // }));
+  // const isWaiting = useRef(false); // Use ref to manage waiting state
+  // const [pageMajor, setPageMajor] = useState(1); // Current page
+  // const [loading, setLoading] = useState(false); // Loading state
+  // const handleScroll = (e) => {
+  //   const { scrollTop, scrollHeight, clientHeight } = e.target;
+  //   if (
+  //     scrollHeight - scrollTop > clientHeight - 10 &&
+  //     scrollHeight - scrollTop <= clientHeight + 10 &&
+  //     !loading &&
+  //     pageMajor <= total_pageMajor &&
+  //     !isWaiting.current
+  //   ) {
+  //     setLoading(true);
+  //     isWaiting.current = true;
+
+  //     dispatch(getAllMajor({ page: pageMajor + 1 })).then((e) => {
+  //       setLoading(false);
+  //       isWaiting.current = false;
+  //       setPageMajor((prevPage) => prevPage + 1);
+  //     });
+  //   }
+  // };
+
+  // const CustomMenuList = (props) => {
+  //   const menuRef = useRef(null);
+
+  //   useEffect(() => {
+  //     const menu = menuRef.current;
+  //     if (menu) {
+  //       const onScroll = (e) => handleScroll(e);
+  //       menu.addEventListener("scroll", onScroll);
+
+  //       return () => {
+  //         menu.removeEventListener("scroll", onScroll);
+  //       };
+  //     }
+  //   }, []);
+
+  //   return (
+  //     <components.MenuList {...props} innerRef={menuRef}>
+  //       {props.children}
+  //     </components.MenuList>
+  //   );
+  // };
+
   return (
     <LayoutWeb>
       <div className="px-10">
@@ -207,19 +303,39 @@ function AdmissionStudentManager() {
               ))}
             </select>
             <select
-              name="major"
-              value={filters.major}
+              name="location"
+              value={filters.location}
               onChange={handleFilterChange}
-              className="border rounded-md p-2"
+              className="border rounded-md p-2 w-[170px]"
             >
-              <option value="">Chọn chuyên ngành</option>
-              {allMajors?.map((major) => (
-                <option key={major.id} value={major.id}>
-                  {major.name}
+              <option value="">Chọn vị trí</option>
+              {allLocation?.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
                 </option>
               ))}
             </select>
-            <select
+
+            {/* <Select
+              options={options}
+              onChange={(selectedOption) =>
+                setFilters((prev) => ({ ...prev, major: selectedOption.value }))
+              }
+              menuPlacement="auto"
+              menuShouldBlockScroll={true}
+              styles={{
+                control: (provided) => ({
+                  ...provided,
+                  width: "200px", // 🔥 Cố định width
+                }),
+                menu: (provided) => ({
+                  ...provided,
+                  width: "200px", // 🔥 Đảm bảo menu dropdown cũng có width cố định
+                }),
+              }}
+              components={{ MenuList: CustomMenuList }} // Dùng Custom MenuList
+            /> */}
+            {/* <select
               name="college_exam_group"
               value={filters.college_exam_group}
               onChange={handleFilterChange}
@@ -231,7 +347,7 @@ function AdmissionStudentManager() {
                   {group.name}
                 </option>
               ))}
-            </select>
+            </select> */}
             <select
               name="review_status"
               value={filters.review_status}
@@ -244,11 +360,11 @@ function AdmissionStudentManager() {
               <option value="approved">Chấp nhận</option>
             </select>
             <button
-            onClick={handleSearch}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
-          >
-            Tìm kiếm
-          </button>
+              onClick={handleSearch}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Tìm kiếm
+            </button>
           </div>
           <button
             onClick={handleDownloadExcel}

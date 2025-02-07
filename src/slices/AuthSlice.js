@@ -59,6 +59,7 @@ const AuthSlice = createSlice({
       }
     },
     logout: (state) => {
+      console.log("Tới đây luôn nè")
       removeAuthRefreshFromStorage()
       removeTokenFromStorage()
       removeInfo()
