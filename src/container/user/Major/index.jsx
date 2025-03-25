@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LayoutWeb from "../layoutWeb";
 import TableComponent from "../../component/TableComponent";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,8 @@ import AddMajorModal from "../../modal/Major/AddMajorModal";
 import UpdateMajorModal from "../../modal/Major/UpdateMajorModal";
 import DetailMajorModal from "../../modal/Major/DetailMajorModal";
 import * as XLSX from "xlsx";
+import { getLocationThunk } from "../../../thunks/LocationThunk";
+import { getAllAcademic } from "../../../thunks/AcademicThunks";
 
 function MajorManager() {
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +21,15 @@ function MajorManager() {
     (state) => state.majorReducer
   );
 
+  const [filters, setFilters] = useState({
+    evaluation_method: "",
+    training_location: "",
+    year: "",
+  });
+
+  const { allLocation } = useSelector((state) => state.locationReducer);
+  const { allAcademic } = useSelector((state) => state.academicsReducer);
+
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
     if (allMajors.length <= 0 && !hasFetched.current) {
@@ -26,6 +37,13 @@ function MajorManager() {
       dispatch(getAllMajor({ page: 1 }));
     }
   }, [allMajors.length, dispatch]);
+
+  useLayoutEffect(() => {
+    if (allAcademic.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
+      dispatch(getAllAcademic({ page: 1 }));
+    }
+  }, [allAcademic.length, dispatch]);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -38,19 +56,25 @@ function MajorManager() {
     handleShowModal();
   };
 
-  const handleCheckboxChange = (row) => {
-    setSelectedRows((prevSelected) =>
-      prevSelected.includes(row)
-        ? prevSelected.filter((item) => item !== row)
-        : [...prevSelected, row]
-    );
+  useEffect(() => {
+    if (allLocation?.length <= 0) {
+      dispatch(getLocationThunk({ page: 1 }));
+    }
+  }, [allLocation?.length, dispatch]);
+
+  //filter
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
   };
 
-  const handleDownloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(selectedRows);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Majors");
-    XLSX.writeFile(workbook, "Selected_Majors.xlsx");
+  const handleSearch = async () => {
+    const res = await dispatch(getAllMajor(filters));
+    if (res?.payload?.length === 0) {
+    }
   };
 
   const headers = [
@@ -65,13 +89,7 @@ function MajorManager() {
     "",
   ];
   const columns = [
-    (row) => (
-      <input
-        type="checkbox"
-        checked={selectedRows.includes(row)}
-        onChange={() => handleCheckboxChange(row)}
-      />
-    ),
+    (row) => <input type="checkbox" checked={selectedRows.includes(row)} />,
     (row, index) => index + 1,
     "code",
     "name",
@@ -97,7 +115,7 @@ function MajorManager() {
           className="text-yellow-500 border border-yellow-500 rounded px-2 py-1 hover:bg-yellow-100"
           onClick={() => handleView(row, "edit")}
         >
-          sửa
+          Sửa
         </button>
         <button
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
@@ -129,7 +147,53 @@ function MajorManager() {
   return (
     <LayoutWeb>
       <div className="px-10">
-        <div className="flex justify-end items-center mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex space-x-4">
+            <select
+              name="training_location"
+              value={filters.training_location}
+              onChange={handleFilterChange}
+              className="border rounded-md p-2 w-[170px]"
+            >
+              <option value="">Chọn vị trí</option>
+              {allLocation?.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              name="year"
+              value={filters.year}
+              onChange={handleFilterChange}
+              className="border rounded-md p-2 w-[170px]"
+            >
+              <option value="">Năm học</option>
+              <option key={2024} value={2024}>
+                2024
+              </option>
+            </select>
+            <select
+              name="academic_level"
+              value={filters.academic_level}
+              onChange={handleFilterChange}
+              className="border rounded-md p-2 w-[170px]"
+            >
+              <option value="">Bậc học</option>
+              {allAcademic?.map((academic) => (
+                <option key={academic.id} value={academic.id}>
+                  {academic.name}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleSearch}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
+            >
+              Tìm kiếm
+            </button>
+          </div>
           <button
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md"
             onClick={handleCreateMajor}

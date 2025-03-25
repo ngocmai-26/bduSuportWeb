@@ -53,7 +53,7 @@ function Navbar() {
 
   return (
     <div className="w-1/6">
-      <aside className="w-1/6 bg-gray-900 text-white min-h-screen py-6 fixed top-0 left-0 h-screen pt-24 overflow-y-auto">
+      <aside className="w-1/6 bg-[#901317] text-white min-h-screen py-6 fixed top-0 left-0 h-screen pt-24 overflow-y-auto text-lg">
         <nav>
           <ul>
             {routes.map((route) => (
@@ -65,8 +65,8 @@ function Navbar() {
                       e.preventDefault(); 
                     }
                   }}
-                  className={`block px-4 rounded hover:bg-gray-700 border-b border-gray-500 py-4 ${
-                    currentPath === route.path ? "font-bold bg-gray-700" : ""
+                  className={`block px-4 rounded hover:bg-[#bb191e] border-b border-gray-500 py-4 ${
+                    currentPath === route.path ? "font-bold bg-[#bb191e]" : ""
                   }`}
                 >
                   {route.name}

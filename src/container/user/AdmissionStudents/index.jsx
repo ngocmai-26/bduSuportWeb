@@ -24,7 +24,8 @@ function AdmissionStudentManager() {
     major: "",
     college_exam_group: "",
     review_status: "",
-    location: ""
+    location: "",
+    year: "",
   });
 
   const { allAdmission, total_page, current_page } = useSelector(
@@ -34,7 +35,7 @@ function AdmissionStudentManager() {
   //   (state) => state.collegeExamGroupsReducer
   // );
   const { allEvaluation } = useSelector((state) => state.evaluationReducer);
-  const { allMajors, total_pageMajor } = useSelector(
+  const { allMajors } = useSelector(
     (state) => state.majorReducer
   );
   const { allLocation} = useSelector((state) => state.locationReducer);
@@ -314,6 +315,17 @@ function AdmissionStudentManager() {
                   {location.name}
                 </option>
               ))}
+            </select>
+            <select
+              name="year"
+              value={filters.year}
+              onChange={handleFilterChange}
+              className="border rounded-md p-2 w-[170px]"
+            >
+              <option value="">Năm học</option>
+              <option key={2024} value={2024}>
+                2024
+              </option>
             </select>
 
             {/* <Select

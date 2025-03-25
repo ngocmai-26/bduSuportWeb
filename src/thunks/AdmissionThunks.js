@@ -16,6 +16,7 @@ export const getAllAdmission = (data) => async (dispatch) => {
           review_status: data?.review_status,
           page: data?.page,
           size: 10,
+          year: data?.year
         },
         headers: {
           'Content-Type': 'application/json',

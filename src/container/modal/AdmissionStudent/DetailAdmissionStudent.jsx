@@ -159,79 +159,80 @@ const DetailAdmissionStudent = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-3/4 md:w-1/2 lg:w-2/3 p-6 relative overflow-hidden">
-        <button
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 transition"
-          onClick={onClose}
-        >
-          <span className="text-2xl leading-none">&times;</span>
-        </button>
-        <h2 className="text-2xl font-semibold mb-4 text-center">
-          Chi Tiết Thông Tin Sinh Viên
-        </h2>
-        {singleAdmission ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700">Thông tin cá nhân</h3>
-                <p><strong className="text-gray-600">ID:</strong> {singleAdmission?.student_info?.id}</p>
-                <p><strong className="text-gray-600">Họ Tên:</strong> {singleAdmission?.student_info?.fullname}</p>
-                <p><strong className="text-gray-600">Giới Tính:</strong> {singleAdmission?.student_info?.gender ? "Nam" : "Nữ"}</p>
-                <p><strong className="text-gray-600">Ngày Sinh:</strong> {singleAdmission?.student_info?.date_of_birth}</p>
-                <p><strong className="text-gray-600">CMND/CCCD:</strong> {singleAdmission?.student_info?.citizen_id}</p>
-                <p><strong className="text-gray-600">Email:</strong> {singleAdmission?.student_info?.email}</p>
-                <p><strong className="text-gray-600">Số Điện Thoại:</strong> {singleAdmission?.student_info?.phone}</p>
-                <p><strong className="text-gray-600">Địa Chỉ:</strong> {singleAdmission?.student_info?.address}</p>
-                <p><strong className="text-gray-600">Thành Phố:</strong> {singleAdmission?.student_info?.city}</p>
-                <p><strong className="text-gray-600">Trường THPT:</strong> {singleAdmission?.student_info?.high_school}</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-700">Thông tin học tập</h3>
-                <p><strong className="text-gray-600">Ngành Học:</strong> {singleAdmission?.major_name}</p>
-                <p><strong className="text-gray-600">Trình Độ Học Vấn:</strong> {singleAdmission?.academic_level_name}</p>
-                <p><strong className="text-gray-600">Khối Thi:</strong> {singleAdmission?.college_exam_group_name} {singleAdmission?.college_exam_group_code}</p>
-                <p><strong className="text-gray-600">Phương Thức Xét Tuyển:</strong> {singleAdmission?.evaluation_method_name || "Không có"}</p>
-                <p><strong className="text-gray-600">Điểm Tổng Kết:</strong> {singleAdmission?.final_score === -1 ? "Không có" : singleAdmission?.final_score}</p>
-                <p><strong className="text-gray-600">Kết Quả:</strong> {singleAdmission?.is_passed ? "Đậu" : "Rớt"}</p>
-              </div>
-            </div>
-            {renderSubjectScores()}
-            {renderFiles()}
+  <div className="bg-white rounded-lg shadow-2xl w-11/12 md:w-3/4 lg:w-2/3 p-6 relative max-h-screen overflow-y-auto transform transition-all duration-300">
+    <button
+      className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 transition"
+      onClick={onClose}
+    >
+      <span className="text-2xl leading-none">&times;</span>
+    </button>
+    <h2 className="text-2xl font-semibold mb-4 text-center border-b pb-2">
+      Chi Tiết Thông Tin Sinh Viên
+    </h2>
+    {singleAdmission ? (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Thông tin cá nhân</h3>
+            <p><strong className="text-gray-600">ID:</strong> {singleAdmission?.student_info?.id}</p>
+            <p><strong className="text-gray-600">Họ Tên:</strong> {singleAdmission?.student_info?.fullname}</p>
+            <p><strong className="text-gray-600">Giới Tính:</strong> {singleAdmission?.student_info?.gender ? "Nam" : "Nữ"}</p>
+            <p><strong className="text-gray-600">Ngày Sinh:</strong> {singleAdmission?.student_info?.date_of_birth}</p>
+            <p><strong className="text-gray-600">CMND/CCCD:</strong> {singleAdmission?.student_info?.citizen_id}</p>
+            <p><strong className="text-gray-600">Email:</strong> {singleAdmission?.student_info?.email}</p>
+            <p><strong className="text-gray-600">Số Điện Thoại:</strong> {singleAdmission?.student_info?.phone}</p>
+            <p><strong className="text-gray-600">Địa Chỉ:</strong> {singleAdmission?.student_info?.address}</p>
+            <p><strong className="text-gray-600">Thành Phố:</strong> {singleAdmission?.student_info?.city}</p>
+            <p><strong className="text-gray-600">Trường THPT:</strong> {singleAdmission?.student_info?.high_school}</p>
           </div>
-        ) : (
-          <p className="text-center text-gray-500">Không có thông tin sinh viên.</p>
-        )}
-      </div>
-
-      {isImageOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-60">
-          <button
-            className="absolute top-4 right-4 text-white text-2xl"
-            onClick={closeImageModal}
-          >
-            &times;
-          </button>
-          <button
-            className="absolute left-4 text-white text-3xl"
-            onClick={showPreviousImage}
-          >
-            &#8592;
-          </button>
-          <img
-            src={singleAdmission.files[currentImageIndex]}
-            alt={`hình ảnh ${currentImageIndex + 1}`}
-            className="max-w-full max-h-full object-contain"
-          />
-          <button
-            className="absolute right-4 text-white text-3xl"
-            onClick={showNextImage}
-          >
-            &#8594;
-          </button>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">Thông tin học tập</h3>
+            <p><strong className="text-gray-600">Ngành Học:</strong> {singleAdmission?.major_name}</p>
+            <p><strong className="text-gray-600">Trình Độ Học Vấn:</strong> {singleAdmission?.academic_level_name}</p>
+            <p><strong className="text-gray-600">Khối Thi:</strong> {singleAdmission?.college_exam_group_name} {singleAdmission?.college_exam_group_code}</p>
+            <p><strong className="text-gray-600">Phương Thức Xét Tuyển:</strong> {singleAdmission?.evaluation_method_name || "Không có"}</p>
+            <p><strong className="text-gray-600">Điểm Tổng Kết:</strong> {singleAdmission?.final_score === -1 ? "Không có" : singleAdmission?.final_score}</p>
+            <p><strong className="text-gray-600">Kết Quả:</strong> {singleAdmission?.is_passed ? "Đậu" : "Rớt"}</p>
+          </div>
         </div>
-      )}
+        {renderSubjectScores()}
+        {renderFiles()}
+      </div>
+    ) : (
+      <p className="text-center text-gray-500">Không có thông tin sinh viên.</p>
+    )}
+  </div>
+
+  {isImageOpen && (
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-60">
+      <button
+        className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 transition"
+        onClick={closeImageModal}
+      >
+        &times;
+      </button>
+      <button
+        className="absolute left-4 text-white text-3xl hover:text-gray-300 transition"
+        onClick={showPreviousImage}
+      >
+        &#8592;
+      </button>
+      <img
+        src={singleAdmission.files[currentImageIndex]}
+        alt={`hình ảnh ${currentImageIndex + 1}`}
+        className="max-w-full max-h-full object-contain rounded-lg shadow-md"
+      />
+      <button
+        className="absolute right-4 text-white text-3xl hover:text-gray-300 transition"
+        onClick={showNextImage}
+      >
+        &#8594;
+      </button>
     </div>
-  );
+  )}
+</div>
+
+  )
 };
 
 export default DetailAdmissionStudent;

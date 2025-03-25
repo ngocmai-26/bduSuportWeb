@@ -13,6 +13,9 @@ export const getAllMajor = (data) => async (dispatch, rejectWithValue) => {
       params: {
         page: data?.page,
         size: 10,
+        year: data?.year,
+        academic_level: data?.academic_level,
+        training_location: data?.training_location
       },
       headers: {
         'Content-Type': 'application/json',
