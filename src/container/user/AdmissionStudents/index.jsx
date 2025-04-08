@@ -120,13 +120,13 @@ function AdmissionStudentManager() {
   };
 
   const handleDownloadExcel = () => {
-    if (!selectedRows || selectedRows.length === 0) {
+    if (!selectedRows || selectedRows?.length === 0) {
       console.error("No rows selected");
       return;
     }
 
     // Xử lý dữ liệu trước khi xuất
-    const dataForExcel = selectedRows.map((row) => {
+    const dataForExcel = selectedRows?.map((row) => {
       return {
         ...row, // Lấy tất cả các trường từ đối tượng gốc
         files:

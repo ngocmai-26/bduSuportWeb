@@ -13,7 +13,8 @@ function HomePage() {
 
   // Cấu hình route với icon
   const adminRoutes = [
-    { path: '/account-manager', name: 'Quản lý tài khoản', icon: 'https://ecomstone.com/wp-content/uploads/2021/05/icon-ecomstone-2.png' },
+    { path: '/account-manager', name: 'Quản lý tài khoản', icon: 'https://cdn-icons-png.freepik.com/512/12105/12105203.png' },
+    { path: '/information-student-manager', name: 'Quản lý thông tin học sinh', icon: 'https://png.pngtree.com/png-clipart/20240629/original/pngtree-line-icon-with-people-in-a-line-vector-png-image_15439451.png' },
     { path: '/academic-manager', name: 'Quản lý bậc học', icon: 'https://png.pngtree.com/png-vector/20230131/ourmid/pngtree-graduation-bachelor-hat-illustration-png-image_6580811.png' },
     { path: '/subject-manager', name: 'Quản lý môn học', icon: 'https://png.pngtree.com/png-clipart/20230407/original/pngtree-open-book-icon-vector-illustration-clipart-design-png-image_9031608.png' },
     { path: '/college-exam-group-manager', name: 'Quản lý nhóm môn', icon: 'https://img.pikbest.com/origin/09/24/25/99YpIkbEsTFsU.png!sw800' },

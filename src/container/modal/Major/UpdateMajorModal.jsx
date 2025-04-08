@@ -183,6 +183,17 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
     }
   
   };
+
+  const handleChangeCheckbox = (e) => {
+    const { name, value, type, checked } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]:
+        type === "checkbox" ? checked : value,
+    }));
+
+  };
+
   
 
   return (
@@ -282,6 +293,27 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
+              <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Có mở xét tuyển ngành này không?
+              </label>
+              <div className="flex items-center mt-4">
+                <input
+                  id="open_to_recruitment"
+                  name="open_to_recruitment"
+                  type="checkbox"
+                  checked={data.open_to_recruitment}
+                  onChange={handleChangeCheckbox}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="open_to_recruitment"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Hiện thị chức năng
+                </label>
+              </div>
+            </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Trình độ học vấn

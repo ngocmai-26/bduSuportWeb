@@ -12,16 +12,17 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
   // Initialize state with the provided initial data or default values
   const [data, setData] = useState(initialData || {});
   const [changedData, setChangedData] = useState({});
-
+  console.log("initialData", initialData);
   useEffect(() => {
     if (initialData) {
       // Set initial data when modal is shown
       setData({
-        name: initialData?.name || "",
-        icon: initialData?.icon || null,
-        is_show: initialData?.is_show || true,
-        order: initialData?.order || 0,
-        direct_to: initialData?.direct_to || "",
+        name: initialData?.name,
+        icon: initialData?.icon,
+        is_show: initialData?.is_show,
+        disable_miniapp_user_hidden: initialData?.disable_miniapp_user_hidden,
+        order: initialData?.order,
+        direct_to: initialData?.direct_to,
       });
       setChangedData({}); // Reset changedData when initialData changes
     }
@@ -75,7 +76,6 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
 
     // If there are any changes, submit them
     if (Object.keys(changedData).length > 0) {
-
       dispatch(patchFunction({ id: initialData.id, data: changedData }))
         .then(() => {
           handleClose(); // Close the modal on success
@@ -99,7 +99,6 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
   // Close modal and reset form data
   const handleCloseModal = () => {
     handleClose();
-    setData({});
     setChangedData({});
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset file input
@@ -135,7 +134,7 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
               <input
                 type="text"
                 name="name"
-                value={data.name || ""}
+                value={data.name}
                 onChange={handleChange}
                 required
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
@@ -153,12 +152,15 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
               />
             </div>
             <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Có hiện thị chức năng không?
+              </label>
               <div className="flex items-center mt-4">
                 <input
                   id="is_showPatch"
                   name="is_show"
                   type="checkbox"
-                  checked={data.is_show || false}
+                  checked={data.is_show}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
@@ -172,12 +174,33 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
+                Người dùng có được bật tắt chức năng này không
+              </label>
+              <div className="flex items-center mt-4">
+                <input
+                  id="is_showPatchP"
+                  name="disable_miniapp_user_hidden"
+                  type="checkbox"
+                  checked={data.disable_miniapp_user_hidden}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="disable_miniapp_user_hidden"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Không Cho phép
+                </label>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
                 Thứ tự ưu tiên
               </label>
               <input
                 type="number"
                 name="order"
-                value={data.order || ""}
+                value={data.order}
                 onChange={handleChange}
                 required
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
@@ -190,7 +213,7 @@ const UpdateFunctionModal = ({ show, handleClose, initialData }) => {
               <input
                 type="text"
                 name="direct_to"
-                value={data.direct_to ||""}
+                value={data.direct_to}
                 onChange={handleChange}
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
               />

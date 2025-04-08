@@ -15,6 +15,7 @@ import LocationSlice from '../slices/LocationSlice'
 import FunctionSlice from '../slices/FunctionSlice'
 import ContactSlice from '../slices/ContactSlice'
 import HandbookSlice from '../slices/HandbookSlice'
+import InfoStudentsSlice from '../slices/InfoStudentSlice'
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     functionReducer: FunctionSlice,
     contactReducer: ContactSlice,
     handbookReducer: HandbookSlice,
+    infoStudentsReducer: InfoStudentsSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

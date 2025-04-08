@@ -24,6 +24,7 @@ function Navbar() {
   const adminRoutes = [
     { path: "/", name: "Trang chủ" },
     { path: "/account-manager", name: "Quản lý tài khoản" },
+    { path: "/information-student-manager", name: "Quản lý thông tin học sinh" },
     { path: "/academic-manager", name: "Quản lý bậc học" },
     { path: "/subject-manager", name: "Quản lý môn học" },
     { path: "/college-exam-group-manager", name: "Quản lý nhóm môn" },

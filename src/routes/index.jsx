@@ -21,6 +21,7 @@ import FunctionManager from "../container/user/Function";
 import ContactManager from "../container/user/Contact";
 import HandbookManager from "../container/user/Handbook";
 import AuditManager from "../container/auth/audit";
+import InfoStudentManager from "../container/user/infoStudent";
 
 export const GeneralRoute = () => {
   return (
@@ -60,6 +61,7 @@ export const LoggedRoute = () => {
         <Route path="/contact-manager" element={<ContactManager />} />
         <Route path="/handbook-manager" element={<HandbookManager />} />
         <Route path="/audit-manager" element={<AuditManager />} />
+        <Route path="/information-student-manager" element={<InfoStudentManager />} />
       </Routes>
     </AppMiddleware>
   );

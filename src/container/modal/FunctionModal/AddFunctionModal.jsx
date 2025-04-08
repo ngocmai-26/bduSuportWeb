@@ -11,6 +11,7 @@ const AddFunctionModal = ({ show, handleClose }) => {
     name: "",
     icon: null,
     is_show: true,
+    disable_miniapp_user_hidden: true,
     order: 0,
     direct_to: "",
   });
@@ -106,7 +107,7 @@ const AddFunctionModal = ({ show, handleClose }) => {
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
-                Địa điểm
+                Có hiện thị chức năng không?
               </label>
 
             <div className="flex items-center mt-4">
@@ -125,6 +126,30 @@ const AddFunctionModal = ({ show, handleClose }) => {
                 Hiện thị chức năng
               </label>
             </div>
+          
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+              Người dùng có được bật tắt chức năng này không
+              </label>
+
+            <div className="flex items-center mt-4">
+              <input
+                id="disable_miniapp_user_hidden"
+                name="disable_miniapp_user_hidden"
+                type="checkbox"
+                checked={data.disable_miniapp_user_hidden}
+                onChange={handleChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label
+                htmlFor="disable_miniapp_user_hidden"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                Không Cho phép
+              </label>
+            </div>
+       
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">

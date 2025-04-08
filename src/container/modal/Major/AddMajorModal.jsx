@@ -26,6 +26,7 @@ function AddMajorModal({ show, handleClose }) {
     benchmark_school_record: 0,
     evaluation_methods: [],
     number_of_credits: 0,
+    open_to_recruitment: false,
   });
 
   const { allCollegeExamGroups, total_page } = useSelector(
@@ -39,66 +40,77 @@ function AddMajorModal({ show, handleClose }) {
   const hasFetched = useRef(false);
 
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0&& !hasFetched.current) {
-      dispatch(getAllAcademic({page:1}));
+    if (allAcademic.length <= 0 && !hasFetched.current) {
+      dispatch(getAllAcademic({ page: 1 }));
     }
   }, [allAcademic.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
-    if (allEvaluation.length <= 0&& !hasFetched.current) {
-      dispatch(getAllEvaluation({page:1}));
+    if (allEvaluation.length <= 0 && !hasFetched.current) {
+      dispatch(getAllEvaluation({ page: 1 }));
     }
   }, [allEvaluation.length, hasFetched, dispatch]);
   useLayoutEffect(() => {
     if (allLocation.length <= 0 && !hasFetched.current) {
-      dispatch(getLocationThunk({page:1}));
+      dispatch(getLocationThunk({ page: 1 }));
     }
   }, [allLocation.length, hasFetched, dispatch]);
 
   const [page, setPage] = useState(1); // Current page
-    const [loading, setLoading] = useState(false); // Loading state
-    const [CollegeExamGroupList, setCollegeExamGroupList] = useState([]); // Local state for accumulated subjects
-  
-    const isWaiting = useRef(false); // Use ref to manage waiting state
-  
-     useLayoutEffect(() => {
-       if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-         hasFetched.current = true;
-         dispatch(getAllCollegeExamGroup({page:1}));
-       }
-     }, [allCollegeExamGroups.length, dispatch]);
-  
-    useEffect(() => {
-      if (allCollegeExamGroups.length > 0) {
-        setCollegeExamGroupList((prevSubjects) => [...prevSubjects, ...allCollegeExamGroups]);
-      }
-    }, [allCollegeExamGroups]);
-  
-    const handleScroll = (e) => {
-      const { scrollTop, scrollHeight, clientHeight } = e.target;
-      
-      if (
-        scrollHeight - scrollTop > clientHeight - 10 &&
-        scrollHeight - scrollTop <= clientHeight &&
-        !loading && 
-        page <= total_page && 
-        !isWaiting.current 
-      ) {
-        setLoading(true);
-        isWaiting.current = true;
-    
-        dispatch(getAllCollegeExamGroup({ page: page + 1 })).then(() => {
-          setLoading(false);
-          isWaiting.current = false; 
-          setPage((prevPage) => prevPage + 1);
-        });
-      }
-    };
+  const [loading, setLoading] = useState(false); // Loading state
+  const [CollegeExamGroupList, setCollegeExamGroupList] = useState([]); // Local state for accumulated subjects
+
+  const isWaiting = useRef(false); // Use ref to manage waiting state
+
+  useLayoutEffect(() => {
+    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
+      hasFetched.current = true;
+      dispatch(getAllCollegeExamGroup({ page: 1 }));
+    }
+  }, [allCollegeExamGroups.length, dispatch]);
+
+  useEffect(() => {
+    if (allCollegeExamGroups.length > 0) {
+      setCollegeExamGroupList((prevSubjects) => [
+        ...prevSubjects,
+        ...allCollegeExamGroups,
+      ]);
+    }
+  }, [allCollegeExamGroups]);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+    if (
+      scrollHeight - scrollTop > clientHeight - 10 &&
+      scrollHeight - scrollTop <= clientHeight &&
+      !loading &&
+      page <= total_page &&
+      !isWaiting.current
+    ) {
+      setLoading(true);
+      isWaiting.current = true;
+
+      dispatch(getAllCollegeExamGroup({ page: page + 1 })).then(() => {
+        setLoading(false);
+        isWaiting.current = false;
+        setPage((prevPage) => prevPage + 1);
+      });
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  const handleChangeCheckbox = (e) => {
+    const { name, value, type, checked } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -147,7 +159,6 @@ function AddMajorModal({ show, handleClose }) {
 
   const handleSubmit = () => {
     dispatch(createMajor(data)).then((res) => {
-
       handleClose();
       setData({
         code: "",
@@ -164,7 +175,8 @@ function AddMajorModal({ show, handleClose }) {
         benchmark_school_record: 0,
         evaluation_methods: [],
         number_of_credits: 0,
-      })
+        open_to_recruitment: false,
+      });
     });
   };
 
@@ -185,9 +197,9 @@ function AddMajorModal({ show, handleClose }) {
       benchmark_school_record: 0,
       evaluation_methods: [],
       number_of_credits: 0,
-    })
+      open_to_recruitment: false,
+    });
   };
-
 
   return (
     <div
@@ -275,7 +287,8 @@ function AddMajorModal({ show, handleClose }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị Logistics
+                Chuyên ngành (nếu có) vd: Quản trị doanh nghiệp /n Quản trị
+                Logistics
               </label>
               <FormField
                 name="description"
@@ -310,6 +323,28 @@ function AddMajorModal({ show, handleClose }) {
               </select>
             </div>
 
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Có mở xét tuyển ngành này không?
+              </label>
+              <div className="flex items-center mt-4">
+                <input
+                  id="open_to_recruitment"
+                  name="open_to_recruitment"
+                  type="checkbox"
+                  checked={data.open_to_recruitment}
+                  onChange={handleChangeCheckbox}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="open_to_recruitment"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  Hiện thị chức năng
+                </label>
+              </div>
+            </div>
+
             {data.academic_level && selectedAcademic ? (
               <div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -317,7 +352,10 @@ function AddMajorModal({ show, handleClose }) {
                     <label className="block text-sm font-medium text-gray-700">
                       Tổ hợp
                     </label>
-                    <div onScroll={handleScroll} className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-[158px] overflow-y-auto">
+                    <div
+                      onScroll={handleScroll}
+                      className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-[158px] overflow-y-auto"
+                    >
                       {CollegeExamGroupList.map((group) => (
                         <div key={group.id}>
                           <label>
@@ -411,11 +449,14 @@ function AddMajorModal({ show, handleClose }) {
                       name="benchmark_school_record"
                       values={data.benchmark_school_record}
                       id="benchmark_school_record"
-                      setValue={setData}
                       required="required"
                       type="text"
-                     
-                  onChange={(e) => setData({ ...data, benchmark_school_record: +e.target.value })}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          benchmark_school_record: +e.target.value,
+                        })
+                      }
                       className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                     />
                   </div>
@@ -434,8 +475,9 @@ function AddMajorModal({ show, handleClose }) {
                 value={data.number_of_credits}
                 required="required"
                 type="text"
-                
-                onChange={(e) => setData({ ...data, number_of_credits: +e.target.value })}
+                onChange={(e) =>
+                  setData({ ...data, number_of_credits: +e.target.value })
+                }
                 className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
               />
             </div>
@@ -450,7 +492,9 @@ function AddMajorModal({ show, handleClose }) {
                   id="tuition_fee"
                   required="required"
                   type="text"
-                  onChange={(e) => setData({ ...data, tuition_fee: +e.target.value })}
+                  onChange={(e) =>
+                    setData({ ...data, tuition_fee: +e.target.value })
+                  }
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                 />
               </div>
@@ -463,7 +507,9 @@ function AddMajorModal({ show, handleClose }) {
                   id="training_location"
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm"
                   value={data.training_location}
-                  onChange={(e) => setData({ ...data, training_location: +e.target.value })}
+                  onChange={(e) =>
+                    setData({ ...data, training_location: +e.target.value })
+                  }
                   required
                 >
                   <option value="">Chọn địa điểm đào tạo</option>
@@ -472,7 +518,6 @@ function AddMajorModal({ show, handleClose }) {
                       {item.name}
                     </option>
                   ))}
-              
                 </select>
               </div>
             </div>
