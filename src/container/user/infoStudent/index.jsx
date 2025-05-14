@@ -6,6 +6,7 @@ import { getFeedbackThunk } from "../../../thunks/FeedBackThunk";
 import moment from "moment";
 import { getInfoStudent } from "../../../thunks/InfoStudentThunk";
 import * as XLSX from "xlsx";
+import DetailInfoStudentModal from "../../modal/InformationStudent/detailInfoStudent";
 
 function InfoStudentManager() {
   const dispatch = useDispatch();
@@ -13,8 +14,12 @@ function InfoStudentManager() {
     (state) => state.infoStudentsReducer
   );
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const [selectAll, setSelectAll] = useState(false);
+  const handleShowDetailModal = () => setShowDetailModal(true);
+  const handleCloseDetailModal = () => setShowDetailModal(false);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
@@ -78,6 +83,11 @@ function InfoStudentManager() {
     XLSX.writeFile(workbook, "Selected_Admissions.xlsx");
   };
 
+  const handleView = (row) => {
+    setSelectedItem(row);
+    handleShowDetailModal();
+  };
+
   const headers = [
     <input
       type="checkbox"
@@ -108,7 +118,10 @@ function InfoStudentManager() {
     (row) => moment(row.created_at).format("HH:mm DD/MM/YYYY"), // Định dạng thời gian
     (row) => (
       <div>
-        <button className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100">
+        <button
+          className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
+          onClick={() => handleView(row)}
+        >
           Xem
         </button>
       </div>
@@ -116,28 +129,35 @@ function InfoStudentManager() {
   ];
 
   return (
-    <LayoutWeb>
-      <div className="px-10">
-        <div className="flex justify-end pb-2">
-        <button
-          onClick={handleDownloadExcel}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
-          disabled={selectedRows.length === 0}
-        >
-          Tải file Excel
-        </button>
+    <>
+      <LayoutWeb>
+        <div className="px-10">
+          <div className="flex justify-end pb-2">
+            <button
+              onClick={handleDownloadExcel}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
+              disabled={selectedRows.length === 0}
+            >
+              Tải file Excel
+            </button>
+          </div>
+          <TableComponent
+            data={allInfoStudent}
+            headers={headers}
+            columns={columns}
+            rowsPerPage={5}
+            current_page={current_page}
+            total_page={total_page}
+            handlePageChange={handlePageChange}
+          />
         </div>
-        <TableComponent
-          data={allInfoStudent}
-          headers={headers}
-          columns={columns}
-          rowsPerPage={5}
-          current_page={current_page}
-          total_page={total_page}
-          handlePageChange={handlePageChange}
-        />
-      </div>
-    </LayoutWeb>
+      </LayoutWeb>
+      <DetailInfoStudentModal
+        isOpen={showDetailModal}
+        onClose={handleCloseDetailModal}
+        item={selectedItem}
+      />
+    </>
   );
 }
 

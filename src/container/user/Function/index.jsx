@@ -6,6 +6,7 @@ import DetailMajorModal from "../../modal/Major/DetailMajorModal";
 import AddFunctionModal from "../../modal/FunctionModal/AddFunctionModal";
 import { deleteFunction, getAllFunction } from "../../../thunks/FunctionThunks";
 import UpdateFunctionModal from "../../modal/FunctionModal/UpdateFunctionModal";
+import DetailFunctionModal from "../../modal/FunctionModal/detailFunctionModal";
 
 function FunctionManager() {
   const [showModal, setShowModal] = useState(false);
@@ -76,6 +77,7 @@ function FunctionManager() {
     dispatch(getAllFunction({page: page}))
   };
   const handleView = (row, action) => {
+    console.log("row", row)
     setSelectedItem(row);
     if (action === "view") {
       handleShowDetailModal();
@@ -106,10 +108,10 @@ function FunctionManager() {
         />
       </div>
       <AddFunctionModal show={showModal} handleClose={handleCloseModal} />
-      <DetailMajorModal
-        isOpen={showDetailModal}
-        onClose={handleCloseDetailModal}
-        item={selectedItem}
+      <DetailFunctionModal
+        show={showDetailModal}
+        handleClose={handleCloseDetailModal}
+        initialData={selectedItem}
       />
       <UpdateFunctionModal
         show={showUpdateModal}

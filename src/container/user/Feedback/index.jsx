@@ -1,13 +1,16 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import TableComponent from "../../component/TableComponent";
 import LayoutWeb from "../layoutWeb";
 import { useDispatch, useSelector } from "react-redux";
 import { getFeedbackThunk } from "../../../thunks/FeedBackThunk";
 import moment from "moment";
+import DetailFeedbackModal from "../../modal/feedback/detailFeedback";
 
 function FeedBackManager() {
   const dispatch = useDispatch();
   const { allFeedBack, total_page, current_page } = useSelector((state) => state.feedbacksReducer);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
 
   const hasFetched = useRef(false);
   useLayoutEffect(() => {
@@ -16,6 +19,10 @@ function FeedBackManager() {
       dispatch(getFeedbackThunk({page: 1}));
     }
   }, [allFeedBack.length, dispatch]);
+
+  
+  const handleShowDetailModal = () => setShowDetailModal(true);
+  const handleCloseDetailModal = () => setShowDetailModal(false);
 
 
   const headers = ["#", "Tựa đề", "Người gửi","Số điện thoại", "Ngày gửi", ""];
@@ -29,6 +36,7 @@ function FeedBackManager() {
       <div>
         <button
           className="text-blue-500 border border-blue-500 rounded px-2 py-1 hover:bg-blue-100"
+          onClick={() => handleView(row)}
         >
           Xem
         </button>
@@ -42,7 +50,15 @@ function FeedBackManager() {
     dispatch(getFeedbackThunk({page: page}))
   };
 
+  const handleView = (row) => {
+    setSelectedItem(row);
+    handleShowDetailModal();
+  };
+
+
+
   return (
+   <>
     <LayoutWeb>
       <div className="px-10">
         
@@ -57,6 +73,11 @@ function FeedBackManager() {
         />
       </div>
     </LayoutWeb>
+    <DetailFeedbackModal
+    isOpen={showDetailModal}
+    onClose={handleCloseDetailModal}
+    item={selectedItem}
+  /></>
   );
 }
 
