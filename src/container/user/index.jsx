@@ -29,6 +29,7 @@ function HomePage() {
     { path: '/contact-manager', name: 'Quản lý liên hệ', icon: 'https://cdn-icons-png.freepik.com/512/5300/5300765.png' },
     { path: '/handbook-manager', name: 'Quản lý handbook', icon: 'https://cdn-icons-png.flaticon.com/512/2620/2620230.png' },
     { path: '/audit-manager', name: 'Quản lý audit log', icon: 'https://cdn-icons-png.flaticon.com/512/4308/4308101.png' },
+    { path: '/facility-manager', name: 'Quản lý cơ sở vật chất', icon: 'https://png.pngtree.com/png-vector/20231214/ourmid/pngtree-facility-25d-business-office-isometric-workplace-people-scene-png-image_11343997.png' },
   ];
 
   const userRoutes = [

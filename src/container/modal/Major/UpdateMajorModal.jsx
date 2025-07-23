@@ -346,8 +346,8 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                         className="block w-full max-w-md mt-1 p-2 border border-gray-300 rounded-md shadow-sm h-40 overflow-y-auto"
                       >
                         {CollegeExamGroupList.map((group) => (
-                          <div>
-                            <label key={group.id}>
+                          <div key={group.id}>
+                            <label>
                               <input
                                 type="checkbox"
                                 className="mx-2"

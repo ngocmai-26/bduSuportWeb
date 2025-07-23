@@ -38,6 +38,7 @@ function Navbar() {
     { path: "/function-manager", name: "Quản lý chức năng" },
     { path: "/contact-manager", name: "Quản lý liên hệ" },
     { path: "/handbook-manager", name: "Quản lý Handbook" },
+    { path: "/facility-manager", name: "Quản lý cơ sở vật chất" },
     { path: "/audit-manager", name: "Quản lý audit log" },
   ];
 

@@ -7,13 +7,13 @@ import {
   removeAuthRefreshFromStorage,
   setToken,
   setRefresh,
+  getNavigate
 } from './services/AuthService';
-import { getNavigate } from './services/AuthService';
 import { logout } from './slices/AuthSlice';
 import { store } from './app/store';
 
 const axiosInstance = axios.create({
-  baseURL: `${API.uri}`,
+  baseURL: API.uri,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,7 +33,6 @@ axiosInstance.interceptors.request.use(
 
 // Xử lý khi refresh token thất bại
 const handleRefreshTokenFailed = () => {
-  // const navigate = getNavigate();
   removeTokenFromStorage();
   removeAuthRefreshFromStorage();
   store.dispatch(logout()); // Đảm bảo logout ngay lập tức
@@ -53,14 +52,18 @@ const handleInvalidSession = async (error) => {
       refresh: refreshToken,
     });
 
-    setToken(response?.data?.data?.access);
-    setRefresh(response?.data?.data?.refresh);
+    const { access, refresh } = response?.data?.data || {};
+    if (!access || !refresh) {
+      throw new Error('Invalid refresh token response');
+    }
+
+    setToken(access);
+    setRefresh(refresh);
 
     const config = error.config;
-    config.headers.Authorization = `Bearer ${response?.data?.data?.access}`;
+    config.headers.Authorization = `Bearer ${access}`;
     return axiosInstance(config); // Gửi lại request với token mới
   } catch (refreshError) {
-    console.log("refreshError", refreshError)
     handleRefreshTokenFailed();
     return Promise.reject(refreshError);
   }
@@ -76,26 +79,23 @@ const handleAccountUnverify = () => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response) {
-      const code = error.response?.data?.code || null;
-      const status = error.response.status; // HTTP status code
+    if (!error.response) {
+      return Promise.reject(error);
+    }
 
-      switch (code) {
-        case 'refresh_token_failed':
-          handleRefreshTokenFailed();
-          break;
+    const { code } = error.response?.data || {};
 
-        case 'invalid_session':
-          return handleInvalidSession(error);
-
-        case 'account_unverify':
-          handleAccountUnverify();
-          break;
-
-        default:
-          break;
-      }
-
+    switch (code) {
+      case 'refresh_token_failed':
+        handleRefreshTokenFailed();
+        break;
+      case 'invalid_session':
+        return handleInvalidSession(error);
+      case 'account_unverify':
+        handleAccountUnverify();
+        break;
+      default:
+        break;
     }
 
     return Promise.reject(error);

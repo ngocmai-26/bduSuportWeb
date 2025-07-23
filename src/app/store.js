@@ -1,41 +1,64 @@
 import { configureStore } from '@reduxjs/toolkit'
-import AlertReducer from '../slices/AlertSlice'
+
+// Auth & User Management
 import AuthReducer from '../slices/AuthSlice'
 import AccountsSlice from '../slices/AccountSlice'
+import InfoStudentsSlice from '../slices/InfoStudentSlice'
+
+// Academic & Education
 import AcademicsSlice from '../slices/AcademicSlice'
 import SubjectsSlice from '../slices/SubjectSlice'
 import CollegeExamGroupsSlice from '../slices/CollegeExamGroupSlice'
 import MajorSlice from '../slices/MajorSlice'
 import EvaluationSlice from '../slices/EvaluationSlice'
-import NewsSlice from '../slices/NewsSlice'
 import AdmissionsSlice from '../slices/AdmissionSlice'
+
+// Content Management
+import NewsSlice from '../slices/NewsSlice'
+import HandbookSlice from '../slices/HandbookSlice'
 import BusinessSlice from '../slices/BusinessSlice'
-import FeedBackSlice from '../slices/FeedBackSlice'
+import FacilitySlice from '../slices/FacilitySlice'
+import FacilityImageReducer from '../slices/FacilityImageSlice'
+
+// UI & System
+import AlertReducer from '../slices/AlertSlice'
 import LocationSlice from '../slices/LocationSlice'
 import FunctionSlice from '../slices/FunctionSlice'
 import ContactSlice from '../slices/ContactSlice'
-import HandbookSlice from '../slices/HandbookSlice'
-import InfoStudentsSlice from '../slices/InfoStudentSlice'
+import FeedBackSlice from '../slices/FeedBackSlice'
 
+/**
+ * Redux store configuration
+ * Groups reducers by functionality and disables serializable check for better performance
+ */
 export const store = configureStore({
   reducer: {
-    alertReducer: AlertReducer,
+    // Auth & User Management
     authReducer: AuthReducer,
     accountsReducer: AccountsSlice,
+    infoStudentsReducer: InfoStudentsSlice,
+
+    // Academic & Education
     academicsReducer: AcademicsSlice,
     subjectsReducer: SubjectsSlice,
     collegeExamGroupsReducer: CollegeExamGroupsSlice,
     majorReducer: MajorSlice,
     evaluationReducer: EvaluationSlice,
-    newsReducer: NewsSlice,
     allAdmissionsReducer: AdmissionsSlice,
+
+    // Content Management
+    newsReducer: NewsSlice,
+    handbookReducer: HandbookSlice,
     businessesReducer: BusinessSlice,
-    feedbacksReducer: FeedBackSlice,
+    facilityReducer: FacilitySlice,
+    facilityImageReducer: FacilityImageReducer,
+
+    // UI & System
+    alertReducer: AlertReducer,
     locationReducer: LocationSlice,
     functionReducer: FunctionSlice,
     contactReducer: ContactSlice,
-    handbookReducer: HandbookSlice,
-    infoStudentsReducer: InfoStudentsSlice,
+    feedbacksReducer: FeedBackSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }),

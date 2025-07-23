@@ -1,16 +1,17 @@
-
-import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLayoutEffect } from 'react';
-import { TOAST_ERROR, TOAST_SUCCESS } from './constants/toast';
 import { ToastContainer, toast } from 'react-toastify';
-import { setAlert } from './slices/AlertSlice';
-import Router from './routes';
 import "react-toastify/dist/ReactToastify.css";
+import './App.css';
+
+import Router from './routes';
+import { TOAST_ERROR, TOAST_SUCCESS } from './constants/toast';
+import { setAlert } from './slices/AlertSlice';
 
 function App() {
   const { msg } = useSelector((state) => state.alertReducer);
   const dispatch = useDispatch();
+
   useLayoutEffect(() => {
     if (Object.keys(msg).length > 0) {
       switch (msg.type) {

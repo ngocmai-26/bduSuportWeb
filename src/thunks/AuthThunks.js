@@ -15,7 +15,6 @@ import {
   setInfo,
   setRefresh,
   setToken,
-  setValueWithKey,
 } from '../services/AuthService'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
 import axios from 'axios'
@@ -180,21 +179,20 @@ export const refreshSession = createAsyncThunk(
       });
 
       if (response.status === 200) {
-        setToken(response.data.data.access);
-        setValueWithKey(API_KEY_NAME, response.data.data.access);
-        setValueWithKey(REFRESH_KEY_NAME, response.data.data.refresh);
+        const { access, refresh } = response.data.data;
+        setToken(access);
+        setRefresh(refresh);
         dispatch(setLogged(true));
       } else {
-        dispatch(logout()); // Logout ngay lập tức nếu có lỗi
+        dispatch(logout());
       }
       return response.data;
     } catch (error) {
-      dispatch(logout()); // Thêm logout vào catch
+      dispatch(logout());
       return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
 
 export const changePassword = createAsyncThunk(
   'change_password',

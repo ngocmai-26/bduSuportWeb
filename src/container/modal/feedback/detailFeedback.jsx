@@ -78,7 +78,6 @@ const DetailFeedbackModal = ({ isOpen, onClose, item }) => {
         ) : (
           <p className="text-center text-gray-500">Không có thông tin tài khoản.</p>
         )}
-        
       </div>
     </div>
   );

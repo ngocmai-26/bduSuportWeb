@@ -22,12 +22,13 @@ import ContactManager from "../container/user/Contact";
 import HandbookManager from "../container/user/Handbook";
 import AuditManager from "../container/auth/audit";
 import InfoStudentManager from "../container/user/infoStudent";
+import FacilityManager from "../container/user/Facility";
 
 export const GeneralRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
-      <Route path="*" element={<Login />} />
+        <Route path="*" element={<Login />} />
         <Route path="/" element={<Login />} />
         <Route path="/ma-xac-thuc" element={<VerifyCode />} />
         <Route path="/gui-lai-ma" element={<ResendVerify />} />
@@ -40,7 +41,7 @@ export const LoggedRoute = () => {
   return (
     <AppMiddleware>
       <Routes>
-      <Route path="*" element={<HomePage />} />
+        <Route path="*" element={<HomePage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/account-manager" element={<AccountManager />} />
         <Route path="/academic-manager" element={<AcademicManager />} />
@@ -60,6 +61,7 @@ export const LoggedRoute = () => {
         <Route path="/function-manager" element={<FunctionManager />} />
         <Route path="/contact-manager" element={<ContactManager />} />
         <Route path="/handbook-manager" element={<HandbookManager />} />
+        <Route path="/facility-manager" element={<FacilityManager />} />
         <Route path="/audit-manager" element={<AuditManager />} />
         <Route path="/information-student-manager" element={<InfoStudentManager />} />
       </Routes>
@@ -70,7 +72,7 @@ export const LoggedRoute = () => {
 function Router() {
   const refresh = loadAuthRefreshFromStorage(); // Load refresh token if available
 
- 
+
   return (
     <BrowserRouter basename="/bdu-support">
       {refresh ? <LoggedRoute /> : <GeneralRoute />}
@@ -79,3 +81,4 @@ function Router() {
 }
 
 export default Router;
+
