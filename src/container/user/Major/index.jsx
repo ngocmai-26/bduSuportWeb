@@ -26,7 +26,6 @@ function MajorManager() {
     training_location: "",
     year: "",
   });
-
   const { allLocation } = useSelector((state) => state.locationReducer);
   const { allAcademic } = useSelector((state) => state.academicsReducer);
 
@@ -141,7 +140,7 @@ function MajorManager() {
   };
   const handlePageChange = (page) => {
     if (page < 1 || page > total_pageMajor) return;
-    dispatch(getAllMajor({ page: page }));
+    dispatch(getAllMajor({ ...filters, page: page }));
   };
 
   return (
@@ -172,6 +171,9 @@ function MajorManager() {
               <option value="">Năm học</option>
               <option key={2024} value={2024}>
                 2024
+              </option>
+              <option key={2025} value={2025}>
+                2025
               </option>
             </select>
             <select
@@ -228,6 +230,10 @@ function MajorManager() {
         show={showUpdateModal}
         handleClose={handleCloseUpdateModal}
         initialData={selectedItem}
+        onUpdateSuccess={() => {
+          // Refresh lại data với page hiện tại sau khi cập nhật thành công
+          dispatch(getAllMajor({ ...filters, page: current_page }));
+        }}
       />
     </LayoutWeb>
   );

@@ -56,7 +56,8 @@ export const createCollegeExamGroup = (data) => async (
             content: 'Tạo nhóm môn học thành công',
           }),
         )
-        dispatch(getAllCollegeExamGroup())
+        // Gọi API với page 1 để refresh dữ liệu
+        dispatch(getAllCollegeExamGroup({ page: 1 }))
       }
     })
     .catch((error) => {
@@ -85,7 +86,7 @@ export const DeleteCollegeExamGroup = (id) => async (dispatch, rejectWithValue) 
             content: 'Xóa loại nhóm môn học thành công',
           }),
         )
-        dispatch(getAllCollegeExamGroup())
+        dispatch(getAllCollegeExamGroup({ page: 1 }))
       }
     })
     .catch((error) => {

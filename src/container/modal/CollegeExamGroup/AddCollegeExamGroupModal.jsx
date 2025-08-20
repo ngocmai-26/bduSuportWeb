@@ -5,7 +5,7 @@ import ButtonComponent from "../../component/ButtonComponent";
 import { getAllSubject } from "../../../thunks/SubjectThunks";
 import { createCollegeExamGroup } from "../../../thunks/CollegeExamGroupThunks";
 
-function AddCollegeExamGroupModal({ show, handleClose }) {
+function AddCollegeExamGroupModal({ show, handleClose, onSuccess }) {
   const dispatch = useDispatch();
   const [data, setData] = useState({ code: "", name: "", subjects: [] });
   const [errors, setErrors] = useState({});
@@ -17,38 +17,44 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
   const loadedPages = useRef([]); // Store loaded pages
   const isWaiting = useRef(false); // Use ref to manage waiting state
 
-   const hasFetched = useRef(false); 
-   useLayoutEffect(() => {
-     if (allSubject.length <= 0 && !hasFetched.current) {
-       hasFetched.current = true;
-       dispatch(getAllSubject({page:1}));
-     }
-   }, [allSubject.length, dispatch]);
+  const hasFetched = useRef(false);
+  useLayoutEffect(() => {
+    if (show) {
+      // Reset state khi modal mở
+      setPage(1);
+      setSubjectsList([]);
+      loadedPages.current = [];
+      hasFetched.current = false;
+
+      // Luôn load dữ liệu subjects từ page 1 khi modal mở
+      dispatch(getAllSubject({ page: 1 }));
+    }
+  }, [show, dispatch]);
 
   useEffect(() => {
     if (allSubject.length > 0) {
-      setSubjectsList((prevSubjects) => [...prevSubjects, ...allSubject]);
+      // Cập nhật subjectsList với dữ liệu mới nhất từ Redux
+      setSubjectsList(allSubject);
     }
   }, [allSubject]);
 
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
-    
- 
+
     if (
-      scrollHeight - scrollTop > clientHeight - 10 && 
-      scrollHeight - scrollTop <= clientHeight && 
+      scrollHeight - scrollTop > clientHeight - 10 &&
+      scrollHeight - scrollTop <= clientHeight &&
       !loading &&
-      page <= total_page && 
-      !isWaiting.current 
+      page < total_page &&
+      !isWaiting.current
     ) {
       setLoading(true);
       isWaiting.current = true;
-  
+
       dispatch(getAllSubject({ page: page + 1 })).then(() => {
-        setLoading(false); 
-        isWaiting.current = false; 
-        setPage((prevPage) => prevPage + 1); 
+        setLoading(false);
+        isWaiting.current = false;
+        setPage((prevPage) => prevPage + 1);
       });
     }
   };
@@ -77,20 +83,36 @@ function AddCollegeExamGroupModal({ show, handleClose }) {
 
     if (Object.keys(formErrors).length === 0) {
       dispatch(createCollegeExamGroup(data)).then(() => {
-        handleClose();
+        // Reset form data
         setData({ code: "", name: "", subjects: [] });
-        setSubjectsList([]); // Clear subjects on successful submission
+        setErrors({});
+        setPage(1);
+        setSubjectsList([]);
+        loadedPages.current = [];
+        hasFetched.current = false;
+
+        // Đóng modal
+        handleClose();
+
+        // Gọi callback để refresh dữ liệu ở component cha
+        if (onSuccess) {
+          onSuccess();
+        }
       });
     }
   };
 
   const handleCloseModal = () => {
-    handleClose();
+    // Reset form data
     setData({ code: "", name: "", subjects: [] });
     setErrors({});
-    setPage(1); // Reset page on modal close
-    setSubjectsList([]); // Clear subjects on modal close
-    loadedPages.current = []; // Reset loaded pages on modal close
+    setPage(1);
+    setSubjectsList([]);
+    loadedPages.current = [];
+    hasFetched.current = false;
+
+    // Đóng modal
+    handleClose();
   };
 
   return (

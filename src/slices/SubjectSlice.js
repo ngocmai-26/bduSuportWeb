@@ -17,6 +17,9 @@ const SubjectsSlice = createSlice({
     setAllSubject: (state, { payload }) => {
       state.allSubject = payload
     },
+    appendAllSubject: (state, { payload }) => {
+      state.allSubject = [...state.allSubject, ...payload]
+    },
     setSearchSubject: (state, { payload }) => {
       state.searchSubject = payload
     },
@@ -43,6 +46,7 @@ const SubjectsSlice = createSlice({
 
 export const {
   setAllSubject,
+  appendAllSubject,
   setSearchSubject,
   setSingleSubject,
   setErrors,

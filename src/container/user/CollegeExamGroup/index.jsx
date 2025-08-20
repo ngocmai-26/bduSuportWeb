@@ -12,20 +12,25 @@ function CollegeExamGroupManager() {
     (state) => state.collegeExamGroupsReducer
   );
 
-  const hasFetched = useRef(false); 
-
+  // Gọi API khi trang load để hiển thị dữ liệu hiện có
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-      hasFetched.current = true; 
-      dispatch(getAllCollegeExamGroup({page: 1}));
-    }
-  }, [allCollegeExamGroups.length, dispatch]);
-  
+    dispatch(getAllCollegeExamGroup({ page: 1 }));
+  }, [dispatch]);
 
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = () => {
+    setShowModal(true);
+    // Không cần gọi API khi mở modal vì dữ liệu đã có sẵn
+  };
+
   const handleCloseModal = () => setShowModal(false);
+
   const handleCreateCollegeExamGroup = () => {
     handleShowModal();
+  };
+
+  // Hàm để refresh dữ liệu sau khi tạo mới thành công
+  const handleCreateSuccess = () => {
+    dispatch(getAllCollegeExamGroup({ page: 1 }));
   };
 
   const headers = ["#", "Mã tổ hợp", "Tổ hợp", "Môn học", ""];
@@ -48,7 +53,10 @@ function CollegeExamGroupManager() {
           className="text-red-500 border border-red-500 rounded px-2 py-1 hover:bg-red-100"
           onClick={() => {
             if (window.confirm("Bạn có muốn xóa nhóm môn này không?")) {
-              dispatch(DeleteCollegeExamGroup(row.id));
+              dispatch(DeleteCollegeExamGroup(row.id)).then(() => {
+                // Refresh dữ liệu sau khi xóa thành công
+                dispatch(getAllCollegeExamGroup({ page: 1 }));
+              });
             }
           }}
         >
@@ -59,7 +67,7 @@ function CollegeExamGroupManager() {
   ];
   const handlePageChange = (page) => {
     if (page < 1 || page > total_page) return;
-    dispatch(getAllCollegeExamGroup({page: page}))
+    dispatch(getAllCollegeExamGroup({ page: page }))
   };
   return (
     <LayoutWeb>
@@ -79,12 +87,16 @@ function CollegeExamGroupManager() {
           rowsPerPage={10}
           current_page={current_page}
           total_page={total_page}
-          
+
           handlePageChange={handlePageChange}
         />
       </div>
-      <AddCollegeExamGroupModal show={showModal} handleClose={handleCloseModal} />
-     
+      <AddCollegeExamGroupModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        onSuccess={handleCreateSuccess}
+      />
+
     </LayoutWeb>
   );
 }

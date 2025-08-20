@@ -2,7 +2,7 @@
 import { API } from '../constants/api'
 import { setAlert } from '../slices/AlertSlice'
 import { TOAST_ERROR, TOAST_SUCCESS } from '../constants/toast'
-import { setAllSubject, setCurrentPage, setStatus, setTotalPage } from '../slices/SubjectSlice'
+import { setAllSubject, appendAllSubject, setCurrentPage, setStatus, setTotalPage } from '../slices/SubjectSlice'
 import axiosInstance from '../axiosConfig'
 import { refreshSession } from './AuthThunks'
 
@@ -11,7 +11,7 @@ export const getAllSubject = (data) => async (dispatch, rejectWithValue) => {
     await axiosInstance
       .get(`${API.uri}/backoffice/subjects`, {
         params: {
-          page: data?.page,
+          page: data?.page || 1,
           size: 10,
         },
         headers: {
@@ -20,7 +20,14 @@ export const getAllSubject = (data) => async (dispatch, rejectWithValue) => {
       })
       .then((response) => {
         if (response) {
-          dispatch(setAllSubject(response.data.data.results))
+          // Nếu là page đầu tiên, reset allSubject
+          // Nếu là page tiếp theo, append vào allSubject
+          if (data?.page === 1 || !data?.page) {
+            dispatch(setAllSubject(response.data.data.results))
+          } else {
+            // Append dữ liệu mới vào allSubject hiện tại
+            dispatch(appendAllSubject(response.data.data.results))
+          }
           dispatch(setCurrentPage(response?.data?.data.current_page))
           dispatch(setTotalPage(response?.data?.data.total_page))
         }

@@ -9,7 +9,7 @@ import { getLocationThunk } from "../../../thunks/LocationThunk";
 import { setAlert } from "../../../slices/AlertSlice";
 import { TOAST_ERROR } from "../../../constants/toast";
 
-function UpdateMajorModal({ show, handleClose, initialData }) {
+function UpdateMajorModal({ show, handleClose, initialData, onUpdateSuccess }) {
   const dispatch = useDispatch();
   const [data, setData] = useState(initialData || {});
   const [selectedAcademic, setSelectedAcademic] = useState(null);
@@ -22,27 +22,36 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
   const { allLocation } = useSelector((state) => state.locationReducer);
 
   const hasFetched = useRef(false);
+  const hasFetchedAcademic = useRef(false);
+  const hasFetchedEvaluation = useRef(false);
+  const hasFetchedLocation = useRef(false);
 
   useLayoutEffect(() => {
-    if (allCollegeExamGroups.length <= 0 && !hasFetched.current) {
-      dispatch(getAllCollegeExamGroup({ page: 1 }));
+    // Chỉ gọi API một lần khi mở modal
+    if (!hasFetched.current) {
+      hasFetched.current = true;
+      console.log("aaasssa");
+      dispatch(getAllCollegeExamGroup({ page: 1 })); // Bỏ size: 1000
     }
-  }, [allCollegeExamGroups.length, dispatch]);
+  }, [dispatch]);
 
   useLayoutEffect(() => {
-    if (allAcademic.length <= 0 && !hasFetched.current) {
+    if (allAcademic.length <= 0 && !hasFetchedAcademic.current) {
+      hasFetchedAcademic.current = true;
       dispatch(getAllAcademic({ page: 1 }));
     }
   }, [allAcademic.length, dispatch]);
 
   useLayoutEffect(() => {
-    if (allEvaluation.length <= 0 && !hasFetched.current) {
+    if (allEvaluation.length <= 0 && !hasFetchedEvaluation.current) {
+      hasFetchedEvaluation.current = true;
       dispatch(getAllEvaluation({ page: 1 }));
     }
   }, [allEvaluation.length, dispatch]);
 
   useLayoutEffect(() => {
-    if (allLocation.length <= 0 && !hasFetched.current) {
+    if (allLocation.length <= 0 && !hasFetchedLocation.current) {
+      hasFetchedLocation.current = true;
       dispatch(getLocationThunk({ page: 1 }));
     }
   }, [allLocation.length, dispatch]);
@@ -53,7 +62,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
   const isWaiting = useRef(false);
 
   useEffect(() => {
-    
+    // Append dữ liệu mới vào list cũ để infinite scroll
     if (allCollegeExamGroups.length > 0) {
       setCollegeExamGroupList((prevSubjects) => [
         ...prevSubjects,
@@ -62,13 +71,15 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
     }
   }, [allCollegeExamGroups]);
 
+  // Trả lại handleScroll cho infinite scroll
   const handleScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+    // Kiểm tra khi scroll gần đến cuối
     if (
-      scrollHeight - scrollTop > clientHeight - 10 &&
-      scrollHeight - scrollTop <= clientHeight &&
+      scrollHeight - scrollTop <= clientHeight + 10 &&
       !loading &&
-      page <= total_page &&
+      page < total_page &&
       !isWaiting.current
     ) {
       setLoading(true);
@@ -99,7 +110,7 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
 
 
   useEffect(() => {
-    
+
     const matchedLevel = allAcademic.find(
       (level) => level.id === +data.academic_level
     );
@@ -150,13 +161,13 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
     const updatedFields = Object.keys(data).reduce((fields, key) => {
       const currentValue = data[key];
       const initialValue = initialData[key];
-  
+
       if (Array.isArray(currentValue)) {
         // Kiểm tra sự thay đổi thực sự của mảng
         const isArrayChanged =
           currentValue.length !== (initialValue?.length || 0) ||
           currentValue.some((item, index) => item !== (initialValue?.[index]));
-  
+
         if (isArrayChanged) {
           fields[key] = currentValue;
         }
@@ -164,10 +175,10 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
         // Kiểm tra giá trị không phải mảng
         fields[key] = currentValue;
       }
-  
+
       return fields;
     }, {});
-  
+
     // Kiểm tra xem có thay đổi hay không
     if (Object.keys(updatedFields).length === 0) {
       dispatch(
@@ -177,11 +188,15 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
       // Nếu có thay đổi, gửi yêu cầu cập nhật
       dispatch(updateMajor({ id: initialData?.id, data: updatedFields })).then(
         () => {
+          // Gọi callback để refresh data ở trang chính
+          if (onUpdateSuccess) {
+            onUpdateSuccess();
+          }
           handleClose();
         }
       );
     }
-  
+
   };
 
   const handleChangeCheckbox = (e) => {
@@ -194,13 +209,12 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
 
   };
 
-  
+
 
   return (
     <div
-      className={`fixed inset-0 z-10 overflow-y-auto ${
-        show ? "block" : "hidden"
-      }`}
+      className={`fixed inset-0 z-10 overflow-y-auto ${show ? "block" : "hidden"
+        }`}
     >
       <div className="flex items-center justify-center min-h-screen p-4">
         <div
@@ -294,26 +308,26 @@ function UpdateMajorModal({ show, handleClose, initialData }) {
                 />
               </div>
               <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Có mở xét tuyển ngành này không?
-              </label>
-              <div className="flex items-center mt-4">
-                <input
-                  id="open_to_recruitment"
-                  name="open_to_recruitment"
-                  type="checkbox"
-                  checked={data.open_to_recruitment}
-                  onChange={handleChangeCheckbox}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="open_to_recruitment"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Hiện thị chức năng
+                <label className="block text-sm font-medium text-gray-700">
+                  Có mở xét tuyển ngành này không?
                 </label>
+                <div className="flex items-center mt-4">
+                  <input
+                    id="open_to_recruitment"
+                    name="open_to_recruitment"
+                    type="checkbox"
+                    checked={data.open_to_recruitment}
+                    onChange={handleChangeCheckbox}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="open_to_recruitment"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
+                    Hiện thị chức năng
+                  </label>
+                </div>
               </div>
-            </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Trình độ học vấn
